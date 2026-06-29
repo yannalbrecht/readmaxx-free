@@ -363,6 +363,22 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
 .spin{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ============================================================
+   UPDATE BANNER  (new version available)
+   ============================================================ */
+.update-banner{position:fixed;left:12px;right:12px;top:calc(var(--sat) + 10px);z-index:95;
+  display:flex;align-items:center;gap:10px;padding:11px 12px 11px 16px;border-radius:16px;
+  background:linear-gradient(120deg,rgba(139,108,255,.96),rgba(255,77,157,.96));
+  box-shadow:var(--shadow),var(--glow);animation:drop .35s cubic-bezier(.2,.8,.2,1) both;color:#fff}
+@keyframes drop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.update-banner .ub-t{flex:1;font-weight:700;font-size:14px}
+.update-banner .ub-btn{background:#fff;color:#1a1230;font-weight:800;font-size:14px;height:36px;padding:0 16px;border-radius:99px}
+.update-banner .ub-btn:active{transform:scale(.96)}
+.update-banner .ub-x{width:30px;height:30px;display:grid;place-items:center;color:#fff;opacity:.85}
+.update-banner .ub-x svg{width:18px;height:18px}
+.set.set-hot{background:var(--grad-soft)}
+.set.set-hot .si{background:var(--grad);color:#fff}
+
 /* small utilities */
 .row{display:flex;align-items:center;gap:12px}
 .col{display:flex;flex-direction:column}

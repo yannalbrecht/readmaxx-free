@@ -24,6 +24,8 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
+const APP_VERSION = '1.1.0'; // keep in sync with BUILD in sw.js
+let updateReady = false;
 
 /* ============================================================
    SAMPLES — built-in public-domain texts (instant try)
@@ -125,6 +127,46 @@ function wireGlobal() {
   D.mdInput.addEventListener('change', onVaultPicked);
   D.dirInput.addEventListener('change', onDirPicked);
   document.addEventListener('keydown', readerKeys);
+
+  // Make on-device storage durable so the library survives eviction.
+  navigator.storage?.persist?.().catch(() => {});
+  // A new build is waiting → offer a one-tap update (data is kept).
+  window.addEventListener('rm-update-ready', () => {
+    updateReady = true;
+    showUpdateBanner();
+    if (!D.profile.classList.contains('hidden')) renderProfile();
+  });
+  if (window.__rmUpdate && window.__rmUpdate.available) { updateReady = true; showUpdateBanner(); }
+}
+
+/* ---- in-app update (swap code, keep all data) ---- */
+function showUpdateBanner() {
+  if (document.querySelector('.update-banner')) return;
+  const b = el('div', { class:'update-banner' });
+  b.append(
+    el('span', { class:'ub-t' }, '✨ New version available'),
+    el('button', { class:'ub-btn', onclick: () => updateApp() }, 'Update'),
+    el('button', { class:'ub-x', html: ICON.x, onclick: () => b.remove() }),
+  );
+  document.body.append(b);
+  haptic(10);
+}
+
+async function updateApp(label) {
+  toast('Updating…');
+  if (label) label.textContent = 'Updating…';
+  try {
+    if (window.__rmUpdate) { await window.__rmUpdate.apply(); return; } // reloads via controllerchange
+  } catch (e) { console.warn(e); }
+  // Fallback if the SW API is unavailable: clear code caches and reload fresh.
+  try { const ks = await caches.keys(); await Promise.all(ks.map((k) => caches.delete(k))); } catch {}
+  location.reload();
+}
+
+async function checkForUpdate() {
+  toast('Checking for updates…');
+  try { await window.__rmUpdate?.check(); } catch {}
+  setTimeout(() => { if (!updateReady) toast('You’re on the latest version ✓'); }, 1800);
 }
 
 function enterApp() {
@@ -1209,8 +1251,21 @@ function renderProfile() {
   g5.append(navRow(ICON.trash, 'Reset onboarding', '', () => { state.profile.onboarded = false; save(); startOnboarding(); }));
   v.append(g5);
 
+  // App / updates — applies a new version in place, keeping all your data.
+  v.append(groupTitle('App'));
+  const g6 = el('div', { class:'set-group' });
+  const updateRow = el('button', { class:'set' + (updateReady ? ' set-hot' : ''), style:'width:100%;text-align:left',
+    onclick: () => updateApp() });
+  updateRow.append(el('div', { class:'si', html: ICON.refresh }));
+  updateRow.append(el('div', { class:'st' }, updateReady ? 'Update available — tap to update' : 'Update app'));
+  updateRow.append(el('div', { class:'sv' }, updateReady ? 'new' : 'keeps your data'));
+  updateRow.append(el('div', { style:'color:var(--faint);width:18px;height:18px', html: ICON.next }));
+  g6.append(updateRow);
+  g6.append(navRow(ICON.share, 'Check for updates', `v${APP_VERSION}`, checkForUpdate));
+  v.append(g6);
+
   v.append(el('div', { class:'center faint', style:'padding:18px 0 6px;font-size:12px' },
-    'ReadMaxx Free · v1.0 · private & offline'));
+    `ReadMaxx Free · v${APP_VERSION} · private & offline`));
   v.append(el('div', { class:'center faint', style:'font-size:12px;padding-bottom:10px' },
     'Add to Home Screen: Share → “Add to Home Screen”.'));
 }

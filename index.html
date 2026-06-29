@@ -76,11 +76,51 @@
 
   <script type="module" src="js/app.js"></script>
   <script>
-    // Register the service worker at this page's scope. The relative path
-    // keeps it working on the GitHub Pages project subpath.
+    // Service worker + in-app update flow. Data (IndexedDB/localStorage) is never
+    // touched by an update — only the cached code is swapped.
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW failed', e));
+      let reloading = false;
+      // When the freshly-activated SW takes control, reload once to run new code.
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloading) return; reloading = true; window.location.reload();
+      });
+
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('./sw.js');
+          const announce = () => window.dispatchEvent(new CustomEvent('rm-update-ready'));
+
+          // Exposed to the app so the Settings "Update" button can apply it.
+          window.__rmUpdate = {
+            available: !!reg.waiting,
+            async apply() {
+              const r = await navigator.serviceWorker.getRegistration();
+              await r?.update().catch(() => {});
+              const w = (r && r.waiting) || reg.waiting;
+              if (w) { w.postMessage({ type: 'SKIP_WAITING' }); return true; } // controllerchange → reload
+              // No waiting worker: clear code caches and hard-reload to pull fresh code.
+              try { const ks = await caches.keys(); await Promise.all(ks.map((k) => caches.delete(k))); } catch (e) {}
+              window.location.reload();
+              return false;
+            },
+            check() { return reg.update().catch(() => {}); },
+          };
+
+          if (reg.waiting && navigator.serviceWorker.controller) { window.__rmUpdate.available = true; announce(); }
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            nw && nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                window.__rmUpdate.available = true; announce();
+              }
+            });
+          });
+
+          // Look for updates on launch, when the app regains focus, and hourly.
+          reg.update().catch(() => {});
+          document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+          setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+        } catch (e) { console.warn('SW failed', e); }
       });
     }
   </script>

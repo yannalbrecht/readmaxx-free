@@ -1,5 +1,8 @@
 // ReadMaxx Free service worker — offline-first PWA shell
-const VERSION = 'readmaxx-v2';
+// Bump BUILD on every deploy so clients detect a waiting update and can apply it
+// from the in-app "Update" button (without reinstalling — data is untouched).
+const BUILD = '1.1.0';
+const VERSION = 'readmaxx-' + BUILD;
 const CORE = [
   './',
   './index.html',
@@ -27,7 +30,9 @@ self.addEventListener('install', (e) => {
     caches.open(VERSION).then((c) =>
       // Add individually so one 404 (e.g. an optional vendor file) can't abort the whole install.
       Promise.allSettled(CORE.map((u) => c.add(u)))
-    ).then(() => self.skipWaiting())
+    )
+    // NOTE: no skipWaiting() here — a new SW stays "waiting" so the app can show
+    // an Update button and the user applies it when ready (no surprise reloads).
   );
 });
 
@@ -37,6 +42,11 @@ self.addEventListener('activate', (e) => {
       Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
+});
+
+// The page posts this when the user taps "Update" — activate the waiting SW now.
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', (e) => {
