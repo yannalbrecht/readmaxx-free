@@ -1,0 +1,36 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1230"/>
+      <stop offset="0.55" stop-color="#0e0a1c"/>
+      <stop offset="1" stop-color="#080611"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" rx="230" fill="url(#bg)"/>
+  <!-- reticle ticks -->
+  <g fill="url(#accent)" filter="url(#glow)">
+    <path d="M512 196 l34 58 h-68 z"/>
+    <path d="M512 828 l34 -58 h-68 z"/>
+  </g>
+  <!-- focus bar -->
+  <rect x="190" y="476" width="644" height="72" rx="36" fill="#ffffff" opacity="0.06"/>
+  <!-- word: Re[a]d with ORP letter in red -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="300" text-anchor="middle">
+    <text x="430" y="610" fill="#ffffff">Re</text>
+    <text x="556" y="610" fill="#ff5470">a</text>
+    <text x="660" y="610" fill="#ffffff">d</text>
+  </g>
+  <!-- speed streaks -->
+  <g stroke="url(#accent)" stroke-width="26" stroke-linecap="round" opacity="0.9">
+    <line x1="250" y1="690" x2="360" y2="690"/>
+    <line x1="250" y1="752" x2="320" y2="752"/>
+  </g>
+</svg>

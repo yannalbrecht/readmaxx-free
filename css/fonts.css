@@ -1,0 +1,45 @@
+/* Self-hosted reading faces — work fully offline, cached by the service worker. */
+
+/* Lexend — variable weight; reading-optimized, the default word face. */
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/fonts/lexend-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Atkinson Hyperlegible — accessibility-tuned, highly distinct letterforms. */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/atkinson-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../assets/fonts/atkinson-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* OpenDyslexic — weighted bottoms to reduce letter flipping. */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../assets/fonts/opendyslexic-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../assets/fonts/opendyslexic-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ---- Reading-font application ----
+   --read-font is set on :root by the font setting. It styles the RSVP word,
+   the in-reader context line, and long-form reading surfaces (paste box etc). */
+:root { --read-font: "Lexend", var(--font); --read-scale: 1; }
+.word, .rd-context, .pretty, textarea.field { font-family: var(--read-font); }
+.word { font-size: clamp(34px, calc(9vw * var(--read-scale)), calc(56px * var(--read-scale))); }
+html.bigfont .word { font-size: clamp(44px, calc(13vw * var(--read-scale)), calc(76px * var(--read-scale))); }

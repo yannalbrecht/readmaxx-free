@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>ReadMaxx Free — Speed Reader</title>
+  <meta name="description" content="Read up to 3× faster. A private, on-device RSVP speed reader for articles, books, and Obsidian notes. Free forever." />
+
+  <!-- PWA / theming -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#08070d" />
+
+  <!-- iOS home-screen install (required for a non-blurry icon + full-screen) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ReadMaxx" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+
+  <link rel="preload" href="assets/fonts/lexend-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Splash (shown until app boots) -->
+  <div id="splash" class="splash">
+    <div class="splash-mark">
+      <span class="chev">›</span><span class="chev d2">›</span>
+      <span class="orp-dot"></span>
+    </div>
+    <div class="splash-word">ReadMaxx</div>
+  </div>
+
+  <!-- Onboarding lives here (JS-rendered) -->
+  <main id="onboarding" class="screen onboarding hidden"></main>
+
+  <!-- Main app -->
+  <div id="app" class="app hidden">
+    <section id="view-home"    class="view"></section>
+    <section id="view-stats"   class="view hidden"></section>
+    <section id="view-profile" class="view hidden"></section>
+
+    <!-- Bottom tab bar -->
+    <nav id="tabbar" class="tabbar">
+      <button class="tab active" data-view="home">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg>
+        <span>Library</span>
+      </button>
+      <button class="tab tab-read" data-action="quick-read">
+        <span class="read-fab"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+        <span>Read</span>
+      </button>
+      <button class="tab" data-view="stats">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>Stats</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Reader overlay (JS-rendered) -->
+  <div id="reader" class="reader hidden"></div>
+
+  <!-- Sheet / modal mount -->
+  <div id="sheet-root"></div>
+  <div id="toast-root"></div>
+
+  <!-- Hidden file inputs reused across the app -->
+  <input id="file-input" type="file" accept=".txt,.md,.markdown,.epub,text/plain,text/markdown,application/epub+zip" hidden />
+  <input id="md-multi-input" type="file" accept=".md,.markdown,.txt,text/markdown" multiple hidden />
+
+  <script type="module" src="js/app.js"></script>
+  <script>
+    // Register the service worker at this page's scope. The relative path
+    // keeps it working on the GitHub Pages project subpath.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW failed', e));
+      });
+    }
+  </script>
+</body>
+</html>
