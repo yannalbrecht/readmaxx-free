@@ -508,7 +508,16 @@ async function fetchArticle(url) {
   // Primary: r.jina.ai returns clean markdown of the page, CORS-enabled.
   try {
     const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' } });
-    if (r.ok) { const t = await r.text(); if (t && t.length > 80) return t; }
+    if (r.ok) {
+      let t = await r.text();
+      if (t && t.length > 80) {
+        // Strip jina's "Title: … Markdown Content:" preamble; keep the title as an H1.
+        const m = t.match(/^Title:\s*(.+)$/m);
+        t = t.replace(/^[\s\S]*?Markdown Content:\s*/, '');
+        if (m) t = `# ${m[1].trim()}\n\n${t}`;
+        return t.trim();
+      }
+    }
   } catch {}
   // Fallback: allorigins raw HTML → strip to text.
   const r2 = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
