@@ -285,6 +285,12 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
   display:flex;flex-direction:column;padding:calc(var(--sat) + 8px) 18px calc(var(--sab) + 12px);animation:fade .3s ease both}
 .vault-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:10px}
 .cover.vault{background:linear-gradient(180deg,#2a2140,#1a1530);font-size:22px}
+.vault-screen .cover{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:700}
+.vault-screen .cover.done{background:var(--grad-soft);color:var(--good)}
+/* subfolder group header */
+.vault-folder{display:flex;align-items:center;gap:8px;margin:16px 4px 8px;font-size:13px;font-weight:700;color:var(--muted)}
+.vault-folder .vf-ic{font-size:15px}
+.good-t{color:var(--good)}
 
 /* in-reader vault note navigation */
 .rd-vaultnav{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 2px 0}

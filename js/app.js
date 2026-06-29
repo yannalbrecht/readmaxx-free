@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.1.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.1.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -599,52 +599,46 @@ async function onFilePicked(e) {
   } catch (err) { console.error(err); toast('Could not read that file', { err:true }); }
 }
 
-async function onVaultPicked(e) {
-  const files = [...e.target.files]; e.target.value = '';
-  if (!files.length) return;
-  let n = 0;
-  for (const f of files) {
-    try {
-      const text = await f.text();
-      const md = /\.(md|markdown)$/i.test(f.name);
-      const title = (text.match(/^#\s+(.+)/m)?.[1] || f.name.replace(/\.[^.]+$/, '')).slice(0, 60);
-      await saveDoc(makeDoc({ title, type: md ? 'md' : 'text', text, markdown: md }));
-      n++;
-    } catch {}
-  }
-  toast(`Imported ${n} note${n !== 1 ? 's' : ''}`);
-  renderHome();
-}
+// Folder picker (#dir-input, webkitdirectory) → recurses ALL subfolders.
+async function onDirPicked(e) { const files = [...e.target.files]; e.target.value = ''; buildVaultFromFiles(files, 'My vault'); }
+// File picker fallback (#md-multi-input) → also grouped into one browsable vault.
+async function onVaultPicked(e) { const files = [...e.target.files]; e.target.value = ''; buildVaultFromFiles(files, 'My notes'); }
 
-/* ---- Vault (whole-folder) import + browser ---- */
+/* ---- Vault import (one folder, subfolders included) + browser ---- */
 function vaultSheet() {
   const body = el('div', { class:'stack' });
-  body.append(el('button', { class:'btn', onclick:() => { closeSheet(); D.dirInput.click(); } }, '📁  Import a whole folder'));
-  body.append(el('button', { class:'btn ghost', onclick:() => { closeSheet(); D.mdInput.click(); } }, 'Pick individual notes'));
+  body.append(el('button', { class:'btn', onclick:() => { closeSheet(); D.dirInput.click(); } }, '📁  Choose a folder'));
+  body.append(el('button', { class:'btn ghost', onclick:() => { closeSheet(); D.mdInput.click(); } }, 'Pick files instead'));
   body.append(el('div', { class:'ob-sub', style:'font-size:13px;max-width:none' },
-    'A folder import keeps your vault together and tracks how much of the whole vault you’ve read. On iPhone, pick your Obsidian / iCloud folder in the Files browser.'));
-  sheet({ title:'Add from your vault', sub:'Markdown (.md) and text (.txt).', body });
+    'Pick one folder — the whole vault, including every subfolder, comes in with per-file reading progress. If your browser can’t pick a folder (some iPhones), tap “Pick files” and select all the notes.'));
+  sheet({ title:'Import a vault', sub:'Markdown (.md) & text (.txt) · subfolders included.', body });
 }
 
+// `folder` = the path between the vault root and the filename (for grouping).
 function makeVaultNote(file, text) {
   const md = /\.(md|markdown)$/i.test(file.name);
+  const rel = file.webkitRelativePath || file.name;
+  const segs = rel.split('/');
+  const folder = segs.length > 2 ? segs.slice(1, -1).join('/') : '';
   const title = (text.match(/^#\s+(.+)/m)?.[1] || file.name.replace(/\.[^.]+$/, '')).slice(0, 80);
-  return { path: file.webkitRelativePath || file.name, title, type: md ? 'md' : 'text',
+  return { path: rel, folder, title, type: md ? 'md' : 'text',
     chapters: toChapters(text, { markdown: md }), words: countWords(text), idx: 0, progress: 0 };
 }
 
-async function onDirPicked(e) {
-  const files = [...e.target.files].filter(f => /\.(md|markdown|txt)$/i.test(f.name));
-  e.target.value = '';
-  if (!files.length) return toast('No .md or .txt files in that folder', { err:true });
+async function buildVaultFromFiles(files, fallbackName) {
+  const picked = files.filter(f => /\.(md|markdown|txt)$/i.test(f.name));
+  if (!picked.length) return toast('No .md or .txt files found', { err:true });
   toast('Importing vault…');
-  const vaultName = ((files[0].webkitRelativePath || '').split('/')[0]) || 'Vault';
+  const rel0 = picked[0].webkitRelativePath || '';
+  const vaultName = (rel0.includes('/') ? rel0.split('/')[0] : '') || fallbackName || 'My notes';
   const notes = [];
-  for (const f of files) { try { const text = await f.text(); if (text.trim()) notes.push(makeVaultNote(f, text)); } catch {} }
+  for (const f of picked) { try { const text = await f.text(); if (text.trim()) notes.push(makeVaultNote(f, text)); } catch {} }
+  if (!notes.length) return toast('Those files were empty', { err:true });
   notes.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric:true }));
   const words = notes.reduce((s, n) => s + n.words, 0);
+  const subfolders = new Set(notes.map(n => n.folder).filter(Boolean)).size;
   const vault = await saveDoc({ id: uid(), type:'vault', title: vaultName, notes, words });
-  toast(`Imported “${vaultName}” · ${notes.length} notes`);
+  toast(`Imported “${vaultName}” · ${notes.length} notes${subfolders ? ` · ${subfolders} folders` : ''}`);
   openVaultBrowser(vault.id);
 }
 
@@ -694,21 +688,35 @@ function renderVaultScreen(v) {
   scroll.append(el('button', { class:'btn', style:'margin-bottom:14px', onclick:() => openVaultNote(v, nextIdx < 0 ? 0 : nextIdx) },
     nextIdx < 0 ? 'Read again from start' : (vp.notesRead ? 'Continue vault' : 'Start reading')));
 
-  scroll.append(el('div', { class:'sec-title' }, el('h3', {}, 'Notes')));
-  v.notes.forEach((n, i) => {
+  // file picker — pick any note to read; grouped by subfolder, each shows %.
+  scroll.append(el('div', { class:'sec-title' }, el('h3', {}, 'Files'),
+    el('a', {}, `${vp.notesRead}/${vp.total} read`)));
+
+  const noteRow = (n, i) => {
     const prog = Math.round((n.progress || 0) * 100);
     const done = prog >= 99;
     const row = el('button', { class:'doc' });
-    row.append(el('div', { class:'cover', style:'font-size:15px' }, done ? '✅' : `${i + 1}`));
+    row.append(el('div', { class:'cover' + (done ? ' done' : ''), style:'font-size:15px' }, done ? '✓' : `${prog || ''}${prog ? '%' : '·'}`));
     const info = el('div', { class:'info' });
     info.append(el('div', { class:'t' }, n.title));
     info.append(el('div', { class:'m' }, el('span', {}, `${fmt(n.words)} words`),
-      el('span', {}, '·'), el('span', {}, done ? 'Finished' : prog > 0 ? `${prog}%` : 'Unread')));
+      el('span', {}, '·'), el('span', { class: done ? 'good-t' : prog > 0 ? '' : 'faint' }, done ? 'Finished' : prog > 0 ? `${prog}% read` : 'Unread')));
     if (prog > 0 && !done) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
     row.append(info, el('div', { class:'go', html: ICON.play }));
     row.addEventListener('click', () => { haptic(6); openVaultNote(v, i); });
-    scroll.append(row);
-  });
+    return row;
+  };
+
+  // group by subfolder so nested files are easy to find
+  const groups = {};
+  v.notes.forEach((n, i) => { (groups[n.folder || ''] = groups[n.folder || ''] || []).push(i); });
+  const folderKeys = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+  const hasFolders = folderKeys.some(Boolean);
+  for (const fk of folderKeys) {
+    if (hasFolders) scroll.append(el('div', { class:'vault-folder' },
+      el('span', { class:'vf-ic' }, fk ? '📂' : '🏠'), el('span', {}, fk || 'Top level')));
+    for (const i of groups[fk]) scroll.append(noteRow(v.notes[i], i));
+  }
   s.append(scroll);
 }
 
@@ -885,7 +893,9 @@ const wEl = () => $('.rd-word', D.reader);
 function renderFlash(i) {
   const f = R.flashes[i]; if (!f) return;
   const w = wEl(); clear(w);
-  if (state.settings.orp && state.settings.chunk === 1) {
+  if (state.settings.orp) {
+    // Pivot-align the whole flash (1+ words) so the red letter sits on the
+    // centre tick for every chunk size.
     const p = orpParts(f.text);
     w.append(el('span', { class:'pre' }, p.pre), el('span', { class:'pivot' }, p.pivot), el('span', { class:'post' }, p.post));
   } else {
