@@ -18,8 +18,8 @@ const $ = (s, r = document) => r.querySelector(s);
 const D = {
   splash: $('#splash'), onboarding: $('#onboarding'), app: $('#app'),
   home: $('#view-home'), stats: $('#view-stats'), profile: $('#view-profile'),
-  tabbar: $('#tabbar'), reader: $('#reader'),
-  fileInput: $('#file-input'), mdInput: $('#md-multi-input'),
+  tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'),
+  fileInput: $('#file-input'), mdInput: $('#md-multi-input'), dirInput: $('#dir-input'),
 };
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
@@ -123,6 +123,7 @@ function wireGlobal() {
   });
   D.fileInput.addEventListener('change', onFilePicked);
   D.mdInput.addEventListener('change', onVaultPicked);
+  D.dirInput.addEventListener('change', onDirPicked);
   document.addEventListener('keydown', readerKeys);
 }
 
@@ -159,6 +160,7 @@ const SPEEDS = [
 ];
 
 let ob = { step: 0, goals: [], base: 250 };
+let obTimer = null;
 const OB_STEPS = ['welcome', 'demo', 'goals', 'speed', 'plan', 'finish'];
 
 function startOnboarding() {
@@ -168,7 +170,10 @@ function startOnboarding() {
   renderOb();
 }
 
+// Layout: fixed top bar · scrollable .ob-body (centers when it fits, scrolls when
+// it doesn't) · pinned .ob-foot so the primary button is ALWAYS on screen.
 function renderOb() {
+  clearTimeout(obTimer); obTimer = null;
   const o = D.onboarding;
   clear(o);
   const pct = (ob.step / (OB_STEPS.length - 1)) * 100;
@@ -176,9 +181,17 @@ function renderOb() {
   if (ob.step > 0) top.append(el('button', { class:'ob-back', onclick:() => { ob.step--; renderOb(); } }, '‹'));
   const bar = el('div', { class:'ob-bar' }); bar.append(el('i', { style:`width:${pct}%` }));
   top.append(bar);
-  top.append(el('button', { class:'ob-skip', onclick: finishOnboarding }, ob.step < 3 ? 'Skip' : ''));
-  o.append(top);
-  o.append(({ welcome:obWelcome, demo:obDemo, goals:obGoals, speed:obSpeed, plan:obPlan, finish:obFinish })[OB_STEPS[ob.step]]());
+  top.append(el('button', { class:'ob-skip' + (ob.step < 3 ? '' : ' is-hidden'), onclick: finishOnboarding }, 'Skip'));
+
+  const { content, cta } = ({ welcome:obWelcome, demo:obDemo, goals:obGoals, speed:obSpeed, plan:obPlan, finish:obFinish })[OB_STEPS[ob.step]]();
+  const body = el('div', { class:'ob-body' });
+  const stage = el('div', { class:'ob-stage' });
+  for (const c of content.flat()) if (c != null) stage.append(c);
+  body.append(stage);
+  const foot = el('div', { class:'ob-foot' });
+  foot.append(el('button', { class:'btn', onclick: cta.onClick }, cta.label));
+
+  o.append(top, body, foot);
 }
 
 function obNext() { ob.step++; renderOb(); }
@@ -189,31 +202,23 @@ function markLogo(size = 54) {
 }
 
 function obWelcome() {
-  const body = el('div', { class:'ob-hero' });
-  body.append(el('div', { class:'badge' }, markLogo(46)));
-  body.append(el('h1', { class:'ob-title center' }, 'ReadMaxx Free'));
-  body.append(el('div', { class:'ob-sub center', style:'max-width:32ch' },
+  const hero = el('div', { class:'ob-hero' });
+  hero.append(el('div', { class:'badge' }, markLogo(46)));
+  hero.append(el('h1', { class:'ob-title center' }, 'ReadMaxx Free'));
+  hero.append(el('div', { class:'ob-sub center', style:'max-width:32ch' },
     'Read up to 3× faster. One word at a time, perfectly placed for your eyes. Private, offline, free forever.'));
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => { haptic(8); obNext(); } }, 'Get started'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  return { content: [hero], cta: { label:'Get started', onClick:() => { haptic(8); obNext(); } } };
 }
 
 function obDemo() {
-  const body = el('div', { class:'ob-body' });
-  body.append(el('div', { class:'ob-eyebrow' }, 'Feel it first'));
-  body.append(el('h1', { class:'ob-title' }, 'This is what fast feels like'));
-  body.append(el('div', { class:'ob-sub' }, 'Keep your eyes on the red letter. The words come to you.'));
   const stage = el('div', { class:'demo-stage' });
   const word = el('div', { class:'word' });
   stage.append(word);
-  body.append(el('div', { class:'mt16' }, stage));
 
   const pick = el('div', { class:'wpm-pick' });
   let wpm = 400;
   const demoText = 'You are reading at four hundred words per minute right now and your comprehension is completely intact.'.split(/\s+/);
-  let di = 0, timer = null;
+  let di = 0;
   const renderWord = (w) => {
     clear(word);
     if (state.settings.orp) {
@@ -223,7 +228,7 @@ function obDemo() {
   };
   const loop = () => {
     renderWord(demoText[di % demoText.length]); di++;
-    timer = setTimeout(loop, 60000 / wpm);
+    obTimer = setTimeout(loop, 60000 / wpm);
   };
   const setWpm = (v) => { wpm = v; [...pick.children].forEach(c => c.classList.toggle('sel', +c.dataset.v === v)); };
   for (const v of [300, 400, 550]) {
@@ -231,19 +236,17 @@ function obDemo() {
       el('span', { class:'big' }, v), el('span', { class:'opt-d' }, 'WPM')));
   }
   setWpm(400); loop();
-  body.append(el('div', { class:'mt16' }, pick));
 
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => { clearTimeout(timer); haptic(8); obNext(); } }, 'I want that'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  return { content: [
+    el('div', { class:'ob-eyebrow' }, 'Feel it first'),
+    el('h1', { class:'ob-title' }, 'This is what fast feels like'),
+    el('div', { class:'ob-sub' }, 'Keep your eyes on the red letter. The words come to you.'),
+    el('div', { class:'mt16' }, stage),
+    el('div', { class:'mt16' }, pick),
+  ], cta: { label:'I want that', onClick:() => { haptic(8); obNext(); } } };
 }
 
 function obGoals() {
-  const body = el('div', { class:'ob-body' });
-  body.append(el('div', { class:'ob-eyebrow' }, 'Your why'));
-  body.append(el('h1', { class:'ob-title' }, 'What are you here to do?'));
-  body.append(el('div', { class:'ob-sub' }, 'Pick any that fit — we’ll tune your plan.'));
   const list = el('div', { class:'opt-list mt16' });
   for (const g of GOALS) {
     const sel = ob.goals.includes(g.id);
@@ -258,18 +261,15 @@ function obGoals() {
     });
     list.append(row);
   }
-  body.append(list);
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => { haptic(8); obNext(); } }, 'Continue'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  return { content: [
+    el('div', { class:'ob-eyebrow' }, 'Your why'),
+    el('h1', { class:'ob-title' }, 'What are you here to do?'),
+    el('div', { class:'ob-sub' }, 'Pick any that fit — we’ll tune your plan.'),
+    list,
+  ], cta: { label:'Continue', onClick:() => { haptic(8); obNext(); } } };
 }
 
 function obSpeed() {
-  const body = el('div', { class:'ob-body' });
-  body.append(el('div', { class:'ob-eyebrow' }, 'Starting line'));
-  body.append(el('h1', { class:'ob-title' }, 'How fast do you read now?'));
-  body.append(el('div', { class:'ob-sub' }, 'A rough guess is fine — most adults read around 200–250 WPM.'));
   const wrap = el('div', { class:'wpm-pick mt16' });
   for (const s of SPEEDS) {
     const row = el('button', { class:'opt' + (ob.base === s.base ? ' sel' : '') },
@@ -277,11 +277,12 @@ function obSpeed() {
     row.addEventListener('click', () => { haptic(6); ob.base = s.base; [...wrap.children].forEach(c => c.classList.remove('sel')); row.classList.add('sel'); });
     wrap.append(row);
   }
-  body.append(wrap);
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => { haptic(8); obNext(); } }, 'See my plan'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  return { content: [
+    el('div', { class:'ob-eyebrow' }, 'Starting line'),
+    el('h1', { class:'ob-title' }, 'How fast do you read now?'),
+    el('div', { class:'ob-sub' }, 'A rough guess is fine — most adults read around 200–250 WPM.'),
+    wrap,
+  ], cta: { label:'See my plan', onClick:() => { haptic(8); obNext(); } } };
 }
 
 function obPlan() {
@@ -289,48 +290,47 @@ function obPlan() {
   const minPerDay = 15;
   const extraWordsYr = Math.round((goal - ob.base) * minPerDay * 365);
   const booksYr = Math.max(1, Math.round((goal * minPerDay * 365) / 90000));
-  const body = el('div', { class:'ob-body' });
-  body.append(el('div', { class:'ob-eyebrow center' }, 'Your personalized plan'));
   const card = el('div', { class:'plan-card mt16' });
   card.append(el('div', { class:'ob-sub center', style:'margin:0 auto 4px' }, 'Target reading speed'));
   card.append(el('div', { class:'plan-num grad-text' }, String(goal)));
   card.append(el('div', { class:'ob-sub center', style:'margin:0 auto' }, 'words per minute'));
-  body.append(card);
   const rows = el('div', { class:'mt16' });
   const add = (k, v) => rows.append(el('div', { class:'plan-row' }, el('span', { class:'muted' }, k), el('b', {}, v)));
   add('Today', `${ob.base} WPM`);
   add('Your goal', `${goal} WPM`);
   add('That’s about', `${booksYr} books / year`);
   add('Extra words/year', `+${fmt(extraWordsYr)}`);
-  body.append(rows);
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => {
+  return { content: [
+    el('div', { class:'ob-eyebrow center' }, 'Your personalized plan'),
+    card, rows,
+  ], cta: { label:'Build my plan', onClick:() => {
     state.profile.baselineWpm = ob.base;
     state.profile.goalWpm = goal;
+    state.profile.dailyGoalWords = recommendedDailyGoal(goal);
     state.settings.wpm = Math.min(goal, Math.max(ob.base, 300));
     haptic(10); obNext();
-  } }, 'Build my plan'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  } } };
 }
 
 function obFinish() {
-  const body = el('div', { class:'ob-body' });
-  body.append(el('div', { class:'ob-eyebrow' }, 'Last thing'));
-  body.append(el('h1', { class:'ob-title' }, 'What should we call you?'));
-  body.append(el('div', { class:'ob-sub' }, 'Optional — it just makes the app feel like yours.'));
   const input = el('input', { class:'field mt16', placeholder:'Your name', maxlength:'24', value: state.profile.name || '' });
-  body.append(input);
-  body.append(el('div', { class:'ob-sub mt16', style:'font-size:14px' },
-    '✓ 100% private · ✓ works offline · ✓ no account, no ads, no fee'));
-  const foot = el('div', { class:'ob-foot' });
-  foot.append(el('button', { class:'btn', onclick: () => {
+  return { content: [
+    el('div', { class:'ob-eyebrow' }, 'Last thing'),
+    el('h1', { class:'ob-title' }, 'What should we call you?'),
+    el('div', { class:'ob-sub' }, 'Optional — it just makes the app feel like yours.'),
+    input,
+    el('div', { class:'ob-sub mt16', style:'font-size:14px' },
+      '✓ 100% private · ✓ works offline · ✓ no account, no ads, no fee'),
+  ], cta: { label:'Start reading →', onClick:() => {
     state.profile.name = input.value.trim();
     state.profile.reasons = ob.goals;
     haptic(14); finishOnboarding();
-  } }, 'Start reading →'));
-  body.append(el('div', { class:'grow' }), foot);
-  return body;
+  } } };
+}
+
+// A sensible daily word target derived from the goal speed (~12 focused min/day).
+function recommendedDailyGoal(goalWpm) {
+  return Math.max(500, Math.round((goalWpm * 12) / 250) * 250);
 }
 
 function finishOnboarding() {
@@ -343,7 +343,7 @@ function finishOnboarding() {
    HOME / LIBRARY
    ============================================================ */
 const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Late night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
-const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', url:'🔗', sample:'✨' }[t] || '📄');
+const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', url:'🔗', sample:'✨', vault:'📁' }[t] || '📄');
 
 async function renderHome() {
   const v = D.home; clear(v);
@@ -380,7 +380,7 @@ async function renderHome() {
   src.append(mkSrc(ICON.paste, 'Paste', pasteSheet));
   src.append(mkSrc(ICON.link, 'Link', urlSheet));
   src.append(mkSrc(ICON.file, 'File', () => D.fileInput.click()));
-  src.append(mkSrc(ICON.vault, 'Vault', () => D.mdInput.click()));
+  src.append(mkSrc(ICON.vault, 'Vault', vaultSheet));
   v.append(src);
 
   // library
@@ -407,17 +407,24 @@ async function renderHome() {
 }
 
 function docCard(d) {
-  const prog = Math.round((d.progress || 0) * 100);
+  const isVault = d.type === 'vault';
+  const vp = isVault ? vaultProgress(d) : null;
+  const prog = isVault ? vp.pct : Math.round((d.progress || 0) * 100);
   const card = el('button', { class:'doc' });
-  card.append(el('div', { class:'cover' }, coverEmoji(d.type)));
+  card.append(el('div', { class:'cover' + (isVault ? ' vault' : '') }, coverEmoji(d.type)));
   const info = el('div', { class:'info' });
   info.append(el('div', { class:'t' }, d.title || 'Untitled'));
   const meta = el('div', { class:'m' });
-  meta.append(el('span', {}, `${fmt(d.words)} words`));
-  if (prog > 0) meta.append(el('span', {}, '·'), el('span', {}, prog >= 99 ? 'Finished' : `${prog}%`));
+  if (isVault) {
+    meta.append(el('span', {}, `${vp.total} notes`), el('span', {}, '·'),
+      el('span', {}, `${vp.notesRead}/${vp.total} read`), el('span', {}, '·'), el('span', {}, `${prog}%`));
+  } else {
+    meta.append(el('span', {}, `${fmt(d.words)} words`));
+    if (prog > 0) meta.append(el('span', {}, '·'), el('span', {}, prog >= 99 ? 'Finished' : `${prog}%`));
+  }
   info.append(meta);
-  if (prog > 0 && prog < 99) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
-  card.append(info, el('div', { class:'go', html: ICON.play }));
+  if (prog > 0 && (prog < 99 || isVault)) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
+  card.append(info, el('div', { class:'go', html: isVault ? ICON.next : ICON.play }));
   card.addEventListener('click', () => { haptic(6); openDoc(d.id); });
   // long-press → actions
   let lp; card.addEventListener('pointerdown', () => { lp = setTimeout(() => docActions(d), 480); });
@@ -558,6 +565,112 @@ async function onVaultPicked(e) {
   renderHome();
 }
 
+/* ---- Vault (whole-folder) import + browser ---- */
+function vaultSheet() {
+  const body = el('div', { class:'stack' });
+  body.append(el('button', { class:'btn', onclick:() => { closeSheet(); D.dirInput.click(); } }, '📁  Import a whole folder'));
+  body.append(el('button', { class:'btn ghost', onclick:() => { closeSheet(); D.mdInput.click(); } }, 'Pick individual notes'));
+  body.append(el('div', { class:'ob-sub', style:'font-size:13px;max-width:none' },
+    'A folder import keeps your vault together and tracks how much of the whole vault you’ve read. On iPhone, pick your Obsidian / iCloud folder in the Files browser.'));
+  sheet({ title:'Add from your vault', sub:'Markdown (.md) and text (.txt).', body });
+}
+
+function makeVaultNote(file, text) {
+  const md = /\.(md|markdown)$/i.test(file.name);
+  const title = (text.match(/^#\s+(.+)/m)?.[1] || file.name.replace(/\.[^.]+$/, '')).slice(0, 80);
+  return { path: file.webkitRelativePath || file.name, title, type: md ? 'md' : 'text',
+    chapters: toChapters(text, { markdown: md }), words: countWords(text), idx: 0, progress: 0 };
+}
+
+async function onDirPicked(e) {
+  const files = [...e.target.files].filter(f => /\.(md|markdown|txt)$/i.test(f.name));
+  e.target.value = '';
+  if (!files.length) return toast('No .md or .txt files in that folder', { err:true });
+  toast('Importing vault…');
+  const vaultName = ((files[0].webkitRelativePath || '').split('/')[0]) || 'Vault';
+  const notes = [];
+  for (const f of files) { try { const text = await f.text(); if (text.trim()) notes.push(makeVaultNote(f, text)); } catch {} }
+  notes.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric:true }));
+  const words = notes.reduce((s, n) => s + n.words, 0);
+  const vault = await saveDoc({ id: uid(), type:'vault', title: vaultName, notes, words });
+  toast(`Imported “${vaultName}” · ${notes.length} notes`);
+  openVaultBrowser(vault.id);
+}
+
+// words-weighted progress across the whole vault + notes-finished count
+function vaultProgress(v) {
+  let wordsRead = 0, notesRead = 0;
+  for (const n of (v.notes || [])) {
+    wordsRead += (n.words || 0) * (n.progress || 0);
+    if ((n.progress || 0) >= 0.99) notesRead++;
+  }
+  const pct = v.words ? Math.round((wordsRead / v.words) * 100) : 0;
+  return { pct, notesRead, total: (v.notes || []).length, wordsRead: Math.round(wordsRead) };
+}
+
+async function openVaultBrowser(id) {
+  const v = await getDoc(id);
+  if (!v) return toast('Vault not found', { err:true });
+  v.lastOpened = Date.now(); putDoc(v);
+  renderVaultScreen(v);
+  D.vaultScreen.classList.remove('hidden');
+}
+
+function renderVaultScreen(v) {
+  const s = D.vaultScreen; clear(s);
+  const vp = vaultProgress(v);
+
+  const top = el('div', { class:'rd-top' });
+  top.append(el('button', { class:'icon-btn', html: ICON.back, onclick: closeVault }));
+  top.append(el('div', { class:'rd-title' }, el('div', { class:'t' }, `📁 ${v.title}`),
+    el('div', { class:'c' }, `${vp.total} notes`)));
+  top.append(el('button', { class:'icon-btn', html: ICON.trash, onclick: () => vaultActions(v) }));
+  s.append(top);
+
+  const scroll = el('div', { class:'vault-scroll' });
+  // overall progress hero
+  const hero = el('div', { class:'card goal-card', style:'margin:6px 0 14px' });
+  hero.append(el('div', { class:'ring', style:`--p:${vp.pct}` }, el('b', {}, `${vp.pct}%`)));
+  const hm = el('div', { class:'goal-meta' });
+  hm.append(el('div', { class:'t' }, vp.pct >= 99 ? 'Vault complete 🎉' : 'Vault progress'));
+  hm.append(el('div', { class:'s' }, `${vp.notesRead} of ${vp.total} notes · ${fmt(vp.wordsRead)} / ${fmt(v.words)} words`));
+  const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${vp.pct}%` })); hm.append(mb);
+  hero.append(hm);
+  scroll.append(hero);
+
+  // continue button → first unread note
+  const nextIdx = v.notes.findIndex(n => (n.progress || 0) < 0.99);
+  scroll.append(el('button', { class:'btn', style:'margin-bottom:14px', onclick:() => openVaultNote(v, nextIdx < 0 ? 0 : nextIdx) },
+    nextIdx < 0 ? 'Read again from start' : (vp.notesRead ? 'Continue vault' : 'Start reading')));
+
+  scroll.append(el('div', { class:'sec-title' }, el('h3', {}, 'Notes')));
+  v.notes.forEach((n, i) => {
+    const prog = Math.round((n.progress || 0) * 100);
+    const done = prog >= 99;
+    const row = el('button', { class:'doc' });
+    row.append(el('div', { class:'cover', style:'font-size:15px' }, done ? '✅' : `${i + 1}`));
+    const info = el('div', { class:'info' });
+    info.append(el('div', { class:'t' }, n.title));
+    info.append(el('div', { class:'m' }, el('span', {}, `${fmt(n.words)} words`),
+      el('span', {}, '·'), el('span', {}, done ? 'Finished' : prog > 0 ? `${prog}%` : 'Unread')));
+    if (prog > 0 && !done) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
+    row.append(info, el('div', { class:'go', html: ICON.play }));
+    row.addEventListener('click', () => { haptic(6); openVaultNote(v, i); });
+    scroll.append(row);
+  });
+  s.append(scroll);
+}
+
+function vaultActions(v) {
+  const body = el('div', { class:'stack' });
+  body.append(el('button', { class:'btn ghost', onclick: async () => {
+    closeSheet(); await deleteDoc(v.id); D.vaultScreen.classList.add('hidden'); showView('home'); toast('Vault removed');
+  } }, 'Remove vault'));
+  sheet({ title: v.title, sub: `${v.notes.length} notes · re-import the folder to refresh`, body });
+}
+
+function closeVault() { D.vaultScreen.classList.add('hidden'); showView('home'); }
+
 async function openSample(s) {
   // reuse an existing imported copy if present so progress persists
   const existing = (await allDocs()).find(d => d.sampleId === s.id);
@@ -618,11 +731,26 @@ let R = null;
 async function openDoc(id) {
   const doc = await getDoc(id);
   if (!doc) return toast('Not found', { err:true });
+  if (doc.type === 'vault') return openVaultBrowser(id);
+  openReader(doc, null);
+}
+
+// Open one note inside a vault, carrying the vault context so progress writes
+// back to the note and prev/next lets you tab through the whole vault.
+function openVaultNote(vault, i) {
+  const note = vault.notes[i]; if (!note) return;
+  D.vaultScreen.classList.add('hidden');
+  const doc = { title: note.title, subtitle: vault.title, words: note.words,
+    chapters: note.chapters, idx: note.idx || 0, progress: note.progress || 0, type:'md' };
+  openReader(doc, { vaultDoc: vault, i });
+}
+
+function openReader(doc, vaultCtx) {
   const built = buildFlashes(doc.chapters, state.settings.chunk);
   R = {
-    doc, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
+    doc, vaultCtx, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
     idx: Math.min(doc.idx || 0, built.flashes.length - 1), playing: false, timer: null,
-    sessionWords: 0, sessionStart: 0, wake: null,
+    sessionWords: 0, sessionStart: 0, wake: null, done: (doc.progress || 0) >= 0.99,
   };
   if (R.idx >= R.total - 1) R.idx = 0; // finished → restart
   state.game.sessions = (state.game.sessions || 0) + 1;
@@ -630,17 +758,36 @@ async function openDoc(id) {
   D.reader.classList.remove('hidden');
 }
 
+function gotoNote(delta) {
+  if (!R?.vaultCtx) return;
+  const { vaultDoc, i } = R.vaultCtx;
+  const j = i + delta;
+  if (j < 0 || j >= vaultDoc.notes.length) return;
+  pause(); saveProgress();
+  openVaultNote(vaultDoc, j);
+}
+
 function renderReader() {
   const r = D.reader; clear(r);
   r.classList.toggle('no-orp', !state.settings.orp);
 
+  const inVault = !!R.vaultCtx;
   const top = el('div', { class:'rd-top' });
-  top.append(el('button', { class:'icon-btn', html: ICON.x, onclick: closeReader }));
+  top.append(el('button', { class:'icon-btn', html: inVault ? ICON.back : ICON.x, onclick: closeReader }));
   const title = el('div', { class:'rd-title' });
   title.append(el('div', { class:'t' }, R.doc.title), el('div', { class:'c rd-chap' }, ''));
   top.append(title);
   top.append(el('button', { class:'icon-btn', html: ICON.gear, onclick: readerSettings }));
   r.append(top);
+
+  if (inVault) {
+    const { vaultDoc, i } = R.vaultCtx;
+    const nav = el('div', { class:'rd-vaultnav' });
+    nav.append(el('button', { class:'chip' + (i <= 0 ? ' is-off' : ''), onclick:() => gotoNote(-1) }, '‹ Prev'));
+    nav.append(el('div', { class:'vn-label' }, `📁 ${vaultDoc.title} · ${i + 1}/${vaultDoc.notes.length}`));
+    nav.append(el('button', { class:'chip' + (i >= vaultDoc.notes.length - 1 ? ' is-off' : ''), onclick:() => gotoNote(1) }, 'Next ›'));
+    r.append(nav);
+  }
 
   const stage = el('div', { class:'rd-stage' });
   const guides = el('div', { class:'focus-guides' });
@@ -724,7 +871,7 @@ function updatePlayBtn() { const b = $('.rd-play', D.reader); if (b) b.innerHTML
 
 function play() {
   if (!R || R.playing) return;
-  if (R.idx >= R.total - 1) R.idx = 0;
+  if (R.idx >= R.total - 1) { R.idx = 0; R.done = false; }
   R.playing = true; R.sessionStart = performance.now(); R.sessionWords = 0;
   updatePlayBtn(); acquireWake();
   tick();
@@ -755,28 +902,47 @@ function seek(i) {
   const wasPlaying = R.playing;
   if (wasPlaying) pause();
   R.idx = Math.max(0, Math.min(R.total - 1, i));
+  R.done = R.idx >= R.total - 1;
   renderFlash(R.idx);
 }
 function skip(n) { seek(R.idx + n); }
 function finishDoc() {
-  R.playing = false; clearTimeout(R.timer); releaseWake();
+  R.playing = false; R.done = true; clearTimeout(R.timer); releaseWake();
   R.idx = R.total - 1; renderFlash(R.idx);
   accrue();
-  R.doc.progress = 1; R.doc.idx = R.total - 1; putDoc(R.doc);
+  writeProgress(true);
   state.game.finished = (state.game.finished || 0) + 1; checkAchievements(); save();
   updatePlayBtn();
-  achievementToast('🏁', 'Finished!');
+  // In a vault, advance to the next unread note automatically; else celebrate.
+  if (R.vaultCtx && R.vaultCtx.i < R.vaultCtx.vaultDoc.notes.length - 1) {
+    achievementToast('✅', 'Note done — next up');
+    setTimeout(() => gotoNote(1), 900);
+  } else {
+    achievementToast('🏁', R.vaultCtx ? 'Vault complete!' : 'Finished!');
+  }
 }
-function saveProgress() {
+// Persist progress to the right place: a standalone doc, or a note inside a vault.
+function writeProgress(finalize) {
   if (!R) return;
-  R.doc.idx = R.idx; R.doc.progress = R.idx / R.total; R.doc.lastOpened = Date.now();
-  putDoc(R.doc);
+  const prog = finalize ? 1 : R.idx / R.total;
+  const idx = finalize ? R.total - 1 : R.idx;
+  if (R.vaultCtx) {
+    const { vaultDoc, i } = R.vaultCtx;
+    vaultDoc.notes[i].idx = idx; vaultDoc.notes[i].progress = prog; vaultDoc.lastOpened = Date.now();
+    putDoc(vaultDoc);
+  } else {
+    R.doc.idx = idx; R.doc.progress = prog; R.doc.lastOpened = Date.now();
+    putDoc(R.doc);
+  }
 }
+function saveProgress() { writeProgress(R && R.done); }
 function closeReader() {
+  const vaultCtx = R?.vaultCtx;
   if (R) { pause(); saveProgress(); }
   R = null;
   D.reader.classList.add('hidden');
-  showView('home');
+  if (vaultCtx) openVaultBrowser(vaultCtx.vaultDoc.id); // back to vault, progress refreshed
+  else showView('home');
 }
 
 /* screen wake lock so the display doesn't dim mid-read */
@@ -822,31 +988,102 @@ function rebuildFlashes() {
 }
 
 /* ============================================================
-   STATS
+   STATS  (all-time history · timeframe KPIs · shareable card)
    ============================================================ */
+let statsRange = 'week';
+const RANGES = { week:'This week', month:'This month', quarter:'This quarter', year:'This year', all:'All time' };
+const DAY = 86400000;
+const dKey = (d) => dayKey(d);
+const dayWords = (d) => state.game.history[dKey(d)] || 0;
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+
+function rangeStartDate(range) {
+  const now = startOfToday();
+  if (range === 'week') return new Date(now - 6 * DAY);
+  if (range === 'month') return new Date(now - 29 * DAY);
+  if (range === 'quarter') return new Date(now - 89 * DAY);
+  if (range === 'year') return new Date(now - 364 * DAY);
+  const keys = Object.keys(state.game.history).sort();
+  return keys.length ? new Date(keys[0] + 'T00:00') : now;
+}
+
+// KPIs for the selected window, read from the all-time daily history map.
+function rangeStats(range) {
+  const start = rangeStartDate(range), today = startOfToday();
+  let total = 0, best = 0, active = 0;
+  for (const [k, w] of Object.entries(state.game.history)) {
+    const d = new Date(k + 'T00:00');
+    if (d >= start && d <= today) { total += w; if (w > 0) active++; if (w > best) best = w; }
+  }
+  const spanDays = Math.max(1, Math.round((today - start) / DAY) + 1);
+  return { total, best, active, spanDays, dailyAvg: Math.round(total / spanDays) };
+}
+
+// Chart buckets: ≤12 clean bars whatever the timeframe.
+function chartBuckets(range) {
+  const now = startOfToday();
+  const monthlySum = (y, m) => Object.entries(state.game.history)
+    .filter(([k]) => { const [Y, M] = k.split('-').map(Number); return Y === y && M - 1 === m; })
+    .reduce((s, [, w]) => s + w, 0);
+  const out = [];
+  if (range === 'week') {
+    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], value: dayWords(d) }); }
+  } else if (range === 'month') {
+    for (let i = 3; i >= 0; i--) {
+      let s = 0; for (let j = 0; j < 7; j++) s += dayWords(new Date(now - (i * 7 + j) * DAY));
+      out.push({ label: i === 0 ? 'now' : `-${i}w`, value: s });
+    }
+  } else if (range === 'quarter' || range === 'year') {
+    const n = range === 'quarter' ? 3 : 12;
+    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ label:'JFMAMJJASOND'[m.getMonth()], value: monthlySum(m.getFullYear(), m.getMonth()) }); }
+  } else {
+    const years = {};
+    for (const [k, w] of Object.entries(state.game.history)) { const y = k.slice(0, 4); years[y] = (years[y] || 0) + w; }
+    const keys = Object.keys(years).sort();
+    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => out.push({ label:"'" + y.slice(2), value: years[y] || 0 }));
+  }
+  return out;
+}
+
 function renderStats() {
   const v = D.stats; clear(v);
   const g = state.game;
-  v.append(el('div', { class:'home-head' }, el('div', { class:'home-name' }, 'Your progress')));
 
-  const grid = el('div', { class:'stat-grid' });
+  const head = el('div', { class:'home-head' });
+  head.append(el('div', { class:'home-name' }, 'Your progress'));
+  head.append(el('button', { class:'icon-btn', html: ICON.share, onclick: shareStats }));
+  v.append(head);
+
+  // timeframe selector
+  const seg = el('div', { class:'range-seg' });
+  for (const k of Object.keys(RANGES)) {
+    const b = el('button', { class:'chip' + (statsRange === k ? ' on' : '') }, k[0].toUpperCase() + k.slice(1));
+    b.addEventListener('click', () => { statsRange = k; haptic(6); renderStats(); });
+    seg.append(b);
+  }
+  v.append(seg);
+
+  const rs = rangeStats(statsRange);
   const minutesSaved = Math.max(0, (g.totalWords / baselineWPM) - (g.totalSeconds / 60));
+  const grid = el('div', { class:'stat-grid' });
   const stat = (n, k, grad) => el('div', { class:'stat' }, el('div', { class:'n' + (grad ? ' grad' : '') }, n), el('div', { class:'k' }, k));
-  grid.append(stat(fmt(g.totalWords), 'words read', true));
-  grid.append(stat(`${g.bestWpm || 0}`, 'best WPM'));
-  grid.append(stat(fmtTime(minutesSaved * 60), 'time saved', true));
+  grid.append(stat(fmt(rs.total), 'words read', true));
+  grid.append(stat(fmt(rs.dailyAvg), 'daily average', true));
+  grid.append(stat(fmt(rs.best), 'best day'));
+  grid.append(stat(`${rs.active}`, statsRange === 'all' ? 'active days' : `of ${rs.spanDays} days`));
+  grid.append(stat(`${g.bestWpm || 0}`, 'best WPM (all-time)'));
   grid.append(stat(`${g.streak || 0} 🔥`, 'day streak'));
   v.append(grid);
 
-  // weekly chart
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Last 7 days')));
-  const days = []; for (let i = 6; i >= 0; i--) days.push(dayKey(new Date(Date.now() - i * 864e5)));
-  const vals = days.map(d => g.history[d] || 0);
-  const max = Math.max(100, ...vals);
+  // adaptive chart
+  v.append(el('div', { class:'sec-title' }, el('h3', {}, RANGES[statsRange]),
+    el('a', {}, `${fmtTime(minutesSaved * 60)} saved`)));
+  const buckets = chartBuckets(statsRange);
+  const max = Math.max(100, ...buckets.map(b => b.value));
   const chart = el('div', { class:'card chart' });
-  days.forEach((d, i) => {
-    const bar = el('div', { class:'bar', style:`height:${Math.max(4, (vals[i] / max) * 100)}%` });
-    bar.append(el('span', {}, ['S','M','T','W','T','F','S'][new Date(d + 'T00:00').getDay()]));
+  buckets.forEach(b => {
+    const bar = el('div', { class:'bar', style:`height:${Math.max(4, (b.value / max) * 100)}%` });
+    bar.append(el('span', {}, b.label));
     chart.append(bar);
   });
   v.append(chart);
@@ -862,6 +1099,44 @@ function renderStats() {
       el('span', { class:'v' }, got ? '✓' : '🔒')));
   }
   v.append(recs);
+}
+
+/* Build a branded 1080² PNG of the current stats window and share/download it. */
+async function shareStats() {
+  haptic(8);
+  const g = state.game, rs = rangeStats(statsRange);
+  const a = ACCENTS[state.settings.accent] || ACCENTS.violet;
+  const W = 1080, c = document.createElement('canvas'); c.width = W; c.height = W;
+  const x = c.getContext('2d');
+  x.fillStyle = '#0b0814'; x.fillRect(0, 0, W, W);
+  const rg = x.createRadialGradient(W / 2, 120, 60, W / 2, 120, W); rg.addColorStop(0, '#1b1336'); rg.addColorStop(1, '#0b0814');
+  x.fillStyle = rg; x.fillRect(0, 0, W, W);
+  const grad = x.createLinearGradient(0, 0, W, W); grad.addColorStop(0, a.a1); grad.addColorStop(1, a.a2);
+  x.textAlign = 'center';
+  x.fillStyle = '#fff'; x.font = '700 44px Lexend, sans-serif'; x.globalAlpha = .9;
+  x.fillText('READMAXX', W / 2, 150); x.globalAlpha = 1;
+  x.fillStyle = a.a1; x.font = '600 34px Lexend, sans-serif'; x.fillText(RANGES[statsRange].toUpperCase(), W / 2, 230);
+  x.fillStyle = grad; x.font = '800 220px Lexend, sans-serif'; x.fillText(fmt(rs.total), W / 2, 470);
+  x.fillStyle = '#a09bb8'; x.font = '500 40px Lexend, sans-serif'; x.fillText('words read', W / 2, 540);
+  const cells = [['Daily avg', fmt(rs.dailyAvg)], ['Best day', fmt(rs.best)], ['Best WPM', `${g.bestWpm || 0}`],
+    ['Streak', `${g.streak || 0} 🔥`], ['Active days', `${rs.active}`], ['All-time', fmt(g.totalWords)]];
+  cells.forEach(([k, val], i) => {
+    const col = i % 3, row = Math.floor(i / 3);
+    const cx = 180 + col * 360, cy = 700 + row * 170;
+    x.fillStyle = '#fff'; x.font = '800 66px Lexend, sans-serif'; x.fillText(val, cx, cy);
+    x.fillStyle = '#6b6680'; x.font = '500 30px Lexend, sans-serif'; x.fillText(k, cx, cy + 46);
+  });
+  x.fillStyle = '#6b6680'; x.font = '500 30px Lexend, sans-serif'; x.fillText('readmaxx-free.vercel.app', W / 2, W - 50);
+
+  const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+  const file = new File([blob], 'readmaxx-stats.png', { type:'image/png' });
+  const text = `My ReadMaxx stats (${RANGES[statsRange]}): ${fmt(rs.total)} words · ${fmt(rs.dailyAvg)}/day · ${g.bestWpm || 0} best WPM · ${g.streak || 0}🔥`;
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text, title:'ReadMaxx' }); return; }
+    if (navigator.share) { await navigator.share({ text, title:'ReadMaxx' }); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'readmaxx-stats.png'; link.click(); URL.revokeObjectURL(url);
+  try { await navigator.clipboard.writeText(text); toast('Image saved · summary copied'); } catch { toast('Stats image saved'); }
 }
 
 /* ============================================================

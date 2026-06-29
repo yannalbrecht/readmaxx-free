@@ -1,5 +1,5 @@
 // ReadMaxx Free service worker — offline-first PWA shell
-const VERSION = 'readmaxx-v1';
+const VERSION = 'readmaxx-v2';
 const CORE = [
   './',
   './index.html',
@@ -47,15 +47,23 @@ self.addEventListener('fetch', (e) => {
   // Never cache cross-origin reader/proxy calls (URL import) — always go to network.
   if (url.origin !== self.location.origin) return;
 
-  // Navigation requests: serve the cached app shell (SPA) so offline launch works.
-  if (req.mode === 'navigate') {
+  // App code (HTML / JS / CSS / manifest) → NETWORK-FIRST so new deploys show up
+  // immediately when online; fall back to cache offline. Without this, cache-first
+  // would pin users to a stale build until the SW version changed.
+  const isCode = req.mode === 'navigate' ||
+    /\.(?:js|css|webmanifest)$/.test(url.pathname);
+  if (isCode) {
     e.respondWith(
-      fetch(req).catch(() => caches.match('./index.html'))
+      fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
+        return res;
+      }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
     );
     return;
   }
 
-  // Same-origin assets: cache-first, then network, then cache the result.
+  // Immutable assets (fonts / icons / images / vendor) → cache-first for speed.
   e.respondWith(
     caches.match(req).then((hit) =>
       hit ||

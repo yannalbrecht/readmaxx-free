@@ -62,6 +62,9 @@
   <!-- Reader overlay (JS-rendered) -->
   <div id="reader" class="reader hidden"></div>
 
+  <!-- Vault browser overlay (JS-rendered) -->
+  <div id="vault-screen" class="vault-screen hidden"></div>
+
   <!-- Sheet / modal mount -->
   <div id="sheet-root"></div>
   <div id="toast-root"></div>
@@ -69,6 +72,7 @@
   <!-- Hidden file inputs reused across the app -->
   <input id="file-input" type="file" accept=".txt,.md,.markdown,.epub,text/plain,text/markdown,application/epub+zip" hidden />
   <input id="md-multi-input" type="file" accept=".md,.markdown,.txt,text/markdown" multiple hidden />
+  <input id="dir-input" type="file" webkitdirectory directory multiple hidden />
 
   <script type="module" src="js/app.js"></script>
   <script>
