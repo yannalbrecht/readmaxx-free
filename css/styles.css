@@ -225,23 +225,35 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 .rd-title .c{font-size:12px;color:var(--muted);margin-top:1px}
 
 /* the flash stage */
-.rd-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
-.focus-guides{position:absolute;left:50%;transform:translateX(-50%);width:min(560px,92%);pointer-events:none}
-.focus-guides .line{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent)}
-.focus-guides .tick{position:absolute;left:50%;width:2px;height:13px;background:var(--accent);transform:translateX(-50%)}
-.focus-guides .top{top:-58px}.focus-guides .top .tick{top:0}
-.focus-guides .bot{bottom:-58px}.focus-guides .bot .tick{bottom:0}
+.rd-stage{flex:1;position:relative;min-height:0}
 
-.word{font-size:clamp(34px,9vw,56px);font-weight:750;letter-spacing:-.01em;white-space:pre;font-feature-settings:"tnum";
+/* The word lives in a fixed-height zone pinned at a constant screen position,
+   framed by the top/bottom barrier lines + centre ticks. It never moves as the
+   word or context length changes — so nothing jumps. */
+.rd-wordzone{position:absolute;left:0;right:0;top:42%;transform:translateY(-50%);height:150px;
+  display:flex;align-items:center;justify-content:center}
+.rd-wordzone .barrier{position:absolute;left:50%;transform:translateX(-50%);width:min(560px,86%);height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-2),transparent);pointer-events:none}
+.rd-wordzone .barrier.top{top:0}
+.rd-wordzone .barrier.bot{bottom:0}
+.rd-wordzone .barrier .tick{position:absolute;left:50%;transform:translateX(-50%);width:2px;height:13px;background:var(--accent)}
+.rd-wordzone .barrier.top .tick{top:0}
+.rd-wordzone .barrier.bot .tick{bottom:0}
+
+/* width:100% + equal flexible gutters force the pivot onto the centre tick
+   (true fixed-position ORP). Font-size is set in fonts.css via --read-scale. */
+.word{width:100%;font-weight:750;letter-spacing:-.01em;white-space:pre;font-feature-settings:"tnum";
   display:flex;justify-content:center;line-height:1.1}
 .word .pivot{color:var(--orp);flex:none;display:inline-block;text-align:center}
-/* the trick: equal flexible gutters force the pivot onto the centre tick */
 .word .pre{flex:1;text-align:right;white-space:pre}
 .word .post{flex:1;text-align:left;white-space:pre}
 .reader.no-orp .word .pivot{color:var(--text)}
-html.bigfont .word{font-size:clamp(44px,13vw,76px)}
 
-.rd-context{margin-top:34px;font-size:14px;line-height:1.7;color:var(--faint);text-align:center;max-width:46ch;min-height:48px;padding:0 6px}
+/* Context sits low, just above the controls, in a fixed-height box bottom-aligned
+   so its (wrapping) line count can change without nudging the word. */
+.rd-context{position:absolute;left:18px;right:18px;bottom:6px;height:62px;overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:center;padding:0 6px}
+.rd-context .ctx-text{width:100%;max-width:46ch;text-align:center;font-size:14px;line-height:1.6;color:var(--faint)}
 .rd-context .cur{color:var(--muted);font-weight:600}
 
 /* bottom controls */

@@ -799,11 +799,11 @@ function renderReader() {
   }
 
   const stage = el('div', { class:'rd-stage' });
-  const guides = el('div', { class:'focus-guides' });
-  guides.innerHTML = '<div class="line top"><span class="tick"></span></div><div class="line bot"><span class="tick"></span></div>';
-  stage.append(guides);
-  stage.append(el('div', { class:'word rd-word' }));
-  stage.append(el('div', { class:'rd-context' }));
+  const zone = el('div', { class:'rd-wordzone' });
+  zone.innerHTML = '<span class="barrier top"><i class="tick"></i></span><span class="barrier bot"><i class="tick"></i></span>';
+  zone.append(el('div', { class:'word rd-word' }));
+  stage.append(zone);
+  stage.append(el('div', { class:'rd-context' }, el('div', { class:'ctx-text' })));
   stage.addEventListener('click', () => { if (state.settings.tapToPause) R.playing ? pause() : play(); });
   r.append(stage);
 
@@ -849,16 +849,17 @@ function renderFlash(i) {
   } else {
     w.textContent = f.text;
   }
-  // context window
-  const ctx = $('.rd-context', D.reader);
+  // context window (wrapping text in a fixed low box; bottom-aligned)
+  const ctxBox = $('.rd-context', D.reader);
+  const ctx = $('.ctx-text', D.reader);
   if (state.settings.showContext) {
-    ctx.style.display = '';
+    ctxBox.style.display = '';
     clear(ctx);
     const lo = Math.max(0, i - 7), hi = Math.min(R.total, i + 8);
     for (let k = lo; k < hi; k++) {
       ctx.append(el('span', k === i ? { class:'cur' } : {}, R.flashes[k].text + ' '));
     }
-  } else ctx.style.display = 'none';
+  } else ctxBox.style.display = 'none';
 
   // chapter label
   const chap = R.ranges.find(c => i >= c.start && i < c.end) || R.ranges[0];
