@@ -46,7 +46,7 @@ export function achievementToast(emoji, title) {
 
 /* ---------- bottom sheet ---------- */
 let sheetCloser = null;
-export function sheet({ title = '', sub = '', body }) {
+export function sheet({ title = '', sub = '', body, onClose = null }) {
   closeSheet();
   const root = document.getElementById('sheet-root');
   const scrim = el('div', { class: 'scrim' });
@@ -57,7 +57,7 @@ export function sheet({ title = '', sub = '', body }) {
   s.append(body);
   root.append(scrim, s);
   scrim.addEventListener('click', closeSheet);
-  sheetCloser = () => { scrim.remove(); s.style.transform = 'translateY(100%)'; s.style.transition = '.28s'; setTimeout(() => s.remove(), 280); };
+  sheetCloser = () => { scrim.remove(); s.style.transform = 'translateY(100%)'; s.style.transition = '.28s'; setTimeout(() => s.remove(), 280); if (onClose) try { onClose(); } catch {} };
   return { close: closeSheet };
 }
 export function closeSheet() { if (sheetCloser) { sheetCloser(); sheetCloser = null; } }

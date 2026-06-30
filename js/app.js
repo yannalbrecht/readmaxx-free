@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.3.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.4.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -405,6 +405,7 @@ const docCategory = (d) => d.type === 'vault' ? 'vault' : (d.type === 'epub' || 
 const docProgress = (d) => d.type === 'vault' ? vaultProgress(d).pct / 100 : (d.progress || 0);
 function matchesFilter(d, f) {
   if (f === 'all') return true;
+  if (f.startsWith('col:')) return (d.tags || []).includes(f.slice(4));
   const pr = docProgress(d);
   if (f === 'reading') return pr > 0 && pr < 0.99;
   if (f === 'unread') return pr <= 0;
@@ -486,13 +487,16 @@ async function renderHome() {
   if (librarySearch) search.append(el('button', { class:'clr', html: ICON.x, 'aria-label':'Clear', onclick:() => { librarySearch = ''; renderHome(); } }));
   v.append(search);
 
-  // filter chips
+  // filter chips (status + type + collections)
   const chips = el('div', { class:'filter-chips' });
-  for (const [id, label] of [['all','All'],['reading','Reading'],['unread','Unread'],['finished','Finished'],['book','Books'],['article','Articles'],['note','Notes'],['vault','Vaults']]) {
+  const addChip = (id, label) => {
     const c = el('button', { class:'fchip' + (libraryFilter === id ? ' on' : '') }, label);
     c.addEventListener('click', () => { libraryFilter = id; haptic(6); renderHome(); });
     chips.append(c);
-  }
+  };
+  for (const [id, label] of [['all','All'],['reading','Reading'],['unread','Unread'],['finished','Finished'],['book','Books'],['article','Articles'],['note','Notes'],['vault','Vaults']]) addChip(id, label);
+  const collections = [...new Set(docs.flatMap(d => d.tags || []))].sort();
+  for (const name of collections) addChip('col:' + name, '# ' + name);
   v.append(chips);
 
   const listWrap = el('div', { class:'lib-list', id:'lib-list' });
@@ -626,8 +630,40 @@ function docActions(d) {
   haptic(12);
   const body = el('div', { class:'stack' });
   body.append(el('button', { class:'btn', onclick:() => { closeSheet(); openDoc(d.id); } }, 'Open'));
+  body.append(el('button', { class:'btn ghost', onclick:() => { closeSheet(); collectionSheet(d); } }, 'Add to collection'));
   body.append(el('button', { class:'btn ghost', onclick: async () => { closeSheet(); await deleteDoc(d.id); toast('Deleted'); renderHome(); } }, 'Delete'));
   sheet({ title: d.title || 'Item', sub: `${fmt(d.words)} words`, body });
+}
+
+async function collectionSheet(d) {
+  const docs = await allDocs();
+  const all = [...new Set(docs.flatMap(x => x.tags || []))].sort();
+  d.tags = d.tags || [];
+  const list = el('div', { class:'stack' });
+  const renderChips = () => {
+    clear(list);
+    if (!all.length) list.append(el('div', { class:'ob-sub', style:'font-size:13px' }, 'No collections yet — create one below.'));
+    for (const name of all) {
+      const b = el('button', { class:'opt' + (d.tags.includes(name) ? ' sel' : '') },
+        el('div', { class:'opt-t grow' }, name), el('span', { class:'tick', html: ICON.check }));
+      b.addEventListener('click', () => {
+        const i = d.tags.indexOf(name); if (i >= 0) d.tags.splice(i, 1); else d.tags.push(name);
+        putDoc(d); haptic(6); b.classList.toggle('sel');
+      });
+      list.append(b);
+    }
+  };
+  renderChips();
+  const inp = el('input', { class:'field', style:'flex:1', placeholder:'New collection', maxlength:'24' });
+  const add = el('button', { class:'btn sm', onclick:() => {
+    const n = inp.value.trim(); if (!n) return;
+    if (!d.tags.includes(n)) d.tags.push(n);
+    if (!all.includes(n)) all.push(n); all.sort();
+    putDoc(d); inp.value = ''; haptic(6); renderChips();
+  } }, 'Create');
+  const body = el('div', {});
+  body.append(list, el('div', { class:'row gap10 mt16' }, inp, add));
+  sheet({ title:'Collections', sub: d.title, body, onClose: renderHome });
 }
 
 /* ============================================================
