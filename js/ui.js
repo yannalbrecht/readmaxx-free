@@ -62,7 +62,7 @@ export function sheet({ title = '', sub = '', body, onClose = null }) {
 }
 export function closeSheet() { if (sheetCloser) { sheetCloser(); sheetCloser = null; } }
 
-/* svg icon shortcuts */
+/* svg icon shorthands */
 export const ICON = {
   back: '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
   x: '<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>',
