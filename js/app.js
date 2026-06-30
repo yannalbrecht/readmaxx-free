@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.3'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.4'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1069,6 +1069,10 @@ async function openReader(doc, vaultCtx) {
   const built = big
     ? await buildFlashesAsync(doc.chapters, state.settings.chunk)
     : buildFlashes(doc.chapters, state.settings.chunk);
+  if (!built.flashes.length) { // empty / whitespace-only doc → avoid NaN% + a dead scrubber
+    D.reader.classList.add('hidden');
+    return toast('No readable text in this document', { err:true });
+  }
   R = {
     doc, vaultCtx, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
     // Restore from the saved FRACTION, not the raw flash index: flash count depends on
