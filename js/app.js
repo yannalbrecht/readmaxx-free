@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================

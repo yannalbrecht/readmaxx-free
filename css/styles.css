@@ -13,7 +13,7 @@
 
   --text:#f4f3fb;
   --muted:#a09bb8;
-  --faint:#6b6680;
+  --faint:#7d7896;
 
   --a1:#8b6cff;            /* accent start  */
   --a2:#ff4d9d;            /* accent end    */
@@ -517,3 +517,8 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
 .center{text-align:center}
 .grow{flex:1}
 .pretty{user-select:text;-webkit-user-select:text}
+
+/* honour the system "reduce motion" setting */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
