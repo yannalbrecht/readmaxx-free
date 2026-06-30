@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.6.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.6.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1656,6 +1656,12 @@ function renderProfile() {
   else g4.append(el('div', { class:'set' }, el('div', { class:'st' }, 'Haptic feedback'),
     el('div', { class:'sv' }, 'Not supported on this device')));
   v.append(g4);
+
+  // Sharing — set up the Safari "Read in ReadMaxx" shortcut any time
+  v.append(groupTitle('Sharing'));
+  const gShare = el('div', { class:'set-group' });
+  gShare.append(navRow(ICON.share, 'Add Safari shortcut', 'one-tap import', openShareGuide));
+  v.append(gShare);
 
   // Data
   v.append(groupTitle('Your data'));
