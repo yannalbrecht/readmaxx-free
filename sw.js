@@ -1,7 +1,7 @@
 // ReadMaxx Free service worker — offline-first PWA shell
 // Bump BUILD on every deploy so clients detect a waiting update and can apply it
 // from the in-app "Update" button (without reinstalling — data is untouched).
-const BUILD = '1.10.4';
+const BUILD = '1.10.5';
 const VERSION = 'readmaxx-' + BUILD;
 const CORE = [
   './',

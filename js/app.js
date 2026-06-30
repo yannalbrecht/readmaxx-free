@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.4'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.5'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -826,7 +826,8 @@ async function importFromUrl(url) {
 }
 async function quickImportText(text) {
   const t = (text || '').trim(); if (!t) return;
-  const title = (t.split('\n').find(Boolean) || 'Shared text').slice(0, 48);
+  // Strip a leading markdown heading marker so the title isn't literally "# Foo".
+  const title = ((t.split('\n').find(Boolean) || 'Shared text').replace(/^#{1,6}\s*/, '')).slice(0, 48);
   const doc = await saveDoc(makeDoc({ title, type:'text', text: t }));
   openDoc(doc.id);
 }
