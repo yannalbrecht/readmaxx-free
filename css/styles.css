@@ -279,6 +279,12 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 .imp-s{font-size:12px;color:var(--muted);margin-top:2px}
 .imp-go{color:var(--faint);width:18px;height:18px;flex:none}
 
+/* safari sharing setup */
+.share-steps{display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.share-step{display:flex;gap:11px;font-size:14px;color:var(--text);line-height:1.45}
+.share-step .sn{width:22px;height:22px;border-radius:50%;background:var(--grad);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;flex:none}
+.share-code{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;word-break:break-all;user-select:all;-webkit-user-select:all}
+
 /* ============================================================
    READER (RSVP)
    ============================================================ */

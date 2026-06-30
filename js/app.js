@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.2.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.3.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -173,6 +173,7 @@ function enterApp() {
   D.onboarding.classList.add('hidden');
   D.app.classList.remove('hidden');
   showView('home');
+  handleLaunchParams(); // import a shared ?add=URL / ?text= if present
 }
 
 function showView(name) {
@@ -385,7 +386,7 @@ function finishOnboarding() {
    HOME / LIBRARY
    ============================================================ */
 const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Late night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
-const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', url:'🔗', sample:'✨', vault:'📁' }[t] || '📄');
+const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', pdf:'📕', url:'🔗', sample:'✨', vault:'📁' }[t] || '📄');
 
 // ---- library state + helpers ----
 let librarySearch = '';
@@ -400,7 +401,7 @@ function tileColors(d) {
   let h = 0; const s = d.title || ''; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return TILE_COLORS[h % TILE_COLORS.length];
 }
-const docCategory = (d) => d.type === 'vault' ? 'vault' : d.type === 'epub' ? 'book' : d.type === 'url' ? 'article' : 'note';
+const docCategory = (d) => d.type === 'vault' ? 'vault' : (d.type === 'epub' || d.type === 'pdf') ? 'book' : d.type === 'url' ? 'article' : 'note';
 const docProgress = (d) => d.type === 'vault' ? vaultProgress(d).pct / 100 : (d.progress || 0);
 function matchesFilter(d, f) {
   if (f === 'all') return true;
@@ -527,9 +528,32 @@ function importSheet() {
     el('span', { class:'imp-go', html: ICON.next }));
   body.append(opt(ICON.paste, 'Paste text', 'Articles, emails, notes', pasteSheet));
   body.append(opt(ICON.link, 'Web link', 'Fetch a clean article', urlSheet));
-  body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub', () => D.fileInput.click()));
+  body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub · .pdf', () => D.fileInput.click()));
   body.append(opt(ICON.vault, 'Import folder / vault', 'Whole vault, subfolders included', vaultSheet));
+  body.append(opt(ICON.share, 'Share from Safari', 'One-tap sharing on iPhone', safariShareInfo));
   sheet({ title:'Import', sub:'Everything stays on your device.', body });
+}
+
+function safariShareInfo() {
+  const link = 'https://readmaxx-free.vercel.app/?add=';
+  const body = el('div', {});
+  body.append(el('div', { class:'ob-sub', style:'max-width:none;margin-bottom:14px' },
+    'iPhone can’t share a link straight into a web app, but a one-time Shortcut fixes that. In the Shortcuts app:'));
+  const steps = el('div', { class:'share-steps' });
+  [['1', 'New Shortcut → add “Receive URLs from Share Sheet”.'],
+   ['2', 'Add “Open URLs”, set it to the link below with the Shortcut Input on the end.'],
+   ['3', 'Name it “Read in ReadMaxx” and turn on “Show in Share Sheet”.'],
+   ['4', 'Now in Safari: Share → Read in ReadMaxx.']].forEach(([n, t]) =>
+    steps.append(el('div', { class:'share-step' }, el('span', { class:'sn' }, n), el('span', {}, t))));
+  body.append(steps);
+  const code = el('div', { class:'share-code' }, `${link}[Shortcut Input]`);
+  body.append(code);
+  body.append(el('button', { class:'btn mt16', onclick: async () => {
+    try { await navigator.clipboard.writeText(link); toast('Link copied'); } catch { toast('Copy the link above'); }
+  } }, 'Copy the link'));
+  body.append(el('div', { class:'ob-sub center mt16', style:'font-size:12px;margin-left:auto;margin-right:auto' },
+    'On Android, sharing to ReadMaxx works from the system share sheet automatically.'));
+  sheet({ title:'Share from Safari', body });
 }
 
 function sortSheet() {
@@ -711,8 +735,11 @@ async function onFilePicked(e) {
   try {
     if (/\.epub$/i.test(file.name)) {
       toast('Opening EPUB…');
-      const doc = await parseEpub(file);
-      const saved = await saveDoc(doc);
+      const saved = await saveDoc(await parseEpub(file));
+      openDoc(saved.id);
+    } else if (/\.pdf$/i.test(file.name)) {
+      toast('Reading PDF…');
+      const saved = await saveDoc(await parsePdf(file));
       openDoc(saved.id);
     } else {
       const text = await file.text();
@@ -720,7 +747,57 @@ async function onFilePicked(e) {
       const doc = await saveDoc(makeDoc({ title: name.slice(0, 60), type: md ? 'md' : 'text', text, markdown: md }));
       openDoc(doc.id);
     }
-  } catch (err) { console.error(err); toast('Could not read that file', { err:true }); }
+  } catch (err) { console.error(err); toast(err.message || 'Could not read that file', { err:true }); }
+}
+
+/* ---- PDF (client-side text extraction via pdf.js) ---- */
+async function parsePdf(file) {
+  const pdfjs = await import('../vendor/pdf.min.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL('vendor/pdf.worker.min.mjs', document.baseURI).href;
+  const data = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjs.getDocument({ data }).promise;
+  let text = '';
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    let line = '';
+    for (const it of content.items) line += (it.str || '') + (it.hasEOL ? '\n' : ' ');
+    text += line + '\n\n';
+  }
+  text = text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (text.length < 40) throw new Error('No selectable text — is this a scanned PDF?');
+  let title = file.name.replace(/\.pdf$/i, '');
+  try { const m = await pdf.getMetadata(); if (m?.info?.Title) title = m.info.Title; } catch {}
+  return { title: title.slice(0, 80), type: 'pdf', chapters: toChapters(text), words: countWords(text) };
+}
+
+/* ---- shared-link / launch-param import (?add=URL or ?text=...) ---- */
+async function importFromUrl(url) {
+  if (!/^https?:\/\//.test(url)) url = 'https://' + url;
+  toast('Fetching article…');
+  try {
+    const text = await fetchArticle(url);
+    if (!text || text.length < 80) throw 0;
+    const title = (text.match(/^#\s+(.+)/m)?.[1] || new URL(url).hostname).slice(0, 60);
+    const doc = await saveDoc(makeDoc({ title, type:'url', text, author:new URL(url).hostname, markdown:true }));
+    openDoc(doc.id);
+  } catch { toast('Couldn’t fetch that link', { err:true }); }
+}
+async function quickImportText(text) {
+  const t = (text || '').trim(); if (!t) return;
+  const title = (t.split('\n').find(Boolean) || 'Shared text').slice(0, 48);
+  const doc = await saveDoc(makeDoc({ title, type:'text', text: t }));
+  openDoc(doc.id);
+}
+function handleLaunchParams() {
+  try {
+    const u = new URL(location.href);
+    const add = u.searchParams.get('add') || u.searchParams.get('url');
+    const text = u.searchParams.get('text');
+    if (!add && !text) return;
+    history.replaceState({}, '', u.pathname + u.hash); // clear so refresh doesn't re-import
+    if (add) importFromUrl(add.trim()); else quickImportText(text);
+  } catch {}
 }
 
 // Folder picker (#dir-input, webkitdirectory) → recurses ALL subfolders.

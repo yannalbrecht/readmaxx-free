@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const port = Number(process.argv[2] || 8124);
 const TYPES = {
-  '.html':'text/html', '.js':'text/javascript', '.css':'text/css',
+  '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.css':'text/css',
   '.json':'application/json', '.webmanifest':'application/manifest+json',
   '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2', '.txt':'text/plain',
 };

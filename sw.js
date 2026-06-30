@@ -1,7 +1,7 @@
 // ReadMaxx Free service worker — offline-first PWA shell
 // Bump BUILD on every deploy so clients detect a waiting update and can apply it
 // from the in-app "Update" button (without reinstalling — data is untouched).
-const BUILD = '1.2.1';
+const BUILD = '1.3.0';
 const VERSION = 'readmaxx-' + BUILD;
 const CORE = [
   './',
@@ -61,7 +61,7 @@ self.addEventListener('fetch', (e) => {
   // immediately when online; fall back to cache offline. Without this, cache-first
   // would pin users to a stale build until the SW version changed.
   const isCode = req.mode === 'navigate' ||
-    /\.(?:js|css|webmanifest)$/.test(url.pathname);
+    /\.(?:js|mjs|css|webmanifest)$/.test(url.pathname);
   if (isCode) {
     e.respondWith(
       fetch(req).then((res) => {
