@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.9.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1165,7 +1165,12 @@ const wEl = () => $('.rd-word', D.reader);
 function renderFlash(i) {
   const f = R.flashes[i]; if (!f) return;
   const w = wEl(); clear(w);
-  if (state.settings.orp) {
+  w.classList.toggle('rd-heading', !!f.card);
+  if (f.card) {
+    // a heading shows as a brief title card (not flashed word-by-word)
+    w.append(el('div', { class:'rd-card-eyebrow' }, f.heading === 1 ? 'Chapter' : 'Section'),
+      el('div', { class:'rd-card-t' }, f.text));
+  } else if (state.settings.orp) {
     // Pivot-align the whole flash (1+ words) so the red letter sits on the
     // centre tick for every chunk size.
     const p = orpParts(f.text);
@@ -1278,7 +1283,6 @@ function openTextView() {
   const chap = R.ranges[ci];
   const chDoc = R.doc.chapters[ci] || { title: R.doc.title, text: '' };
   const chunk = Math.max(1, state.settings.chunk);
-  const flashesInChapter = chap.end - chap.start;
 
   const tv = D.textview; clear(tv); tv.classList.remove('hidden');
   const top = el('div', { class:'tv-top' });
@@ -1314,10 +1318,20 @@ function openTextView() {
   tv.append(foot);
 
   const READ_FRAC = 0.42;
-  let marker = Math.max(0, Math.min(spans.length - 1, (R.idx - chap.start) * chunk));
+  // Map words ↔ flashes by accumulating each flash's word count — robust whatever
+  // the flash shapes are (chunks, heading cards, etc.).
+  const chFlashes = R.flashes.slice(chap.start, chap.end);
+  const flashStartWord = []; let acc = 0;
+  for (let f = 0; f < chFlashes.length; f++) { flashStartWord[f] = acc; acc += chFlashes[f].n; }
+  const wordToFlash = (wd) => {
+    let lo = 0, hi = chFlashes.length - 1, res = 0;
+    while (lo <= hi) { const mid = (lo + hi) >> 1; if (flashStartWord[mid] <= wd) { res = mid; lo = mid + 1; } else hi = mid - 1; }
+    return chap.start + res;
+  };
+  let marker = flashStartWord[Math.max(0, Math.min(chFlashes.length - 1, R.idx - chap.start))] || 0;
+  marker = Math.max(0, Math.min(spans.length - 1, marker));
   let offsets = null;
   const cacheOffsets = () => { offsets = spans.map(s => s.offsetTop + s.offsetHeight / 2); };
-  const wordToFlash = (w) => chap.start + Math.min(flashesInChapter - 1, Math.floor(w / chunk));
 
   function setMarker(w, scrollTo) {
     spans[marker]?.classList.remove('tv-cur');
