@@ -82,6 +82,7 @@ export const ICON = {
   share: '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
   refresh: '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>',
   plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  toc: '<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg>',
   search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
   sort: '<svg viewBox="0 0 24 24"><path d="M4 7h16M6 12h12M9 17h6"/></svg>',
   viewList: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1.2"/><path d="M12 6.5h9M12 9.5h6"/><rect x="3" y="14" width="6" height="6" rx="1.2"/><path d="M12 15.5h9M12 18.5h6"/></svg>',

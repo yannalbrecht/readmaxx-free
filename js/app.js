@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.2.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.2.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -955,12 +955,18 @@ function renderReader() {
   r.classList.toggle('no-orp', !state.settings.orp);
 
   const inVault = !!R.vaultCtx;
+  const multiChapter = R.ranges.length > 1;
   const top = el('div', { class:'rd-top' });
   top.append(el('button', { class:'icon-btn', html: inVault ? ICON.back : ICON.x, onclick: closeReader }));
   const title = el('div', { class:'rd-title' });
-  title.append(el('div', { class:'t' }, R.doc.title), el('div', { class:'c rd-chap' }, ''));
+  const chapLabel = el('div', { class:'c rd-chap' + (multiChapter ? ' tappable' : '') }, '');
+  if (multiChapter) chapLabel.addEventListener('click', openTOC);
+  title.append(el('div', { class:'t' }, R.doc.title), chapLabel);
   top.append(title);
-  top.append(el('button', { class:'icon-btn', html: ICON.gear, onclick: readerSettings }));
+  const acts = el('div', { class:'rd-acts' });
+  if (multiChapter) acts.append(el('button', { class:'icon-btn', html: ICON.toc, 'aria-label':'Contents', onclick: openTOC }));
+  acts.append(el('button', { class:'icon-btn', html: ICON.gear, 'aria-label':'Settings', onclick: readerSettings }));
+  top.append(acts);
   r.append(top);
 
   if (inVault) {
@@ -1037,10 +1043,14 @@ function renderFlash(i) {
     }
   } else ctxBox.style.display = 'none';
 
-  // chapter label
-  const chap = R.ranges.find(c => i >= c.start && i < c.end) || R.ranges[0];
+  // chapter label — shows current chapter + % through THAT chapter
   const chEl = $('.rd-chap', D.reader);
-  if (chEl) chEl.textContent = R.ranges.length > 1 ? `${chap.title} · ${pctText(i)}` : pctText(i);
+  if (chEl) {
+    if (R.ranges.length > 1) {
+      const ci = chapterIndexAt(i), chap = R.ranges[ci];
+      chEl.innerHTML = `<i class="rd-toc-dot"></i>${ci + 1}/${R.ranges.length} · ${chap.title || 'Chapter ' + (ci + 1)} · ${chapterPct(i)}%`;
+    } else chEl.textContent = pctText(i);
+  }
 
   // counters + scrub
   const range = $('.rd-range', D.reader); if (range && +range.value !== i) range.value = i;
@@ -1052,6 +1062,65 @@ function renderFlash(i) {
   $('.rd-tot', D.reader).textContent = fmtTime((R.total - i) > 0 ? (R.doc.words - wordsRead) / state.settings.wpm * 60 : 0);
 }
 const pctText = (i) => `${Math.round((i / R.total) * 100)}%`;
+
+/* ---- chapter navigation ---- */
+function chapterIndexAt(i) {
+  const idx = R.ranges.findIndex(c => i >= c.start && i < c.end);
+  return idx < 0 ? Math.max(0, R.ranges.length - 1) : idx;
+}
+function chapterPct(i) {
+  const c = R.ranges[chapterIndexAt(i)];
+  const span = Math.max(1, c.end - c.start);
+  return Math.min(100, Math.max(0, Math.round(((i - c.start) / span) * 100)));
+}
+function gotoChapter(ci) {
+  const c = R.ranges[Math.max(0, Math.min(R.ranges.length - 1, ci))];
+  if (c) seek(c.start);
+}
+function stepChapter(d) { gotoChapter(chapterIndexAt(R.idx) + d); }
+
+function openTOC() {
+  if (R?.playing) pause();
+  haptic(6);
+  const cur = chapterIndexAt(R.idx);
+  const list = el('div', { class:'toc-list' });
+  R.ranges.forEach((c, ci) => {
+    // % read of each chapter, derived from saved position
+    const span = Math.max(1, c.end - c.start);
+    const pct = R.idx >= c.end ? 100 : R.idx <= c.start ? 0 : Math.round(((R.idx - c.start) / span) * 100);
+    const done = pct >= 99;
+    const row = el('button', { class:'toc-row' + (ci === cur ? ' cur' : '') });
+    row.append(el('span', { class:'toc-n' + (done ? ' done' : '') }, done ? '✓' : String(ci + 1)));
+    const mid = el('div', { class:'grow' });
+    mid.append(el('div', { class:'toc-t' }, c.title || `Chapter ${ci + 1}`));
+    if (ci === cur && pct > 0 && pct < 100) { const pb = el('div', { class:'toc-bar' }); pb.append(el('i', { style:`width:${pct}%` })); mid.append(pb); }
+    row.append(mid, el('span', { class:'toc-pct' }, `${pct}%`));
+    row.addEventListener('click', () => { closeSheet(); gotoChapter(ci); });
+    list.append(row);
+  });
+
+  const nav = el('div', { class:'toc-nav' });
+  nav.append(el('button', { class:'btn ghost' + (cur <= 0 ? ' is-off' : ''), onclick:() => { closeSheet(); stepChapter(-1); } }, '‹ Prev'));
+  nav.append(el('button', { class:'btn', onclick:() => { closeSheet(); play(); } }, 'Resume'));
+  nav.append(el('button', { class:'btn ghost' + (cur >= R.ranges.length - 1 ? ' is-off' : ''), onclick:() => { closeSheet(); stepChapter(1); } }, 'Next ›'));
+
+  const head = el('div', { class:'row', style:'justify-content:space-between;align-items:center;margin-bottom:6px' });
+  head.append(el('div', { style:'font-weight:600' }, `${R.ranges.length} chapters`));
+  head.append(el('button', { class:'chip', onclick:() => { closeSheet(); switchBook(); } }, '⇄ Switch book'));
+
+  const body = el('div', {});
+  body.append(head, list, nav);
+  sheet({ title:'Contents', body });
+}
+
+function switchBook() {
+  // save where we are, leave the reader, land on the library's Continue-reading row
+  if (R) { pause(); saveProgress(); }
+  R = null;
+  D.reader.classList.add('hidden');
+  showView('home');
+}
+
 function updateWpmLabel() { const v = $('.rd-wpmval', D.reader); if (v) v.innerHTML = `${state.settings.wpm}<small> wpm</small>`; }
 function updatePlayBtn() { const b = $('.rd-play', D.reader); if (b) b.innerHTML = R.playing ? ICON.pause : ICON.play; }
 
