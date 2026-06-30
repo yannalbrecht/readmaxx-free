@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.6.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.6.2'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -563,11 +563,18 @@ const SHARE_PREFIX = 'https://readmaxx-free.vercel.app/?add=';
 const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const shortcutFileURL = () => new URL('assets/readmaxx.shortcut', document.baseURI).href;
-function openShortcutFile() { const a = document.createElement('a'); a.href = shortcutFileURL(); a.rel = 'noopener'; a.click(); }
+function openShortcutFile() {
+  // Hand the file to the Shortcuts app via its URL scheme (a plain link just
+  // renders the file as text in Safari). iOS 15+ still needs "Allow Untrusted
+  // Shortcuts" on and may refuse unsigned imports — the manual path is the
+  // reliable fallback.
+  location.href = 'shortcuts://import-shortcut?url=' + encodeURIComponent(shortcutFileURL()) +
+    '&name=' + encodeURIComponent('Read in ReadMaxx');
+}
 async function copyText(t, msg) { try { await navigator.clipboard.writeText(t); toast(msg || 'Copied'); } catch { toast('Long-press the link to copy', { err:true }); } }
 
-let guideMode = 'download', guideStep = 0;
-function openShareGuide() { guideMode = 'download'; guideStep = 0; D.guide.classList.remove('hidden'); renderGuide(); }
+let guideMode = 'manual', guideStep = 0; // manual build is the reliable default
+function openShareGuide() { guideMode = 'manual'; guideStep = 0; D.guide.classList.remove('hidden'); renderGuide(); }
 function closeGuide() { D.guide.classList.add('hidden'); }
 function setGuideMode(m) { guideMode = m; guideStep = 0; haptic(6); renderGuide(); }
 
@@ -583,15 +590,15 @@ const MOCK = {
 };
 
 const DL_STEPS = [
-  { eyebrow:'Fastest way', title:'Add the ReadMaxx shortcut', desc:'Tap below — it opens in the Shortcuts app.', mock:MOCK.addShortcut,
-    action:{ label:'Get the shortcut', act: openShortcutFile },
-    note:'If Shortcuts won’t open it, turn on Settings → Shortcuts → Advanced → “Allow Untrusted Shortcuts”, then tap again — or use “build it yourself” below.' },
-  { eyebrow:'Step 2', title:'Tap “Add Shortcut”', desc:'Shortcuts shows a preview. Scroll down and tap the green Add Shortcut button.', mock:MOCK.addShortcut },
+  { eyebrow:'Quick try', title:'Import the ready-made shortcut', desc:'Tap to hand it to the Shortcuts app. Heads up: Apple blocks unsigned shortcuts from the web, so this may not work on your iOS — the build-it-yourself path always does.', mock:MOCK.addShortcut,
+    action:{ label:'Try importing it', act: openShortcutFile },
+    note:'First turn ON Settings → Shortcuts → Advanced → “Allow Untrusted Shortcuts”. If it still won’t import, switch to “build it yourself” below — that always works.' },
+  { eyebrow:'Step 2', title:'Tap “Add Shortcut”', desc:'If it imported, Shortcuts shows a preview. Scroll down and tap the green Add Shortcut button.', mock:MOCK.addShortcut },
   { eyebrow:'Don’t skip this', title:'Turn on “Show in Share Sheet”', desc:'Open the shortcut’s ⓘ details and make sure “Show in Share Sheet” is ON (type: URLs). This is the step people miss — it’s what makes ReadMaxx appear in Safari’s Share menu.', mock:MOCK.shareToggle },
   { eyebrow:'You’re set', title:'Use it from any page', desc:'In Safari, open an article → tap Share → choose “Read in ReadMaxx”. It opens here and starts reading.', mock:MOCK.safariShare },
 ];
 const MANUAL_STEPS = [
-  { eyebrow:'Build it · 1', title:'New shortcut', desc:'Open the Shortcuts app and tap + (top-right) to create a new shortcut.', mock:MOCK.newShortcut },
+  { eyebrow:'Always works · 1', title:'New shortcut', desc:'Open the Shortcuts app and tap + (top-right) to create a new shortcut. Takes about a minute.', mock:MOCK.newShortcut },
   { eyebrow:'Step 2', title:'Add “Open URLs”', desc:'Tap “Add Action”, search for “Open URLs”, and tap it.', mock:MOCK.openUrls },
   { eyebrow:'Step 3', title:'Build the link', desc:'Tap the URL field, paste the link below, then tap the blue “Shortcut Input” chip above the keyboard so it’s added on the end.', mock:MOCK.urlField,
     action:{ label:'Copy the link', act:() => copyText(SHARE_PREFIX, 'Link copied') } },
@@ -631,7 +638,7 @@ function renderGuide() {
     onclick:() => { if (last) closeGuide(); else { guideStep++; haptic(6); renderGuide(); } } }, last ? 'Done' : 'Next'));
   if (guideStep === 0) foot.append(el('button', { class:'g-switch',
     onclick:() => setGuideMode(guideMode === 'download' ? 'manual' : 'download') },
-    guideMode === 'download' ? 'Or build it yourself →' : '← Use the ready-made shortcut'));
+    guideMode === 'download' ? 'Build it yourself (always works) →' : 'Try the ready-made shortcut →'));
   g.append(foot);
 }
 
