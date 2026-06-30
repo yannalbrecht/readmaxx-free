@@ -81,6 +81,12 @@ export const ICON = {
   fire: '🔥', check: '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>',
   share: '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
   refresh: '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  sort: '<svg viewBox="0 0 24 24"><path d="M4 7h16M6 12h12M9 17h6"/></svg>',
+  viewList: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1.2"/><path d="M12 6.5h9M12 9.5h6"/><rect x="3" y="14" width="6" height="6" rx="1.2"/><path d="M12 15.5h9M12 18.5h6"/></svg>',
+  viewCompact: '<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  viewGrid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.4"/><rect x="13" y="4" width="7" height="7" rx="1.4"/><rect x="4" y="13" width="7" height="7" rx="1.4"/><rect x="13" y="13" width="7" height="7" rx="1.4"/></svg>',
 };
 
 export function fmt(n) {

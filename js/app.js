@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.1.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.2.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -387,6 +387,40 @@ function finishOnboarding() {
 const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Late night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
 const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', url:'🔗', sample:'✨', vault:'📁' }[t] || '📄');
 
+// ---- library state + helpers ----
+let librarySearch = '';
+let libraryFilter = 'all';
+const TILE_COLORS = [
+  ['#3a2c6e', '#b9a8ff'], ['#6e2c4e', '#ffaad0'], ['#244a3a', '#7fe0b0'],
+  ['#2c3a6e', '#9ab8ff'], ['#4a2c5e', '#d8a8ff'], ['#1f4a4a', '#7fe0e0'],
+];
+function tileColors(d) {
+  if (d.type === 'vault') return ['#5a4420', '#ffc97a'];
+  if (d.type === 'sample') return ['#244a3a', '#7fe0b0'];
+  let h = 0; const s = d.title || ''; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return TILE_COLORS[h % TILE_COLORS.length];
+}
+const docCategory = (d) => d.type === 'vault' ? 'vault' : d.type === 'epub' ? 'book' : d.type === 'url' ? 'article' : 'note';
+const docProgress = (d) => d.type === 'vault' ? vaultProgress(d).pct / 100 : (d.progress || 0);
+function matchesFilter(d, f) {
+  if (f === 'all') return true;
+  const pr = docProgress(d);
+  if (f === 'reading') return pr > 0 && pr < 0.99;
+  if (f === 'unread') return pr <= 0;
+  if (f === 'finished') return pr >= 0.99;
+  return docCategory(d) === f;
+}
+const matchesSearch = (d, q) => !q || (`${d.title || ''} ${d.author || ''}`).toLowerCase().includes(q.toLowerCase());
+function sortDocs(docs, by) {
+  const a = [...docs];
+  if (by === 'title') a.sort((x, y) => (x.title || '').localeCompare(y.title || ''));
+  else if (by === 'progress') a.sort((x, y) => docProgress(y) - docProgress(x));
+  else if (by === 'added') a.sort((x, y) => (y.added || 0) - (x.added || 0));
+  else if (by === 'type') a.sort((x, y) => docCategory(x).localeCompare(docCategory(y)) || (y.lastOpened || 0) - (x.lastOpened || 0));
+  else a.sort((x, y) => (y.lastOpened || y.added || 0) - (x.lastOpened || x.added || 0));
+  return a;
+}
+
 async function renderHome() {
   const v = D.home; clear(v);
   const g = state.game, p = state.profile;
@@ -402,45 +436,83 @@ async function renderHome() {
   v.append(head);
 
   // daily goal ring
-  const pctRaw = p.dailyGoalWords ? (g.wordsToday / p.dailyGoalWords) * 100 : 0;
-  const pct = Math.min(100, Math.round(pctRaw));
+  const pct = Math.min(100, Math.round(p.dailyGoalWords ? (g.wordsToday / p.dailyGoalWords) * 100 : 0));
   const goal = el('div', { class:'card goal-card' });
   goal.append(el('div', { class:'ring', style:`--p:${pct}` }, el('b', {}, `${pct}%`)));
   const gm = el('div', { class:'goal-meta' });
   gm.append(el('div', { class:'t' }, pct >= 100 ? 'Daily goal complete 🎉' : 'Daily reading goal'));
   gm.append(el('div', { class:'s' }, `${fmt(g.wordsToday)} / ${fmt(p.dailyGoalWords)} words today`));
-  const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${pct}%` }));
-  gm.append(mb);
+  const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${pct}%` })); gm.append(mb);
   goal.append(gm);
   v.append(goal);
 
-  // add-source row
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Add something to read')));
-  const src = el('div', { class:'src-row' });
-  const mkSrc = (icon, label, fn) => { const b = el('button', { class:'src', onclick:() => { haptic(6); fn(); } },
-    el('span', { class:'ic', html: icon }), el('span', {}, label)); return b; };
-  src.append(mkSrc(ICON.paste, 'Paste', pasteSheet));
-  src.append(mkSrc(ICON.link, 'Link', urlSheet));
-  src.append(mkSrc(ICON.file, 'File', () => D.fileInput.click()));
-  src.append(mkSrc(ICON.vault, 'Vault', vaultSheet));
-  v.append(src);
+  // single import entry
+  v.append(el('button', { class:'import-btn', onclick:() => { haptic(6); importSheet(); } },
+    el('span', { class:'ic', html: ICON.plus }), el('span', { class:'grow' }, 'Import something to read'),
+    el('span', { class:'chev', html: ICON.next })));
 
-  // library
-  const docs = (await allDocs()).sort((a, b) => (b.lastOpened || b.added) - (a.lastOpened || a.added));
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Your library'),
-    docs.length ? el('a', { onclick:(e)=>{e.preventDefault();} }, `${docs.length} item${docs.length>1?'s':''}`) : null));
-  if (!docs.length) {
-    v.append(el('div', { class:'empty' }, el('div', { class:'big' }, '📚'),
-      el('div', {}, 'Nothing here yet.'), el('div', { class:'faint mt8' }, 'Paste text or try a sample below.')));
-  } else {
-    for (const d of docs) v.append(docCard(d));
+  const docs = await allDocs();
+
+  // continue reading
+  const inProgress = sortDocs(docs.filter(d => { const pr = docProgress(d); return pr > 0 && pr < 0.99; }), 'recent').slice(0, 8);
+  if (inProgress.length) {
+    v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Continue reading')));
+    const row = el('div', { class:'cont-row' });
+    for (const d of inProgress) row.append(contCard(d));
+    v.append(row);
+  }
+
+  // library header: title + view toggle + sort
+  const lh = el('div', { class:'lib-head' });
+  lh.append(el('h3', {}, 'Library'));
+  const ctrls = el('div', { class:'lib-ctrls' });
+  const vt = el('div', { class:'view-toggle' });
+  for (const [m, icon] of [['list', ICON.viewList], ['compact', ICON.viewCompact], ['grid', ICON.viewGrid]]) {
+    const b = el('button', { class: state.settings.view === m ? 'on' : '', html: icon, 'aria-label': m });
+    b.addEventListener('click', () => { state.settings.view = m; save(); haptic(6); renderHome(); });
+    vt.append(b);
+  }
+  ctrls.append(vt, el('button', { class:'sort-btn', html: ICON.sort, 'aria-label':'Sort', onclick: sortSheet }));
+  lh.append(ctrls);
+  v.append(lh);
+
+  // search
+  const search = el('div', { class:'search' });
+  search.append(el('span', { class:'ic', html: ICON.search }));
+  const si = el('input', { class:'search-in', placeholder:'Search title or author', value: librarySearch, inputmode:'search' });
+  si.addEventListener('input', () => { librarySearch = si.value; renderList(); });
+  search.append(si);
+  if (librarySearch) search.append(el('button', { class:'clr', html: ICON.x, 'aria-label':'Clear', onclick:() => { librarySearch = ''; renderHome(); } }));
+  v.append(search);
+
+  // filter chips
+  const chips = el('div', { class:'filter-chips' });
+  for (const [id, label] of [['all','All'],['reading','Reading'],['unread','Unread'],['finished','Finished'],['book','Books'],['article','Articles'],['note','Notes'],['vault','Vaults']]) {
+    const c = el('button', { class:'fchip' + (libraryFilter === id ? ' on' : '') }, label);
+    c.addEventListener('click', () => { libraryFilter = id; haptic(6); renderHome(); });
+    chips.append(c);
+  }
+  v.append(chips);
+
+  const listWrap = el('div', { class:'lib-list', id:'lib-list' });
+  v.append(listWrap);
+  renderList();
+  function renderList() {
+    const wrap = $('#lib-list', D.home); if (!wrap) return; clear(wrap);
+    let list = sortDocs(docs.filter(d => matchesFilter(d, libraryFilter) && matchesSearch(d, librarySearch)), state.settings.librarySort);
+    wrap.classList.toggle('grid', state.settings.view === 'grid' && list.length > 0);
+    if (!list.length) {
+      wrap.append(el('div', { class:'empty' }, el('div', { class:'big' }, docs.length ? '🔍' : '📚'),
+        el('div', {}, docs.length ? 'No matches' : 'Your library is empty'),
+        el('div', { class:'faint mt8' }, docs.length ? 'Try another filter or search.' : 'Import something, or try a sample below.')));
+    } else for (const d of list) wrap.append(docCard(d, state.settings.view));
   }
 
   // samples
   v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Try a sample')));
   for (const s of SAMPLES) {
     v.append(el('button', { class:'doc', onclick:() => { haptic(6); openSample(s); } },
-      el('div', { class:'cover' }, s.emoji),
+      el('div', { class:'cover', style:'background:#244a3a;color:#7fe0b0' }, s.emoji),
       el('div', { class:'info' }, el('div', { class:'t' }, s.title),
         el('div', { class:'m' }, el('span', {}, s.author), el('span', {}, '·'),
           el('span', {}, `${countWords(s.text)} words`))),
@@ -448,30 +520,82 @@ async function renderHome() {
   }
 }
 
-function docCard(d) {
+function importSheet() {
+  const body = el('div', { class:'stack' });
+  const opt = (icon, t, s, fn) => el('button', { class:'imp-opt', onclick:() => { haptic(6); closeSheet(); fn(); } },
+    el('span', { class:'imp-ic', html: icon }), el('div', { class:'grow' }, el('div', { class:'imp-t' }, t), el('div', { class:'imp-s' }, s)),
+    el('span', { class:'imp-go', html: ICON.next }));
+  body.append(opt(ICON.paste, 'Paste text', 'Articles, emails, notes', pasteSheet));
+  body.append(opt(ICON.link, 'Web link', 'Fetch a clean article', urlSheet));
+  body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub', () => D.fileInput.click()));
+  body.append(opt(ICON.vault, 'Import folder / vault', 'Whole vault, subfolders included', vaultSheet));
+  sheet({ title:'Import', sub:'Everything stays on your device.', body });
+}
+
+function sortSheet() {
+  const body = el('div', { class:'stack' });
+  for (const [id, label] of [['recent','Recently opened'],['progress','Progress'],['title','Title (A–Z)'],['added','Date added'],['type','Type']]) {
+    const b = el('button', { class:'opt' + (state.settings.librarySort === id ? ' sel' : '') },
+      el('div', { class:'opt-t grow' }, label), el('span', { class:'tick', html: ICON.check }));
+    b.addEventListener('click', () => { state.settings.librarySort = id; save(); haptic(6); closeSheet(); renderHome(); });
+    body.append(b);
+  }
+  sheet({ title:'Sort library', body });
+}
+
+function bindCard(card, d) {
+  card.addEventListener('click', () => { haptic(6); openDoc(d.id); });
+  let lp; card.addEventListener('pointerdown', () => { lp = setTimeout(() => docActions(d), 480); });
+  for (const ev of ['pointerup', 'pointerleave', 'pointermove']) card.addEventListener(ev, () => clearTimeout(lp));
+}
+
+function contCard(d) {
+  const prog = Math.round(docProgress(d) * 100);
+  const [bg, fg] = tileColors(d);
+  const c = el('button', { class:'cont-card' });
+  c.append(el('div', { class:'cont-cover', style:`background:${bg};color:${fg}` }, coverEmoji(d.type)));
+  c.append(el('div', { class:'cont-info' }, el('div', { class:'cont-t' }, d.title || 'Untitled'),
+    el('div', { class:'cont-bar' }, el('i', { style:`width:${prog}%` })), el('div', { class:'cont-pct' }, `${prog}%`)));
+  bindCard(c, d); return c;
+}
+
+function docCard(d, mode = 'list') {
   const isVault = d.type === 'vault';
   const vp = isVault ? vaultProgress(d) : null;
-  const prog = isVault ? vp.pct : Math.round((d.progress || 0) * 100);
+  const prog = Math.round(docProgress(d) * 100);
+  const done = prog >= 99;
+  const [bg, fg] = tileColors(d);
+  const emoji = coverEmoji(d.type);
+
+  if (mode === 'grid') {
+    const card = el('button', { class:'gcard' });
+    const cover = el('div', { class:'gcover', style:`background:${bg};color:${fg}` }, emoji);
+    if (prog > 0) cover.append(el('span', { class:'gbadge' + (done ? ' done' : '') }, done ? '✓' : `${prog}%`));
+    if (prog > 0 && !done) { const pb = el('div', { class:'gbar' }); pb.append(el('i', { style:`width:${prog}%` })); cover.append(pb); }
+    card.append(cover, el('div', { class:'gtitle' }, d.title || 'Untitled'),
+      el('div', { class:'gmeta' }, isVault ? `${vp.total} notes` : `${fmt(d.words)} words`));
+    bindCard(card, d); return card;
+  }
+  if (mode === 'compact') {
+    const card = el('button', { class:'doc compact' });
+    card.append(el('div', { class:'cover', style:`background:${bg};color:${fg}` }, emoji));
+    card.append(el('div', { class:'info' }, el('div', { class:'t' }, d.title || 'Untitled')));
+    card.append(el('span', { class:'cprog' + (done ? ' good-t' : '') }, isVault ? `${prog}%` : done ? '✓' : prog > 0 ? `${prog}%` : ''));
+    bindCard(card, d); return card;
+  }
+  // rich list
   const card = el('button', { class:'doc' });
-  card.append(el('div', { class:'cover' + (isVault ? ' vault' : '') }, coverEmoji(d.type)));
+  card.append(el('div', { class:'cover', style:`background:${bg};color:${fg}` }, emoji));
   const info = el('div', { class:'info' });
   info.append(el('div', { class:'t' }, d.title || 'Untitled'));
   const meta = el('div', { class:'m' });
-  if (isVault) {
-    meta.append(el('span', {}, `${vp.total} notes`), el('span', {}, '·'),
-      el('span', {}, `${vp.notesRead}/${vp.total} read`), el('span', {}, '·'), el('span', {}, `${prog}%`));
-  } else {
-    meta.append(el('span', {}, `${fmt(d.words)} words`));
-    if (prog > 0) meta.append(el('span', {}, '·'), el('span', {}, prog >= 99 ? 'Finished' : `${prog}%`));
-  }
+  if (isVault) meta.append(el('span', {}, `${vp.total} notes`), el('span', {}, '·'), el('span', {}, `${vp.notesRead}/${vp.total} read`));
+  else { meta.append(el('span', {}, `${fmt(d.words)} words`)); if (d.author) meta.append(el('span', {}, '·'), el('span', {}, d.author)); }
   info.append(meta);
   if (prog > 0 && (prog < 99 || isVault)) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
-  card.append(info, el('div', { class:'go', html: isVault ? ICON.next : ICON.play }));
-  card.addEventListener('click', () => { haptic(6); openDoc(d.id); });
-  // long-press → actions
-  let lp; card.addEventListener('pointerdown', () => { lp = setTimeout(() => docActions(d), 480); });
-  for (const ev of ['pointerup', 'pointerleave', 'pointermove']) card.addEventListener(ev, () => clearTimeout(lp));
-  return card;
+  card.append(info);
+  card.append(done && !isVault ? el('span', { class:'go good-t', html: ICON.check }) : el('div', { class:'go', html: isVault ? ICON.next : ICON.play }));
+  bindCard(card, d); return card;
 }
 
 function docActions(d) {

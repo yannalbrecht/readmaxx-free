@@ -46,6 +46,8 @@ const DEFAULT = {
     haptics: true,     // vibrate where supported (Android); no-op on iOS
     sound: false,
     tapToPause: true,  // tap the flash stage to pause/resume
+    view: 'list',          // library layout: list | compact | grid
+    librarySort: 'recent', // recent | progress | title | added | type
   },
   game: {
     xp: 0,
