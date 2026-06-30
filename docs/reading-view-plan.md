@@ -118,12 +118,14 @@ just read the article here, see its structure, find a spot, and resume RSVP ther
 
 Recommended order: 1 → 2 → 3 → 4 → 5 → 6. Phase 1 is the unlock; the visible payoff lands in 3–4.
 
-## 4. Risks & decisions to confirm
-- **Text-view scope**: current chapter + lazy adjacent (recommended) vs. whole article at once.
-- **Marker model**: auto-follow word at the read-line on scroll, *plus* tap-to-place (recommended)
-  vs. a separately draggable marker handle.
-- **"Sort by H1/H2"**: segment into chapters/sections by heading hierarchy (recommended reading) vs.
-  something else.
-- **Headings in RSVP**: show title cards + pause at each heading (recommended) vs. flash them inline.
-- **PDF headings**: paragraphs-only in v1 (font-size heuristic later) — acceptable?
-- **Migration**: old docs upgrade lazily on open (no re-import) — good.
+## 4. Decisions (locked)
+- **Marker model** — *auto-follow word at the read-line on scroll, plus tap-to-place.*
+- **Text-view scope** — *current chapter, lazy-load the adjacent chapters on scroll.*
+- **Headings in RSVP** — *brief "Section · <title>" title card + short pause; headings flash in accent.*
+- **Structure** — *segment into chapters (H1) / sections (H2) / subsections (H3) by the heading
+  outline; text order unchanged.*
+
+### Still open / defaults
+- **PDF headings**: paragraphs-only in v1; font-size heuristic to promote headings is a later add.
+- **Migration**: existing docs upgrade lazily on open (chapter → `h2` + `p` blocks); no re-import.
+- **Reduced motion / a11y**: the Text View doubles as the screen-reader-friendly reading mode.
