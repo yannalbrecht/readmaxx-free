@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.5.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.5.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -107,11 +107,12 @@ function boot() {
   ensureToday();
   if (!state.profile.onboarded) startOnboarding();
   else enterApp();
-  // fade the splash out after first paint
-  requestAnimationFrame(() => setTimeout(() => {
+  // Fade the splash via setTimeout (NOT requestAnimationFrame — rAF never fires
+  // in a backgrounded tab, which would leave the splash stuck over the app).
+  setTimeout(() => {
     D.splash.classList.add('out');
     setTimeout(() => D.splash.classList.add('hidden'), 520);
-  }, 360));
+  }, 400);
   wireGlobal();
 }
 
