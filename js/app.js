@@ -18,13 +18,13 @@ const $ = (s, r = document) => r.querySelector(s);
 const D = {
   splash: $('#splash'), onboarding: $('#onboarding'), app: $('#app'),
   home: $('#view-home'), stats: $('#view-stats'), profile: $('#view-profile'),
-  tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'),
+  tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'), textview: $('#textview'),
   fileInput: $('#file-input'), mdInput: $('#md-multi-input'), dirInput: $('#dir-input'),
 };
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.8.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.9.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1124,7 +1124,8 @@ function renderReader() {
   zone.innerHTML = '<span class="barrier top"><i class="tick"></i></span><span class="barrier bot"><i class="tick"></i></span>';
   zone.append(el('div', { class:'word rd-word' }));
   stage.append(zone);
-  stage.append(el('div', { class:'rd-context' }, el('div', { class:'ctx-text' })));
+  stage.append(el('div', { class:'rd-context', onclick:(e) => { e.stopPropagation(); haptic(6); openTextView(); } },
+    el('div', { class:'ctx-text' }), el('div', { class:'ctx-hint' }, 'tap for full text')));
   stage.addEventListener('click', () => { if (state.settings.tapToPause) R.playing ? pause() : play(); });
   r.append(stage);
 
@@ -1262,6 +1263,91 @@ function switchBook() {
   showView('home');
 }
 
+/* ============================================================
+   TEXT VIEW — full chapter as book-formatted text, with a read-line
+   marker that tracks scroll and resumes RSVP from any word.
+   ============================================================ */
+const TV_BLOCK_CLASS = { h1:'tv-h1', h2:'tv-h2', h3:'tv-h3', p:'tv-p', li:'tv-li', quote:'tv-quote' };
+// Old docs have chapters without `blocks` — derive them so the text view works.
+const chapterBlocks = (ch) => ch.blocks?.length ? ch.blocks : mdToBlocks(ch.text || '', { markdown:false });
+
+function openTextView() {
+  if (!R || !R.ranges?.length) return;
+  if (R.playing) pause();
+  const ci = chapterIndexAt(R.idx);
+  const chap = R.ranges[ci];
+  const chDoc = R.doc.chapters[ci] || { title: R.doc.title, text: '' };
+  const chunk = Math.max(1, state.settings.chunk);
+  const flashesInChapter = chap.end - chap.start;
+
+  const tv = D.textview; clear(tv); tv.classList.remove('hidden');
+  const top = el('div', { class:'tv-top' });
+  top.append(el('button', { class:'icon-btn', html: ICON.x, 'aria-label':'Close', onclick: () => doResume() }));
+  top.append(el('div', { class:'tv-title' }, chDoc.title || R.doc.title));
+  top.append(el('button', { class:'icon-btn', html: ICON.toc, 'aria-label':'Contents',
+    onclick: () => { closeTextView(); if (R.ranges.length > 1) openTOC(); } }));
+  tv.append(top);
+
+  const stageWrap = el('div', { class:'tv-stage' });
+  const scroll = el('div', { class:'tv-scroll' });
+  const inner = el('div', { class:'tv-inner' });
+  // render blocks with one span per word (index = word position within chapter)
+  const spans = [];
+  for (const b of chapterBlocks(chDoc)) {
+    const blk = el('div', { class: TV_BLOCK_CLASS[b.type] || 'tv-p' });
+    for (const word of b.text.split(/\s+/).filter(Boolean)) {
+      const s = document.createElement('span');
+      s.className = 'tv-w'; s.dataset.w = spans.length; s.textContent = word;
+      blk.append(s, document.createTextNode(' '));
+      spans.push(s);
+    }
+    inner.append(blk);
+  }
+  scroll.append(inner);
+  const chip = el('div', { class:'tv-chip', html: ICON.play });
+  const chipPct = el('span', {}); chip.append(chipPct);
+  stageWrap.append(scroll, el('div', { class:'tv-readline' }), chip);
+  tv.append(stageWrap);
+  const foot = el('div', { class:'tv-foot' });
+  foot.append(el('div', { class:'tv-hint' }, 'Scroll to move the marker · tap a word to jump'));
+  foot.append(el('button', { class:'btn', onclick: () => doResume() }, 'Resume reading'));
+  tv.append(foot);
+
+  const READ_FRAC = 0.42;
+  let marker = Math.max(0, Math.min(spans.length - 1, (R.idx - chap.start) * chunk));
+  let offsets = null;
+  const cacheOffsets = () => { offsets = spans.map(s => s.offsetTop + s.offsetHeight / 2); };
+  const wordToFlash = (w) => chap.start + Math.min(flashesInChapter - 1, Math.floor(w / chunk));
+
+  function setMarker(w, scrollTo) {
+    spans[marker]?.classList.remove('tv-cur');
+    marker = Math.max(0, Math.min(spans.length - 1, w));
+    spans[marker].classList.add('tv-cur');
+    chipPct.textContent = ' ' + Math.round((wordToFlash(marker) / R.total) * 100) + '%';
+    if (scrollTo && offsets) scroll.scrollTop = offsets[marker] - scroll.clientHeight * READ_FRAC;
+  }
+  function markerFromScroll() {
+    if (!offsets) return;
+    const y = scroll.scrollTop + scroll.clientHeight * READ_FRAC;
+    let lo = 0, hi = offsets.length - 1;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (offsets[mid] < y) lo = mid + 1; else hi = mid; }
+    if (lo > 0 && Math.abs(offsets[lo - 1] - y) < Math.abs(offsets[lo] - y)) lo--;
+    setMarker(lo, false);
+  }
+  // Direct (not rAF-gated) so it still tracks if the tab throttles rAF; the binary
+  // search over cached offsets is cheap.
+  scroll.addEventListener('scroll', markerFromScroll, { passive: true });
+  inner.addEventListener('click', (e) => { const s = e.target.closest('.tv-w'); if (s) { haptic(6); setMarker(+s.dataset.w, true); } });
+
+  function closeTextView() { D.textview.classList.add('hidden'); }
+  function doResume() { closeTextView(); if (R) { seek(wordToFlash(marker)); play(); } }
+  D.textview._resume = doResume; // for keyboard/back
+
+  // first layout → cache offsets, place marker on the read-line (setTimeout, not
+  // rAF, so it runs even if the tab throttles animation frames)
+  setTimeout(() => { cacheOffsets(); setMarker(marker, true); }, 0);
+}
+
 function updateWpmLabel() { const v = $('.rd-wpmval', D.reader); if (v) v.innerHTML = `${state.settings.wpm}<small> wpm</small>`; }
 function updatePlayBtn() { const b = $('.rd-play', D.reader); if (b) b.innerHTML = R.playing ? ICON.pause : ICON.play; }
 
@@ -1357,6 +1443,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function readerKeys(e) {
+  if (!D.textview.classList.contains('hidden')) { if (e.key === 'Escape') D.textview._resume?.(); return; }
   if (D.reader.classList.contains('hidden') || !R) return;
   if (e.key === ' ') { e.preventDefault(); R.playing ? pause() : play(); }
   else if (e.key === 'ArrowLeft') skip(-8);
