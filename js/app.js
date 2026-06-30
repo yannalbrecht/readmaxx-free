@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.3.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.3.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1227,7 +1227,12 @@ function pause() {
 function accrue() {
   if (!R || !R.sessionStart) return;
   const secs = (performance.now() - R.sessionStart) / 1000;
-  if (R.sessionWords > 0 && secs > 0.5) addReading(R.sessionWords, secs, state.settings.wpm);
+  if (R.sessionWords > 0 && secs > 0.5) {
+    // Record ACTUAL measured throughput (words / minutes) — not the slider value,
+    // so best-WPM and achievements reflect real reading, including auto-pauses.
+    const actualWpm = Math.round(R.sessionWords / (secs / 60));
+    addReading(R.sessionWords, secs, actualWpm);
+  }
   R.sessionWords = 0; R.sessionStart = performance.now();
 }
 function seek(i) {
@@ -1526,6 +1531,11 @@ function renderProfile() {
   // Data
   v.append(groupTitle('Your data'));
   const g5 = el('div', { class:'set-group' });
+  const storageRow = el('div', { class:'set' });
+  storageRow.append(el('div', { class:'si', html: ICON.refresh }), el('div', { class:'st' }, 'Storage used'),
+    el('div', { class:'sv rm-storage' }, '…'));
+  g5.append(storageRow);
+  updateStorageRow();
   g5.append(navRow(ICON.file, 'Export backup', '.json', exportBackup));
   g5.append(navRow(ICON.paste, 'Import backup', '', importBackup));
   g5.append(navRow(ICON.trash, 'Reset onboarding', '', () => { state.profile.onboarded = false; save(); startOnboarding(); }));
@@ -1657,6 +1667,18 @@ function pickAvatar() {
     body.append(el('button', { class:'src', style:'font-size:26px', onclick:() => { state.profile.avatar = e; save(); haptic(6); closeSheet(); renderProfile(); } }, e));
   }
   sheet({ title:'Pick an avatar', body });
+}
+
+async function updateStorageRow() {
+  let est;
+  try { est = await navigator.storage.estimate(); } catch {}
+  const node = $('.rm-storage', D.profile); if (!node) return; // queried after await — row is now in the DOM
+  if (!est) { node.textContent = 'on device'; return; }
+  const used = est.usage || 0, quota = est.quota || 0;
+  const fmtB = (b) => b >= 1048576 ? (b / 1048576).toFixed(b < 10485760 ? 1 : 0) + ' MB' : Math.round(b / 1024) + ' KB';
+  const pctUsed = quota ? Math.round((used / quota) * 100) : 0;
+  node.textContent = `${fmtB(used)}${quota ? ` of ${fmtB(quota)} · ${pctUsed}%` : ''}`;
+  if (pctUsed >= 80) { node.style.color = 'var(--warn)'; toast('Storage is getting full — export a backup', { err:true }); }
 }
 
 async function exportBackup() {
