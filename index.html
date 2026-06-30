@@ -83,9 +83,12 @@
     // touched by an update — only the cached code is swapped.
     if ('serviceWorker' in navigator) {
       let reloading = false;
-      // When the freshly-activated SW takes control, reload once to run new code.
+      // Only an UPDATE should force a reload. On a first visit the SW's initial
+      // clients.claim() also fires controllerchange — but there was no controller
+      // before, so skip it (otherwise every first load reloads itself needlessly).
+      const hadController = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (reloading) return; reloading = true; window.location.reload();
+        if (reloading || !hadController) return; reloading = true; window.location.reload();
       });
 
       window.addEventListener('load', async () => {

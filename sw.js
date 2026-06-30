@@ -1,7 +1,7 @@
 // ReadMaxx Free service worker — offline-first PWA shell
 // Bump BUILD on every deploy so clients detect a waiting update and can apply it
 // from the in-app "Update" button (without reinstalling — data is untouched).
-const BUILD = '1.10.1';
+const BUILD = '1.10.2';
 const VERSION = 'readmaxx-' + BUILD;
 const CORE = [
   './',
@@ -65,10 +65,12 @@ self.addEventListener('fetch', (e) => {
   if (isCode) {
     e.respondWith(
       fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
+        if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {}); } // never cache 404/500
         return res;
-      }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+      }).catch(() => caches.match(req).then((hit) =>
+        // Offline miss: only navigations get the app shell; a missing JS/.mjs (e.g. pdf.js
+        // on first offline use) must fail cleanly, not receive HTML it can't parse.
+        hit || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())))
     );
     return;
   }
@@ -78,8 +80,7 @@ self.addEventListener('fetch', (e) => {
     caches.match(req).then((hit) =>
       hit ||
       fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
+        if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {}); } // never cache errors
         return res;
       }).catch(() => hit)
     )

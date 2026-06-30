@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.2'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1353,7 +1353,19 @@ function openTextView() {
   scroll.addEventListener('scroll', markerFromScroll, { passive: true });
   inner.addEventListener('click', (e) => { const s = e.target.closest('.tv-w'); if (s) { haptic(6); setMarker(+s.dataset.w, true); } });
 
-  function closeTextView() { D.textview.classList.add('hidden'); }
+  // Span geometry changes when a non-preloaded reading font swaps in, or on
+  // rotation/resize — recompute offsets and re-pin the marker so scroll tracking
+  // and tap-to-jump stay accurate. (Listeners are cleaned up on close.)
+  const recache = () => { if (!D.textview.classList.contains('hidden')) { cacheOffsets(); setMarker(marker, true); } };
+  window.addEventListener('resize', recache);
+  window.addEventListener('orientationchange', recache);
+  if (document.fonts?.ready) document.fonts.ready.then(recache);
+
+  function closeTextView() {
+    window.removeEventListener('resize', recache);
+    window.removeEventListener('orientationchange', recache);
+    D.textview.classList.add('hidden');
+  }
   function doResume() { closeTextView(); if (R) { seek(wordToFlash(marker)); play(); } }
   D.textview._resume = doResume; // for keyboard/back
 

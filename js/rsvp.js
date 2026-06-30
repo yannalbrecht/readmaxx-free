@@ -52,8 +52,11 @@ export function orpParts(text) {
 function buildChapter(ch, ci, chunk, flashes) {
   const start = flashes.length;
   let words = 0;
+  // Old docs (only .text, no .blocks) must tokenize EXACTLY like the Text View's
+  // chapterBlocks (mdToBlocks markdown:false) — otherwise flash word-index and span
+  // word-index diverge and tap/resume/seek land on the wrong word.
   const blocks = ch.blocks?.length ? ch.blocks
-    : (ch.text || '').split(/\n{2,}/).map(t => ({ type: 'p', text: t }));
+    : mdToBlocks(ch.text || '', { markdown: false });
   for (const b of blocks) {
     const ws = b.text.split(RE_WS).filter(Boolean);
     if (!ws.length) continue;
