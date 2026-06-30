@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.6.2'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.7.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -470,6 +470,9 @@ async function renderHome() {
   v.append(el('button', { class:'import-btn', onclick:() => { haptic(6); importSheet(); } },
     el('span', { class:'ic', html: ICON.plus }), el('span', { class:'grow' }, 'Import something to read'),
     el('span', { class:'chev', html: ICON.next })));
+  // one-tap "read a link I copied" — the realistic way to get a Safari link in here
+  v.append(el('button', { class:'paste-link-row', onclick:() => { haptic(6); pasteLinkImport(); } },
+    el('span', { class:'ic', html: ICON.link }), el('span', {}, 'Read a link you copied')));
 
   const docs = await allDocs();
 
@@ -548,11 +551,12 @@ function importSheet() {
   const opt = (icon, t, s, fn) => el('button', { class:'imp-opt', onclick:() => { haptic(6); closeSheet(); fn(); } },
     el('span', { class:'imp-ic', html: icon }), el('div', { class:'grow' }, el('div', { class:'imp-t' }, t), el('div', { class:'imp-s' }, s)),
     el('span', { class:'imp-go', html: ICON.next }));
+  body.append(opt(ICON.link, 'Read a copied link', 'Copy in Safari, then tap here', pasteLinkImport));
   body.append(opt(ICON.paste, 'Paste text', 'Articles, emails, notes', pasteSheet));
-  body.append(opt(ICON.link, 'Web link', 'Fetch a clean article', urlSheet));
+  body.append(opt(ICON.search, 'Type a web link', 'Enter or paste a URL', urlSheet));
   body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub · .pdf', () => D.fileInput.click()));
   body.append(opt(ICON.vault, 'Import folder / vault', 'Whole vault, subfolders included', vaultSheet));
-  body.append(opt(ICON.share, 'Share from Safari', 'One-tap sharing on iPhone', openShareGuide));
+  body.append(opt(ICON.share, 'Safari share shortcut', 'Optional — opens in Safari', openShareGuide));
   sheet({ title:'Import', sub:'Everything stays on your device.', body });
 }
 
@@ -562,19 +566,14 @@ function importSheet() {
 const SHARE_PREFIX = 'https://readmaxx-free.vercel.app/?add=';
 const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const shortcutFileURL = () => new URL('assets/readmaxx.shortcut', document.baseURI).href;
-function openShortcutFile() {
-  // Hand the file to the Shortcuts app via its URL scheme (a plain link just
-  // renders the file as text in Safari). iOS 15+ still needs "Allow Untrusted
-  // Shortcuts" on and may refuse unsigned imports — the manual path is the
-  // reliable fallback.
-  location.href = 'shortcuts://import-shortcut?url=' + encodeURIComponent(shortcutFileURL()) +
-    '&name=' + encodeURIComponent('Read in ReadMaxx');
-}
+// Apple-signed iCloud shortcut → genuine one-tap install, no "untrusted
+// shortcuts" toggle needed (unsigned web-hosted shortcuts can't import on iOS 15+).
+const SHORTCUT_ICLOUD = 'https://www.icloud.com/shortcuts/a57f08820b204a2e8703ced347c62c50';
+function openShortcutFile() { location.href = SHORTCUT_ICLOUD; }
 async function copyText(t, msg) { try { await navigator.clipboard.writeText(t); toast(msg || 'Copied'); } catch { toast('Long-press the link to copy', { err:true }); } }
 
-let guideMode = 'manual', guideStep = 0; // manual build is the reliable default
-function openShareGuide() { guideMode = 'manual'; guideStep = 0; D.guide.classList.remove('hidden'); renderGuide(); }
+let guideMode = 'download', guideStep = 0; // signed iCloud install is the reliable default now
+function openShareGuide() { guideMode = 'download'; guideStep = 0; D.guide.classList.remove('hidden'); renderGuide(); }
 function closeGuide() { D.guide.classList.add('hidden'); }
 function setGuideMode(m) { guideMode = m; guideStep = 0; haptic(6); renderGuide(); }
 
@@ -590,12 +589,13 @@ const MOCK = {
 };
 
 const DL_STEPS = [
-  { eyebrow:'Quick try', title:'Import the ready-made shortcut', desc:'Tap to hand it to the Shortcuts app. Heads up: Apple blocks unsigned shortcuts from the web, so this may not work on your iOS — the build-it-yourself path always does.', mock:MOCK.addShortcut,
-    action:{ label:'Try importing it', act: openShortcutFile },
-    note:'First turn ON Settings → Shortcuts → Advanced → “Allow Untrusted Shortcuts”. If it still won’t import, switch to “build it yourself” below — that always works.' },
-  { eyebrow:'Step 2', title:'Tap “Add Shortcut”', desc:'If it imported, Shortcuts shows a preview. Scroll down and tap the green Add Shortcut button.', mock:MOCK.addShortcut },
-  { eyebrow:'Don’t skip this', title:'Turn on “Show in Share Sheet”', desc:'Open the shortcut’s ⓘ details and make sure “Show in Share Sheet” is ON (type: URLs). This is the step people miss — it’s what makes ReadMaxx appear in Safari’s Share menu.', mock:MOCK.shareToggle },
-  { eyebrow:'You’re set', title:'Use it from any page', desc:'In Safari, open an article → tap Share → choose “Read in ReadMaxx”. It opens here and starts reading.', mock:MOCK.safariShare },
+  { eyebrow:'One tap', title:'Add the ReadMaxx shortcut', desc:'Tap below — it opens in the Shortcuts app, signed by Apple. No extra settings, no “untrusted shortcuts”.', mock:MOCK.addShortcut,
+    action:{ label:'Add the shortcut', act: openShortcutFile },
+    note:'It opens iCloud briefly, then the Shortcuts app. If a web page opens instead, tap “Get Shortcut” / “Open in Shortcuts”.' },
+  { eyebrow:'Step 2', title:'Tap “Add Shortcut”', desc:'Shortcuts shows a preview of “Read in ReadMaxx”. Scroll down and tap the blue Add Shortcut button.', mock:MOCK.addShortcut },
+  { eyebrow:'Quick check', title:'“Show in Share Sheet” is on', desc:'It’s usually on already. To be sure: open the shortcut’s ⓘ details and confirm “Show in Share Sheet” is ON (type: URLs) — that’s what puts ReadMaxx in Safari’s Share menu.', mock:MOCK.shareToggle },
+  { eyebrow:'You’re set', title:'Use it from any page', desc:'In Safari, open an article → tap Share → choose “Read in ReadMaxx”. It opens in ReadMaxx and starts reading right away.', mock:MOCK.safariShare,
+    note:'On iPhone, a shared article opens and reads in Safari. Apple keeps Safari and your home-screen app separate, so it won’t also appear in the home-screen library — paste the link in Import if you want to save it there.' },
 ];
 const MANUAL_STEPS = [
   { eyebrow:'Always works · 1', title:'New shortcut', desc:'Open the Shortcuts app and tap + (top-right) to create a new shortcut. Takes about a minute.', mock:MOCK.newShortcut },
@@ -906,6 +906,20 @@ async function quickImportText(text) {
   const title = (t.split('\n').find(Boolean) || 'Shared text').slice(0, 48);
   const doc = await saveDoc(makeDoc({ title, type:'text', text: t }));
   openDoc(doc.id);
+}
+
+// One-tap "read what I copied": the realistic iOS share flow — copy a link in
+// Safari, open this app, tap once. Reads the clipboard (needs a tap = the gesture)
+// and imports a URL or text into THIS (home-screen) library.
+async function pasteLinkImport() {
+  let clip = '';
+  try { clip = (await navigator.clipboard.readText() || '').trim(); }
+  catch { toast('Allow paste to read your link', { err:true }); return urlSheet(); }
+  if (!clip) return toast('Copy a link first, then tap this', { err:true });
+  const url = clip.match(/https?:\/\/[^\s]+/);
+  if (url) return importFromUrl(url[0]);
+  if (clip.length > 50) return quickImportText(clip);
+  toast('No link found on the clipboard', { err:true });
 }
 function handleLaunchParams() {
   try {

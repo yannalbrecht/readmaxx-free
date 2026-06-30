@@ -222,6 +222,10 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 .import-btn .grow{text-align:left}
 .import-btn .chev{color:var(--faint);width:18px;height:18px;flex:none}
 .import-btn:active{transform:scale(.99)}
+.paste-link-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:-8px 0 18px;
+  padding:9px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:600}
+.paste-link-row .ic{width:16px;height:16px;color:var(--accent)}
+.paste-link-row:active{background:var(--surface-2)}
 
 .cont-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
 .cont-row::-webkit-scrollbar{display:none}
