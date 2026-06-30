@@ -8,7 +8,7 @@ import {
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
 } from './store.js';
 import {
-  buildFlashes, buildFlashesAsync, flashDelay, orpParts, toChapters, countWords, stripMarkdown,
+  buildFlashes, buildFlashesAsync, flashDelay, orpParts, mdToBlocks, blocksToOutline, countWords,
 } from './rsvp.js';
 import {
   el, clear, buzz, toast, achievementToast, sheet, closeSheet, ICON, fmt, fmtTime,
@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.7.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.8.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -661,9 +661,17 @@ async function saveDoc(doc) {
   return doc;
 }
 
-function makeDoc({ title, type, text, author, markdown }) {
-  const chapters = toChapters(text, { markdown: markdown || type === 'md' });
-  return { title: title || 'Untitled', type, author, chapters, words: countWords(text) };
+// Unified doc builder: from raw text (→ mdToBlocks) or pre-parsed blocks (EPUB/HTML).
+// Stores typed `blocks` + heading `toc` and derives the `{title,text}` chapters the
+// RSVP reader already consumes — so the reader is unchanged.
+function makeDoc({ title, type, text, author, markdown, blocks }) {
+  // Recognise markdown when asked, when it's an .md file, or when the text plainly
+  // contains heading syntax — so pasted/.txt content also formats by H1/H2/H3.
+  const isMd = markdown || type === 'md' || (!blocks && /^#{1,6}\s+\S/m.test(text || ''));
+  const bl = blocks || mdToBlocks(text, { markdown: isMd });
+  const { chapters, toc } = blocksToOutline(bl, { title });
+  return { title: title || 'Untitled', type, author, blocks: bl, chapters, toc,
+    words: chapters.reduce((s, c) => s + (c.words || 0), 0) };
 }
 
 function pasteSheet() {
@@ -673,7 +681,7 @@ function pasteSheet() {
   const go = el('button', { class:'btn', onclick: async () => {
     const t = ta.value.trim(); if (!t) return toast('Nothing to read', { err:true });
     closeSheet();
-    const firstLine = t.split('\n').find(Boolean) || 'Pasted text';
+    const firstLine = (t.split('\n').find(Boolean) || 'Pasted text').replace(/^#{1,6}\s*/, '');
     const doc = await saveDoc(makeDoc({ title: firstLine.slice(0, 48), type:'text', text:t }));
     openDoc(doc.id);
   } }, 'Read now');
@@ -733,17 +741,28 @@ async function fetchArticle(url) {
   return htmlToText(html);
 }
 
+// The ONE DOM→blocks walker (used by HTML article import and EPUB).
+function domToBlocks(root) {
+  const blocks = [];
+  root.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,blockquote').forEach(n => {
+    const t = n.textContent.replace(/\s+/g, ' ').trim();
+    if (!t) return;
+    const tag = n.tagName.toLowerCase();
+    const type = /^h[1-6]$/.test(tag) ? 'h' + Math.min(3, +tag[1]) : tag === 'blockquote' ? 'quote' : tag;
+    blocks.push({ type, text: t });
+  });
+  return blocks;
+}
+function blocksToMarkdown(blocks) {
+  const pre = { h1:'# ', h2:'## ', h3:'### ', li:'- ', quote:'> ', p:'' };
+  return blocks.map(b => (pre[b.type] || '') + b.text).join('\n\n');
+}
 function htmlToText(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   doc.querySelectorAll('script,style,nav,footer,header,aside,noscript,svg').forEach(n => n.remove());
   const main = doc.querySelector('article, main') || doc.body;
-  let out = '';
-  main.querySelectorAll('h1,h2,h3,p,li,blockquote').forEach(n => {
-    const t = n.textContent.replace(/\s+/g, ' ').trim();
-    if (!t) return;
-    out += (/^H[123]$/.test(n.tagName) ? '\n\n# ' + t : t) + '\n\n';
-  });
-  return out.trim() || main.textContent.replace(/\s+/g, ' ').trim();
+  const blocks = domToBlocks(main);
+  return blocks.length ? blocksToMarkdown(blocks) : main.textContent.replace(/\s+/g, ' ').trim();
 }
 
 async function onFilePicked(e) {
@@ -786,7 +805,7 @@ async function parsePdf(file) {
   if (text.length < 40) throw new Error('No selectable text — is this a scanned PDF?');
   let title = file.name.replace(/\.pdf$/i, '');
   try { const m = await pdf.getMetadata(); if (m?.info?.Title) title = m.info.Title; } catch {}
-  return { title: title.slice(0, 80), type: 'pdf', chapters: toChapters(text), words: countWords(text) };
+  return makeDoc({ title: title.slice(0, 80), type: 'pdf', text });
 }
 
 /* ---- shared-link / launch-param import (?add=URL or ?text=...) ---- */
@@ -854,8 +873,9 @@ function makeVaultNote(file, text) {
   const segs = rel.split('/');
   const folder = segs.length > 2 ? segs.slice(1, -1).join('/') : '';
   const title = (text.match(/^#\s+(.+)/m)?.[1] || file.name.replace(/\.[^.]+$/, '')).slice(0, 80);
-  return { path: rel, folder, title, type: md ? 'md' : 'text',
-    chapters: toChapters(text, { markdown: md }), words: countWords(text), idx: 0, progress: 0 };
+  const d = makeDoc({ title, type: md ? 'md' : 'text', text, markdown: md });
+  return { path: rel, folder, title, type: d.type, blocks: d.blocks, chapters: d.chapters,
+    toc: d.toc, words: d.words, idx: 0, progress: 0 };
 }
 
 async function buildVaultFromFiles(files, fallbackName) {
@@ -994,25 +1014,23 @@ async function parseEpub(file) {
   const manifest = {};
   opf.querySelectorAll('manifest > item').forEach(it => manifest[it.getAttribute('id')] = it.getAttribute('href'));
   const spine = [...opf.querySelectorAll('spine > itemref')].map(r => manifest[r.getAttribute('idref')]).filter(Boolean);
-  const chapters = [];
-  for (const href of spine) {
-    const entry = zip.file(base + decodeURIComponent(href));
+  const allBlocks = [];
+  for (let si = 0; si < spine.length; si++) {
+    const entry = zip.file(base + decodeURIComponent(spine[si]));
     if (!entry) continue;
-    const html = await entry.async('string');
-    const dd = parser.parseFromString(html, 'text/html');
+    const dd = parser.parseFromString(await entry.async('string'), 'text/html');
     dd.querySelectorAll('script,style,svg').forEach(n => n.remove());
-    const chTitle = dd.querySelector('h1,h2,title')?.textContent?.trim() || '';
-    let text = '';
-    dd.body?.querySelectorAll('h1,h2,h3,p,li,blockquote').forEach(n => {
-      const t = n.textContent.replace(/\s+/g, ' ').trim();
-      if (t) text += t + '\n\n';
-    });
-    if (!text.trim()) text = (dd.body?.textContent || '').replace(/\s+/g, ' ').trim();
-    if (text.trim()) chapters.push({ title: chTitle, text: text.trim() });
+    const blocks = domToBlocks(dd.body || dd);
+    if (!blocks.length) continue;
+    // make each spine file a chapter: ensure it starts at the top heading level.
+    if (!blocks.some(b => b.type === 'h1')) {
+      if (/^h[23]$/.test(blocks[0].type)) blocks[0] = { type: 'h1', text: blocks[0].text };
+      else blocks.unshift({ type: 'h1', text: (dd.querySelector('title')?.textContent || '').replace(/\s+/g, ' ').trim() || `Section ${si + 1}` });
+    }
+    allBlocks.push(...blocks);
   }
-  if (!chapters.length) throw new Error('No readable text in EPUB');
-  const words = chapters.reduce((a, c) => a + countWords(c.text), 0);
-  return { title, type:'epub', author, chapters, words };
+  if (!allBlocks.length) throw new Error('No readable text in EPUB');
+  return makeDoc({ title, type: 'epub', author, blocks: allBlocks });
 }
 
 /* ============================================================

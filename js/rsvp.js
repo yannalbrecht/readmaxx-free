@@ -99,73 +99,93 @@ export function flashDelay(flash, wpm) {
   return Math.round(base * flash.n * flash.mul);
 }
 
-/* ---------- text → chapters ---------- */
+/* ---------- text → typed blocks → chapters ----------
+   One parser for every source: mdToBlocks (text/markdown) and domToBlocks
+   (HTML/EPUB, in app.js) both emit { type:'h1'|'h2'|'h3'|'p'|'li'|'quote', text }.
+   blocksToOutline segments those into the { title, text } chapters the reader
+   already consumes, and also returns a heading toc. */
 
-/* Strip markdown syntax to clean readable prose (keeps the words, drops the noise). */
-export function stripMarkdown(md) {
-  return md
-    .replace(/```[\s\S]*?```/g, ' ')                 // code fences
-    .replace(/`([^`]+)`/g, '$1')                       // inline code
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')             // images
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')           // links -> text
-    .replace(/^>\s?/gm, '')                            // blockquotes
-    .replace(/^\s*[-*+]\s+/gm, '')                     // bullets
-    .replace(/^\s*\d+\.\s+/gm, '')                     // numbered lists
-    .replace(/[*_~]{1,3}([^*_~]+)[*_~]{1,3}/g, '$1')   // bold/italic/strike
-    .replace(/^#{1,6}\s*/gm, '')                       // (headings handled separately)
-    .replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g, (_, a, b) => (b ? b.slice(1) : a)) // obsidian wikilinks
-    .replace(/^\s*[-=]{3,}\s*$/gm, '')                 // hr / frontmatter rules
-    .replace(/\r/g, '')
+// Strip inline markdown/markup noise from one run of text.
+function inlineClean(s) {
+  return (s || '')
+    .replace(/`([^`]+)`/g, '$1')                                                 // inline code
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')                                        // images
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')                                      // links → text
+    .replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g, (_, a, b) => (b ? b.slice(1) : a))  // wikilinks
+    .replace(/[*_~]{1,3}([^*_~\n]+)[*_~]{1,3}/g, '$1')                            // bold/italic/strike
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
-/* Split into chapters using markdown headings (# / ##). Falls back to length-based. */
-export function toChapters(rawText, { markdown = false } = {}) {
-  let text = rawText.replace(/\r/g, '');
-
-  // strip YAML frontmatter
-  text = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-
-  if (markdown) {
-    const lines = text.split('\n');
-    const chapters = [];
-    let cur = { title: '', buf: [] };
-    const push = () => {
-      const body = stripMarkdown(cur.buf.join('\n')).trim();
-      if (body || cur.title) chapters.push({ title: cur.title || 'Intro', text: body });
-    };
-    for (const line of lines) {
-      const m = line.match(/^(#{1,3})\s+(.*)/);
-      if (m) {
-        if (cur.buf.length || cur.title) push();
-        cur = { title: m[2].replace(/[*_`#]/g,'').trim(), buf: [] };
-      } else {
-        cur.buf.push(line);
-      }
+// Markdown / plain text → ordered typed blocks. markdown:false ⇒ paragraphs only.
+export function mdToBlocks(raw, { markdown = false } = {}) {
+  let text = (raw || '').replace(/\r/g, '').replace(/^---\n[\s\S]*?\n---\n/, ''); // drop YAML frontmatter
+  text = text.replace(/```[\s\S]*?```/g, '\n\n');                                 // drop code fences
+  const blocks = [];
+  let para = [];
+  const flush = () => { const t = inlineClean(para.join(' ')); if (t) blocks.push({ type: 'p', text: t }); para = []; };
+  for (const line of text.split('\n')) {
+    if (markdown) {
+      const h = line.match(/^(#{1,6})\s+(.+)/);
+      if (h) { flush(); blocks.push({ type: 'h' + Math.min(3, h[1].length), text: inlineClean(h[2]) }); continue; }
+      const li = line.match(/^\s*(?:[-*+]|\d+[.)])\s+(.+)/);
+      if (li) { flush(); const t = inlineClean(li[1]); if (t) blocks.push({ type: 'li', text: t }); continue; }
+      const q = line.match(/^\s*>\s?(.*)/);
+      if (q) { flush(); const t = inlineClean(q[1]); if (t) blocks.push({ type: 'quote', text: t }); continue; }
+      if (/^\s*[-=*_]{3,}\s*$/.test(line)) { flush(); continue; }                 // horizontal rule
     }
-    push();
-    const cleaned = chapters.filter(c => c.text.length);
-    if (cleaned.length) return cleaned;
+    if (/^\s*$/.test(line)) { flush(); continue; }
+    para.push(line);
   }
-
-  return splitByLength(stripMarkdown(text) || text);
+  flush();
+  return blocks.filter(b => b.text);
 }
 
-/* For plain text with no structure, chunk into ~ chapter-sized pieces at sentence breaks. */
-export function splitByLength(text, target = 1400) {
-  const words = text.split(RE_WS).filter(Boolean);
-  if (words.length <= target * 1.4) return [{ title: '', text }];
-  const chapters = [];
-  let buf = [], n = 0;
-  for (const w of words) {
-    buf.push(w); n++;
-    if (n >= target && /[.!?]["')]?$/.test(w)) {
-      chapters.push({ title: `Part ${chapters.length + 1}`, text: buf.join(' ') });
-      buf = []; n = 0;
+const isHeading = (b) => /^h[1-3]$/.test(b.type);
+
+// Segment blocks into chapters by heading outline (top heading level = chapter
+// break). No headings → split long docs into ~target-word parts.
+export function blocksToOutline(blocks, { title = '', target = 1400 } = {}) {
+  const heads = blocks.filter(isHeading);
+  const toc = [];
+  let chapters = [];
+
+  if (heads.length) {
+    const topLvl = Math.min(...heads.map(b => +b.type[1]));
+    let cur = null;
+    for (const b of blocks) {
+      if (isHeading(b)) toc.push({ level: +b.type[1], title: b.text });
+      if (isHeading(b) && +b.type[1] === topLvl) {
+        if (cur) chapters.push(cur);
+        cur = { title: b.text, blocks: [b] };
+      } else {
+        if (!cur) cur = { title: title || '', blocks: [] };
+        cur.blocks.push(b);
+      }
     }
+    if (cur) chapters.push(cur);
+  } else {
+    const parts = splitBlocksByLength(blocks, target);
+    chapters = parts.map((bl, i) => ({ title: parts.length > 1 ? `Part ${i + 1}` : '', blocks: bl }));
   }
-  if (buf.length) chapters.push({ title: `Part ${chapters.length + 1}`, text: buf.join(' ') });
-  return chapters;
+
+  for (const c of chapters) {
+    c.text = c.blocks.map(b => b.text).join('\n\n');
+    c.words = countWords(c.text);
+  }
+  return { chapters: chapters.filter(c => c.words || c.title), toc };
+}
+
+function splitBlocksByLength(blocks, target) {
+  const total = blocks.reduce((s, b) => s + countWords(b.text), 0);
+  if (total <= target * 1.4) return [blocks];
+  const parts = []; let buf = [], n = 0;
+  for (const b of blocks) {
+    buf.push(b); n += countWords(b.text);
+    if (n >= target) { parts.push(buf); buf = []; n = 0; }
+  }
+  if (buf.length) parts.push(buf);
+  return parts;
 }
 
 export function countWords(text) {
