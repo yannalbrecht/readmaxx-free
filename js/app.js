@@ -18,13 +18,13 @@ const $ = (s, r = document) => r.querySelector(s);
 const D = {
   splash: $('#splash'), onboarding: $('#onboarding'), app: $('#app'),
   home: $('#view-home'), stats: $('#view-stats'), profile: $('#view-profile'),
-  tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'),
+  tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'), guide: $('#guide'),
   fileInput: $('#file-input'), mdInput: $('#md-multi-input'), dirInput: $('#dir-input'),
 };
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.5.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.6.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -205,7 +205,8 @@ const SPEEDS = [
 
 let ob = { step: 0, goals: [], base: 250 };
 let obTimer = null;
-const OB_STEPS = ['welcome', 'demo', 'goals', 'speed', 'plan', 'finish'];
+// 'share' (Safari sharing setup) is inserted only on iPhone/iPad.
+const obStepNames = () => ['welcome', 'demo', 'goals', 'speed', 'plan', ...(isIOS() ? ['share'] : []), 'finish'];
 
 function startOnboarding() {
   D.app.classList.add('hidden');
@@ -220,14 +221,15 @@ function renderOb() {
   clearTimeout(obTimer); obTimer = null;
   const o = D.onboarding;
   clear(o);
-  const pct = (ob.step / (OB_STEPS.length - 1)) * 100;
+  const STEPS = obStepNames();
+  const pct = (ob.step / (STEPS.length - 1)) * 100;
   const top = el('div', { class:'ob-top' });
   if (ob.step > 0) top.append(el('button', { class:'ob-back', onclick:() => { ob.step--; renderOb(); } }, '‹'));
   const bar = el('div', { class:'ob-bar' }); bar.append(el('i', { style:`width:${pct}%` }));
   top.append(bar);
   top.append(el('button', { class:'ob-skip' + (ob.step < 3 ? '' : ' is-hidden'), onclick: finishOnboarding }, 'Skip'));
 
-  const { content, cta } = ({ welcome:obWelcome, demo:obDemo, goals:obGoals, speed:obSpeed, plan:obPlan, finish:obFinish })[OB_STEPS[ob.step]]();
+  const { content, cta } = ({ welcome:obWelcome, demo:obDemo, goals:obGoals, speed:obSpeed, plan:obPlan, share:obShare, finish:obFinish })[STEPS[ob.step]]();
   const body = el('div', { class:'ob-body' });
   const stage = el('div', { class:'ob-stage' });
   for (const c of content.flat()) if (c != null) stage.append(c);
@@ -354,6 +356,21 @@ function obPlan() {
     state.settings.wpm = Math.min(goal, Math.max(ob.base, 300));
     haptic(10); obNext();
   } } };
+}
+
+function obShare() {
+  const card = el('button', { class:'ob-share-card', onclick:() => { haptic(8); openShareGuide(); } },
+    el('div', { class:'ic', html: ICON.share }),
+    el('div', { class:'grow' }, el('div', { class:'t' }, 'Set up sharing'),
+      el('div', { class:'s' }, 'Walk through it now — takes a minute')),
+    el('div', { class:'chev', html: ICON.next }));
+  return { content: [
+    el('div', { class:'ob-eyebrow' }, 'iPhone tip'),
+    el('h1', { class:'ob-title' }, 'Read links straight from Safari'),
+    el('div', { class:'ob-sub' }, 'Add a one-time shortcut so any article you’re on opens here with a tap of Safari’s Share button.'),
+    el('div', { class:'mt16' }, card),
+    el('div', { class:'ob-sub mt16', style:'font-size:13px' }, 'You can always set this up later in Import → Share from Safari.'),
+  ], cta: { label:'Continue', onClick:() => { haptic(8); obNext(); } } };
 }
 
 function obFinish() {
@@ -535,30 +552,87 @@ function importSheet() {
   body.append(opt(ICON.link, 'Web link', 'Fetch a clean article', urlSheet));
   body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub · .pdf', () => D.fileInput.click()));
   body.append(opt(ICON.vault, 'Import folder / vault', 'Whole vault, subfolders included', vaultSheet));
-  body.append(opt(ICON.share, 'Share from Safari', 'One-tap sharing on iPhone', safariShareInfo));
+  body.append(opt(ICON.share, 'Share from Safari', 'One-tap sharing on iPhone', openShareGuide));
   sheet({ title:'Import', sub:'Everything stays on your device.', body });
 }
 
-function safariShareInfo() {
-  const link = 'https://readmaxx-free.vercel.app/?add=';
-  const body = el('div', {});
-  body.append(el('div', { class:'ob-sub', style:'max-width:none;margin-bottom:14px' },
-    'iPhone can’t share a link straight into a web app, but a one-time Shortcut fixes that. In the Shortcuts app:'));
-  const steps = el('div', { class:'share-steps' });
-  [['1', 'New Shortcut → add “Receive URLs from Share Sheet”.'],
-   ['2', 'Add “Open URLs”, set it to the link below with the Shortcut Input on the end.'],
-   ['3', 'Name it “Read in ReadMaxx” and turn on “Show in Share Sheet”.'],
-   ['4', 'Now in Safari: Share → Read in ReadMaxx.']].forEach(([n, t]) =>
-    steps.append(el('div', { class:'share-step' }, el('span', { class:'sn' }, n), el('span', {}, t))));
-  body.append(steps);
-  const code = el('div', { class:'share-code' }, `${link}[Shortcut Input]`);
-  body.append(code);
-  body.append(el('button', { class:'btn mt16', onclick: async () => {
-    try { await navigator.clipboard.writeText(link); toast('Link copied'); } catch { toast('Copy the link above'); }
-  } }, 'Copy the link'));
-  body.append(el('div', { class:'ob-sub center mt16', style:'font-size:12px;margin-left:auto;margin-right:auto' },
-    'On Android, sharing to ReadMaxx works from the system share sheet automatically.'));
-  sheet({ title:'Share from Safari', body });
+/* ============================================================
+   Share-from-Safari — interactive setup guide
+   ============================================================ */
+const SHARE_PREFIX = 'https://readmaxx-free.vercel.app/?add=';
+const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const shortcutFileURL = () => new URL('assets/readmaxx.shortcut', document.baseURI).href;
+function openShortcutFile() { const a = document.createElement('a'); a.href = shortcutFileURL(); a.rel = 'noopener'; a.click(); }
+async function copyText(t, msg) { try { await navigator.clipboard.writeText(t); toast(msg || 'Copied'); } catch { toast('Long-press the link to copy', { err:true }); } }
+
+let guideMode = 'download', guideStep = 0;
+function openShareGuide() { guideMode = 'download'; guideStep = 0; D.guide.classList.remove('hidden'); renderGuide(); }
+function closeGuide() { D.guide.classList.add('hidden'); }
+function setGuideMode(m) { guideMode = m; guideStep = 0; haptic(6); renderGuide(); }
+
+// iOS-style mock visuals; `.hl` marks the exact thing to tap.
+const MOCK = {
+  addShortcut: `<div class="ios-card"><div class="ios-card-row"><span class="ios-glyph">⚡️</span><span>Read in ReadMaxx</span></div><div class="ios-add hl">Add Shortcut</div></div>`,
+  shareToggle: `<div class="ios-list"><div class="ios-row"><span>Show in Share Sheet</span><span class="ios-toggle on hl"></span></div><div class="ios-row"><span>Share Sheet Types</span><span class="ios-val">URLs ›</span></div></div>`,
+  safariShare: `<div class="ios-sheet"><div class="ios-grab"></div><div class="ios-row hl"><span class="ios-glyph">⚡️</span><span>Read in ReadMaxx</span><span class="ios-chev">›</span></div><div class="ios-row dim"><span>Add to Reading List</span></div><div class="ios-row dim"><span>Copy</span></div></div>`,
+  newShortcut: `<div class="ios-nav"><span>Shortcuts</span><span class="ios-plus hl">+</span></div>`,
+  openUrls: `<div class="ios-find">🔍 Open URLs</div><div class="ios-list"><div class="ios-row hl"><span class="ios-glyph">🔗</span><span>Open URLs</span></div><div class="ios-row dim"><span>Open App</span></div></div>`,
+  urlField: `<div class="ios-action"><div class="ios-action-t">Open URLs</div><div class="ios-url">${SHARE_PREFIX}<span class="ios-chip hl">Shortcut Input</span></div></div>`,
+  named: `<div class="ios-action"><div class="ios-url" style="color:var(--text)">Read in ReadMaxx</div></div>`,
+};
+
+const DL_STEPS = [
+  { eyebrow:'Fastest way', title:'Add the ReadMaxx shortcut', desc:'Tap below — it opens in the Shortcuts app.', mock:MOCK.addShortcut,
+    action:{ label:'Get the shortcut', act: openShortcutFile },
+    note:'If Shortcuts won’t open it, turn on Settings → Shortcuts → Advanced → “Allow Untrusted Shortcuts”, then tap again — or use “build it yourself” below.' },
+  { eyebrow:'Step 2', title:'Tap “Add Shortcut”', desc:'Shortcuts shows a preview. Scroll down and tap the green Add Shortcut button.', mock:MOCK.addShortcut },
+  { eyebrow:'Don’t skip this', title:'Turn on “Show in Share Sheet”', desc:'Open the shortcut’s ⓘ details and make sure “Show in Share Sheet” is ON (type: URLs). This is the step people miss — it’s what makes ReadMaxx appear in Safari’s Share menu.', mock:MOCK.shareToggle },
+  { eyebrow:'You’re set', title:'Use it from any page', desc:'In Safari, open an article → tap Share → choose “Read in ReadMaxx”. It opens here and starts reading.', mock:MOCK.safariShare },
+];
+const MANUAL_STEPS = [
+  { eyebrow:'Build it · 1', title:'New shortcut', desc:'Open the Shortcuts app and tap + (top-right) to create a new shortcut.', mock:MOCK.newShortcut },
+  { eyebrow:'Step 2', title:'Add “Open URLs”', desc:'Tap “Add Action”, search for “Open URLs”, and tap it.', mock:MOCK.openUrls },
+  { eyebrow:'Step 3', title:'Build the link', desc:'Tap the URL field, paste the link below, then tap the blue “Shortcut Input” chip above the keyboard so it’s added on the end.', mock:MOCK.urlField,
+    action:{ label:'Copy the link', act:() => copyText(SHARE_PREFIX, 'Link copied') } },
+  { eyebrow:'Don’t skip this', title:'Show in Share Sheet', desc:'Tap the shortcut’s ⓘ details → turn ON “Show in Share Sheet” → set Share Sheet Types to URLs.', mock:MOCK.shareToggle },
+  { eyebrow:'Step 5', title:'Name it', desc:'Name the shortcut “Read in ReadMaxx”, then tap Done.', mock:MOCK.named },
+  { eyebrow:'You’re set', title:'Use it from any page', desc:'In Safari, open an article → Share → “Read in ReadMaxx”.', mock:MOCK.safariShare },
+];
+
+function renderGuide() {
+  const steps = guideMode === 'manual' ? MANUAL_STEPS : DL_STEPS;
+  const s = steps[guideStep];
+  const last = guideStep === steps.length - 1;
+  const g = D.guide; clear(g);
+
+  const top = el('div', { class:'g-top' });
+  top.append(el('button', { class:'icon-btn', html: guideStep > 0 ? ICON.back : ICON.x,
+    onclick:() => { if (guideStep > 0) { guideStep--; renderGuide(); } else closeGuide(); } }));
+  top.append(el('div', { class:'g-title' }, 'Share from Safari'));
+  top.append(el('button', { class:'icon-btn', html: ICON.x, 'aria-label':'Close', onclick: closeGuide }));
+  g.append(top);
+
+  const dots = el('div', { class:'g-dots' });
+  steps.forEach((_, i) => dots.append(el('span', { class:'g-dot' + (i === guideStep ? ' on' : '') })));
+  g.append(dots);
+
+  const body = el('div', { class:'g-body' });
+  body.append(el('div', { class:'g-eyebrow' }, s.eyebrow));
+  body.append(el('h2', { class:'g-h' }, s.title));
+  const mock = el('div', { class:'g-mock' }); mock.innerHTML = s.mock; body.append(mock);
+  body.append(el('div', { class:'g-desc' }, s.desc));
+  if (s.note) body.append(el('div', { class:'g-note' }, s.note));
+  g.append(body);
+
+  const foot = el('div', { class:'g-foot' });
+  if (s.action) foot.append(el('button', { class:'btn', onclick: s.action.act }, s.action.label));
+  foot.append(el('button', { class: s.action ? 'btn ghost' : 'btn',
+    onclick:() => { if (last) closeGuide(); else { guideStep++; haptic(6); renderGuide(); } } }, last ? 'Done' : 'Next'));
+  if (guideStep === 0) foot.append(el('button', { class:'g-switch',
+    onclick:() => setGuideMode(guideMode === 'download' ? 'manual' : 'download') },
+    guideMode === 'download' ? 'Or build it yourself →' : '← Use the ready-made shortcut'));
+  g.append(foot);
 }
 
 function sortSheet() {
