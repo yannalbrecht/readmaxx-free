@@ -84,6 +84,16 @@ export function save() {
     try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {}
   }, 120);
 }
+// Write immediately — the 120ms debounce above can otherwise drop the final
+// XP/streak/goal increment when iOS freezes or kills a backgrounded PWA.
+export function flushSave() {
+  clearTimeout(saveTimer);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {}
+}
+if (typeof addEventListener !== 'undefined') {
+  addEventListener('pagehide', flushSave);
+  addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+}
 
 /* ---------- date helpers ---------- */
 export function dayKey(d = new Date()) {

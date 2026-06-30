@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.2'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.10.3'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -378,6 +378,7 @@ function recommendedDailyGoal(goalWpm) {
 }
 
 function finishOnboarding() {
+  clearTimeout(obTimer); obTimer = null; // Skip during the demo would otherwise leak its self-rescheduling timer
   state.profile.onboarded = true;
   save();
   enterApp();
@@ -721,9 +722,11 @@ function urlSheet() {
 }
 
 async function fetchArticle(url) {
+  // Abort a hung proxy after 15s so the "Fetch article" button can't stick forever.
+  const timed = (ms = 15000) => { const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal; };
   // Primary: r.jina.ai returns clean markdown of the page, CORS-enabled.
   try {
-    const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' } });
+    const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' }, signal: timed() });
     if (r.ok) {
       let t = await r.text();
       if (t && t.length > 80) {
@@ -736,7 +739,7 @@ async function fetchArticle(url) {
     }
   } catch {}
   // Fallback: allorigins raw HTML → strip to text.
-  const r2 = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+  const r2 = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), { signal: timed() });
   const html = await r2.text();
   return htmlToText(html);
 }
@@ -768,6 +771,7 @@ function htmlToText(html) {
 async function onFilePicked(e) {
   const file = e.target.files[0]; e.target.value = '';
   if (!file) return;
+  if (file.size > MAX_IMPORT_BYTES) return toast('That file is too large (max 50 MB)', { err:true });
   const name = file.name.replace(/\.[^.]+$/, '');
   try {
     if (/\.epub$/i.test(file.name)) {
@@ -1056,6 +1060,7 @@ function openVaultNote(vault, i) {
 }
 
 const BIG_DOC = 50000; // words above which we build asynchronously (no UI freeze)
+const MAX_IMPORT_BYTES = 50 * 1024 * 1024; // reject huge files before they OOM the tab
 
 async function openReader(doc, vaultCtx) {
   D.reader.classList.remove('hidden');
@@ -1066,7 +1071,10 @@ async function openReader(doc, vaultCtx) {
     : buildFlashes(doc.chapters, state.settings.chunk);
   R = {
     doc, vaultCtx, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
-    idx: Math.min(doc.idx || 0, built.flashes.length - 1), playing: false, timer: null,
+    // Restore from the saved FRACTION, not the raw flash index: flash count depends on
+    // the current "words per flash", which may have changed since this doc was saved.
+    idx: Math.min(built.flashes.length - 1, Math.round((doc.progress || 0) * built.flashes.length)),
+    playing: false, timer: null,
     sessionWords: 0, sessionStart: 0, wake: null, done: (doc.progress || 0) >= 0.99,
   };
   if (R.idx >= R.total - 1) R.idx = 0; // finished → restart
@@ -1801,8 +1809,9 @@ function accentRow() {
 }
 function fontRow(inGroup) {
   const row = el('button', { class:'set', style:'width:100%;text-align:left', onclick: fontSheet });
+  const f = FONTS[state.settings.font] || FONTS.lexend; // guard unknown font from an imported/old backup
   row.append(el('div', { class:'st' }, 'Reading font'));
-  row.append(el('div', { class:'sv', style:`font-family:${FONTS[state.settings.font].css}` }, FONTS[state.settings.font].name));
+  row.append(el('div', { class:'sv', style:`font-family:${f.css}` }, f.name));
   row.append(el('div', { style:'color:var(--faint);width:18px;height:18px', html: ICON.next }));
   return row;
 }
