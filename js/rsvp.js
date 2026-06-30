@@ -45,36 +45,51 @@ export function orpParts(text) {
    chapters: [{title, text}]
    chunk: words per flash (1-3)
    returns { flashes:[{text,chapter,paraEnd}], chapterRanges:[{title,start,end,words}] , words } */
+// Build one chapter's flashes directly into `flashes` (single pass — no
+// intermediate per-word object array, so peak memory stays low on big books).
+function buildChapter(text, ci, chunk, flashes) {
+  const start = flashes.length;
+  const paras = text.split(/\n{2,}/);
+  const ws = [];
+  const paraEndAt = new Set();
+  for (let pi = 0; pi < paras.length; pi++) {
+    let added = 0;
+    for (const w of paras[pi].trim().split(RE_WS)) if (w) { ws.push(w); added++; }
+    if (added && pi < paras.length - 1) paraEndAt.add(ws.length - 1);
+  }
+  for (let i = 0; i < ws.length; i += chunk) {
+    const end = Math.min(i + chunk, ws.length);
+    let txt = ws[i];
+    for (let k = i + 1; k < end; k++) txt += ' ' + ws[k];
+    const lastIdx = end - 1;
+    const pe = paraEndAt.has(lastIdx);
+    flashes.push({ text: txt, n: end - i, chapter: ci, mul: wordMultiplier(ws[lastIdx]) * (pe ? 1.6 : 1), paraEnd: pe });
+  }
+  return { words: ws.length, start, end: flashes.length };
+}
+
 export function buildFlashes(chapters, chunk = 1) {
-  const flashes = [];
-  const chapterRanges = [];
+  const flashes = [], chapterRanges = [];
   let totalWords = 0;
+  for (let ci = 0; ci < chapters.length; ci++) {
+    const r = buildChapter(chapters[ci].text, ci, chunk, flashes);
+    totalWords += r.words;
+    chapterRanges.push({ title: chapters[ci].title || `Chapter ${ci + 1}`, start: r.start, end: r.end, words: r.words });
+  }
+  return { flashes, chapterRanges, words: totalWords };
+}
 
-  chapters.forEach((ch, ci) => {
-    const start = flashes.length;
-    // keep paragraph info: split on blank lines
-    const paras = ch.text.split(/\n{2,}/);
-    let words = [];
-    paras.forEach((p, pi) => {
-      const ws = p.trim().split(RE_WS).filter(Boolean);
-      ws.forEach((w, wi) => words.push({ w, paraEnd: wi === ws.length - 1 && pi < paras.length - 1 }));
-    });
-    totalWords += words.length;
-    for (let i = 0; i < words.length; i += chunk) {
-      const group = words.slice(i, i + chunk);
-      const text = group.map(g => g.w).join(' ');
-      const lastW = group[group.length - 1];
-      flashes.push({
-        text,
-        n: group.length,
-        chapter: ci,
-        mul: wordMultiplier(lastW.w) * (lastW.paraEnd ? 1.6 : 1),
-        paraEnd: lastW.paraEnd,
-      });
-    }
-    chapterRanges.push({ title: ch.title || `Chapter ${ci + 1}`, start, end: flashes.length, words: words.length });
-  });
-
+// Same output, but yields to the event loop between chapters so very large
+// books build without freezing the UI.
+export async function buildFlashesAsync(chapters, chunk = 1) {
+  const flashes = [], chapterRanges = [];
+  let totalWords = 0;
+  for (let ci = 0; ci < chapters.length; ci++) {
+    const r = buildChapter(chapters[ci].text, ci, chunk, flashes);
+    totalWords += r.words;
+    chapterRanges.push({ title: chapters[ci].title || `Chapter ${ci + 1}`, start: r.start, end: r.end, words: r.words });
+    if ((ci & 1) === 1) await new Promise(res => setTimeout(res));
+  }
   return { flashes, chapterRanges, words: totalWords };
 }
 

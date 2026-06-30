@@ -298,6 +298,12 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 /* the flash stage */
 .rd-stage{flex:1;position:relative;min-height:0}
 
+/* large-book build / loading state */
+.rd-building{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.rd-spin{width:38px;height:38px;border-radius:50%;border:3px solid var(--surface-3);border-top-color:var(--accent);animation:spin .8s linear infinite}
+.rd-build-t{font-size:16px;font-weight:600;color:var(--text)}
+.rd-build-s{font-size:13px;color:var(--muted);max-width:72%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 /* The word lives in a fixed-height zone pinned at a constant screen position,
    framed by the top/bottom barrier lines + centre ticks. It never moves as the
    word or context length changes — so nothing jumps. */

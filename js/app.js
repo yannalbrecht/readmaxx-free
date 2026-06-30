@@ -8,7 +8,7 @@ import {
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
 } from './store.js';
 import {
-  buildFlashes, flashDelay, orpParts, toChapters, countWords, stripMarkdown,
+  buildFlashes, buildFlashesAsync, flashDelay, orpParts, toChapters, countWords, stripMarkdown,
 } from './rsvp.js';
 import {
   el, clear, buzz, toast, achievementToast, sheet, closeSheet, ICON, fmt, fmtTime,
@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.4.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.5.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1041,8 +1041,15 @@ function openVaultNote(vault, i) {
   openReader(doc, { vaultDoc: vault, i });
 }
 
-function openReader(doc, vaultCtx) {
-  const built = buildFlashes(doc.chapters, state.settings.chunk);
+const BIG_DOC = 50000; // words above which we build asynchronously (no UI freeze)
+
+async function openReader(doc, vaultCtx) {
+  D.reader.classList.remove('hidden');
+  const big = (doc.words || 0) > BIG_DOC;
+  if (big) showReaderBuilding(doc.title);
+  const built = big
+    ? await buildFlashesAsync(doc.chapters, state.settings.chunk)
+    : buildFlashes(doc.chapters, state.settings.chunk);
   R = {
     doc, vaultCtx, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
     idx: Math.min(doc.idx || 0, built.flashes.length - 1), playing: false, timer: null,
@@ -1051,7 +1058,14 @@ function openReader(doc, vaultCtx) {
   if (R.idx >= R.total - 1) R.idx = 0; // finished → restart
   state.game.sessions = (state.game.sessions || 0) + 1;
   renderReader();
-  D.reader.classList.remove('hidden');
+}
+
+function showReaderBuilding(title) {
+  const r = D.reader; clear(r);
+  r.append(el('div', { class:'rd-building' },
+    el('div', { class:'rd-spin' }),
+    el('div', { class:'rd-build-t' }, 'Preparing book…'),
+    el('div', { class:'rd-build-s' }, title || '')));
 }
 
 function gotoNote(delta) {
@@ -1351,9 +1365,13 @@ function readerSettings() {
   body.append(fontRow());
   sheet({ title:'Reading settings', body });
 }
-function rebuildFlashes() {
+async function rebuildFlashes() {
   const cur = R.idx / R.total;
-  const built = buildFlashes(R.doc.chapters, state.settings.chunk);
+  const big = (R.doc.words || 0) > BIG_DOC;
+  if (big) showReaderBuilding(R.doc.title);
+  const built = big
+    ? await buildFlashesAsync(R.doc.chapters, state.settings.chunk)
+    : buildFlashes(R.doc.chapters, state.settings.chunk);
   R.flashes = built.flashes; R.ranges = built.chapterRanges; R.total = built.flashes.length;
   R.idx = Math.min(R.total - 1, Math.round(cur * R.total));
   const range = $('.rd-range', D.reader); if (range) { range.max = R.total - 1; range.value = R.idx; }
