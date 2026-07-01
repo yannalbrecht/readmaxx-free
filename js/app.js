@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.5'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.6'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -463,6 +463,28 @@ function sortDocs(docs, by) {
   return a;
 }
 
+// Turn a word count into a tangible readout: page-equivalent + a relatable reference
+// ("≈ 4 pages · 2× a news article"). ~250 words per page (standard paperback).
+const READ_REFS = [
+  { w: 300,   one: 'a news brief' },
+  { w: 800,   one: 'a news article' },
+  { w: 1500,  one: 'a blog post' },
+  { w: 4000,  one: 'a book chapter' },
+  { w: 7500,  one: 'a short story' },
+  { w: 25000, one: 'a novella' },
+  { w: 90000, one: 'a novel' },
+];
+function readingEquivalent(words) {
+  if (!words) return '';
+  const pages = words / 250;
+  const pagesTxt = pages < 1 ? 'under a page' : `${Math.round(pages)} page${Math.round(pages) === 1 ? '' : 's'}`;
+  let ref = READ_REFS[0];
+  for (const r of READ_REFS) if (words >= r.w) ref = r;
+  const mult = words / ref.w;
+  const refTxt = mult >= 1.5 ? `${Math.round(mult)}× ${ref.one}` : `about ${ref.one}`;
+  return `≈ ${pagesTxt} · ${refTxt}`;
+}
+
 async function renderHome() {
   const v = D.home; clear(v);
   const g = state.game, p = state.profile;
@@ -484,6 +506,7 @@ async function renderHome() {
   const gm = el('div', { class:'goal-meta' });
   gm.append(el('div', { class:'t' }, pct >= 100 ? 'Daily goal complete 🎉' : 'Daily reading goal'));
   gm.append(el('div', { class:'s' }, `${fmt(g.wordsToday)} / ${fmt(p.dailyGoalWords)} words today`));
+  if (g.wordsToday > 0) gm.append(el('div', { class:'goal-eq' }, readingEquivalent(g.wordsToday)));
   const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${pct}%` })); gm.append(mb);
   goal.append(gm);
   v.append(goal);
