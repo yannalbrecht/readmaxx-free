@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.2'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.3'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1186,9 +1186,14 @@ function renderReader() {
   zone.innerHTML = '<span class="barrier top"><i class="tick"></i></span><span class="barrier bot"><i class="tick"></i></span>';
   zone.append(el('div', { class:'word rd-word' }));
   stage.append(zone);
+  // inline speed readout — sits just above the context so you can see your speed
+  // without moving your eyes down to the slider.
+  const speedLbl = el('div', { class:'rd-speed' }, `${state.settings.wpm} wpm`);
+  stage.append(speedLbl);
   stage.append(el('div', { class:'rd-context', onclick:(e) => { e.stopPropagation(); haptic(6); openTextView(); } },
     el('div', { class:'ctx-text' }), el('div', { class:'ctx-hint' }, 'tap for full text')));
   stage.addEventListener('click', () => { if (state.settings.tapToPause) R.playing ? pause() : play(); });
+  addSpeedStrips(stage, speedLbl);
   r.append(stage);
 
   const ctr = el('div', { class:'rd-controls' });
@@ -1211,7 +1216,7 @@ function renderReader() {
   const wpm = el('div', { class:'wpm-control' });
   const wr = el('input', { type:'range', min:'100', max:'1000', step:'10', value:String(state.settings.wpm), class:'grad-track' });
   const wv = el('div', { class:'val rd-wpmval' });
-  wr.addEventListener('input', () => { state.settings.wpm = +wr.value; updateWpmLabel(); save(); });
+  wr.addEventListener('input', () => { setWpmLive(+wr.value, speedLbl); });
   wpm.append(el('span', { class:'muted', style:'font-size:12px' }, 'WPM'), wr, wv);
   ctr.append(wpm);
   r.append(ctr);
@@ -1233,6 +1238,46 @@ function showDoneBanner() {
 }
 
 const wEl = () => $('.rd-word', D.reader);
+
+// Set WPM from anywhere (drag strips, slider) and keep every readout in sync.
+function setWpmLive(v, speedLbl) {
+  v = Math.max(100, Math.min(1000, Math.round(v / 5) * 5));
+  if (v === state.settings.wpm) return;
+  state.settings.wpm = v;
+  const wr = $('.wpm-control input', D.reader); if (wr) wr.value = v;
+  if (speedLbl) { speedLbl.textContent = `${v} wpm`; speedLbl.classList.remove('pulse'); void speedLbl.offsetWidth; speedLbl.classList.add('pulse'); }
+  updateWpmLabel(); save();
+}
+
+// Draggable speed control on BOTH edges of the reading stage: drag up = faster,
+// down = slower. Owns its pointer events so it never triggers tap-to-pause or the
+// context tap.
+function addSpeedStrips(stage, speedLbl) {
+  for (const side of ['l', 'r']) {
+    const strip = el('div', { class:`rd-speedstrip ${side}`, html:'<span class="ss-ar">▲</span><span class="ss-hint">speed</span><span class="ss-ar">▼</span>' });
+    let startY = 0, startWpm = 0, lastHap = 0, dragging = false;
+    strip.addEventListener('pointerdown', (e) => {
+      e.stopPropagation(); dragging = true; startY = e.clientY; startWpm = state.settings.wpm; lastHap = startWpm;
+      try { strip.setPointerCapture(e.pointerId); } catch {}
+      strip.classList.add('active');
+    });
+    strip.addEventListener('pointermove', (e) => {
+      if (!dragging) return; e.preventDefault();
+      setWpmLive(startWpm + (startY - e.clientY) * 1.4, speedLbl); // up (smaller clientY) = faster
+      if (Math.abs(state.settings.wpm - lastHap) >= 25) { haptic(4); lastHap = state.settings.wpm; }
+    });
+    const end = (e) => { if (!dragging) return; dragging = false; strip.classList.remove('active'); try { strip.releasePointerCapture(e.pointerId); } catch {} };
+    strip.addEventListener('pointerup', end);
+    strip.addEventListener('pointercancel', end);
+    strip.addEventListener('click', (e) => e.stopPropagation()); // a drag-end must not bubble to tap-to-pause
+    stage.append(strip);
+  }
+  // one-time coaching hint
+  if (!state.settings.seenSpeedHint) {
+    toast('Drag either edge up/down to change speed', { ms: 3200 });
+    state.settings.seenSpeedHint = true; save();
+  }
+}
 
 function renderFlash(i) {
   const f = R.flashes[i]; if (!f) return;

@@ -346,6 +346,23 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 .transport .play.is-replay{background:var(--card);border:1px solid var(--line);box-shadow:none}
 .transport .play.is-replay svg{fill:none;stroke:var(--accent);stroke-width:2}
 
+/* inline speed readout — above the context so speed is visible without looking down */
+.rd-speed{position:absolute;left:0;right:0;bottom:74px;text-align:center;font-size:12px;font-weight:750;
+  letter-spacing:.04em;color:var(--accent);pointer-events:none;z-index:2;opacity:.85}
+.rd-speed.pulse{animation:speedpulse .34s ease}
+@keyframes speedpulse{0%{transform:scale(1.28)}100%{transform:scale(1)}}
+
+/* draggable speed strips on BOTH edges (drag up = faster, down = slower) */
+.rd-speedstrip{position:absolute;top:9%;bottom:22%;width:44px;display:flex;flex-direction:column;align-items:center;
+  justify-content:space-between;padding:18px 0;touch-action:none;z-index:4;cursor:ns-resize;color:var(--faint);
+  opacity:.3;transition:opacity .18s,color .18s;user-select:none;-webkit-user-select:none}
+.rd-speedstrip.l{left:0;background:linear-gradient(90deg,var(--grad-soft),transparent)}
+.rd-speedstrip.r{right:0;background:linear-gradient(270deg,var(--grad-soft),transparent)}
+.rd-speedstrip .ss-ar{font-size:10px;line-height:1}
+.rd-speedstrip .ss-hint{writing-mode:vertical-rl;text-orientation:mixed;font-size:8px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.rd-speedstrip.active{opacity:1;color:var(--accent)}
+@media (prefers-reduced-motion: reduce){ .rd-speed.pulse{animation:none} }
+
 /* ============================================================
    TEXT VIEW (scrubbable full-text)
    ============================================================ */
