@@ -8,7 +8,7 @@ import {
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
 } from './store.js';
 import {
-  buildFlashes, buildFlashesAsync, flashDelay, orpParts, mdToBlocks, blocksToOutline, countWords,
+  buildFlashes, buildFlashesAsync, flashDelay, orpParts, mdToBlocks, blocksToOutline, countWords, analyzeTopics,
 } from './rsvp.js';
 import {
   el, clear, buzz, toast, achievementToast, sheet, closeSheet, ICON, fmt, fmtTime,
@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.2'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -641,6 +641,8 @@ function docCard(d, mode = 'list') {
   if (isVault) meta.append(el('span', {}, `${vp.total} notes`), el('span', {}, '·'), el('span', {}, `${vp.notesRead}/${vp.total} read`));
   else { meta.append(el('span', {}, `${fmt(d.words)} words`)); if (d.author) meta.append(el('span', {}, '·'), el('span', {}, d.author)); }
   info.append(meta);
+  const topic = !isVault && (d.topics || []).find(t => t && t !== 'General');
+  if (topic) info.append(el('span', { class:'topic-tag' }, topic));
   if (!done && prog > 0 && (prog < 99 || isVault)) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
   card.append(info);
   card.append(done && !isVault ? el('span', { class:'go good-t', html: ICON.check }) : el('div', { class:'go', html: isVault ? ICON.next : ICON.play }));
@@ -709,7 +711,8 @@ function makeDoc({ title, type, text, author, markdown, blocks }) {
   const isMd = markdown || type === 'md' || (!blocks && /^#{1,6}\s+\S/m.test(text || ''));
   const bl = blocks || mdToBlocks(text, { markdown: isMd });
   const { chapters, toc } = blocksToOutline(bl, { title });
-  return { title: title || 'Untitled', type, author, blocks: bl, chapters, toc,
+  const { topics, keywords } = analyzeTopics(text || bl.map(b => b.text).join(' '));
+  return { title: title || 'Untitled', type, author, blocks: bl, chapters, toc, topics, keywords,
     words: chapters.reduce((s, c) => s + (c.words || 0), 0) };
 }
 
@@ -1085,6 +1088,10 @@ async function openDoc(id) {
   const doc = await getDoc(id);
   if (!doc) return toast('Not found', { err:true });
   if (doc.type === 'vault') return openVaultBrowser(id);
+  if (!doc.topics) { // lazy-backfill topics for docs imported before topic analysis existed
+    const a = analyzeTopics((doc.chapters || []).map(c => c.text).join(' '));
+    doc.topics = a.topics; doc.keywords = a.keywords; putDoc(doc);
+  }
   openReader(doc, null);
 }
 
@@ -1486,6 +1493,10 @@ function accrue() {
     // Record ACTUAL measured throughput (words / minutes) — not the slider value,
     // so best-WPM and achievements reflect real reading, including auto-pauses.
     const actualWpm = Math.round(R.sessionWords / (secs / 60));
+    // Attribute the session's words to this doc's topics for the Interests aggregate
+    // (before addReading so topic-breadth achievements can unlock in the same pass).
+    const topics = R.doc.topics || [];
+    if (topics.length) { state.game.topicWords = state.game.topicWords || {}; for (const t of topics) state.game.topicWords[t] = (state.game.topicWords[t] || 0) + R.sessionWords; }
     addReading(R.sessionWords, secs, actualWpm);
   }
   R.sessionWords = 0; R.sessionStart = performance.now();

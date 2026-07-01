@@ -199,3 +199,44 @@ function splitBlocksByLength(blocks, target) {
 export function countWords(text) {
   return (text.match(/\S+/g) || []).length;
 }
+
+/* ---------- on-device topic analysis (no network / no LLM) ----------
+   A curated keyword→category taxonomy scored by term frequency. Returns the doc's
+   top 1–2 topics plus its most frequent content words. Used for per-doc tags and the
+   aggregate "Interests" view. */
+const STOPWORDS = new Set(('the a an and or but if then else of to in on at for with by from as is are was were be been being this that these those it its it\'s they them their our your his her my me we you he she who what which when where why how not no yes do does did have has had will would can could should may might must about into over under out up down off then than so such also just very more most much many few some any all each every other another one two three new old good great like get got make made take take back way time year day people man woman thing things use used using need want know think see look come go going said say says because while during between after before again once here there both same own too only').split(' '));
+
+const TOPIC_KEYWORDS = {
+  'Technology': ['software','computer','app','code','coding','programming','tech','technology','digital','internet','algorithm','device','hardware','robot','machine','cloud','cyber','smartphone','developer','database','server','platform','interface'],
+  'AI': ['ai','intelligence','neural','model','training','learning','gpt','llm','chatbot','automation','dataset','inference','prompt','agent'],
+  'Science': ['science','scientific','research','experiment','physics','chemistry','biology','scientist','theory','quantum','molecule','universe','astronomy','evolution','particle','genetics','laboratory','hypothesis'],
+  'Business': ['business','company','market','startup','entrepreneur','strategy','management','revenue','customer','product','sales','growth','industry','corporate','ceo','profit','venture','founder','scale'],
+  'Finance': ['money','invest','investment','stock','finance','financial','economy','economic','bank','fund','capital','trading','crypto','bitcoin','wealth','portfolio','asset','dividend','inflation','budget'],
+  'Health': ['health','medical','doctor','disease','patient','medicine','fitness','exercise','diet','nutrition','wellness','therapy','symptom','treatment','healthy','clinical','immune','hormone'],
+  'Psychology': ['psychology','behavior','emotion','cognitive','mental','habit','motivation','personality','consciousness','perception','bias','memory','anxiety','psychological','mindset','mood'],
+  'Philosophy': ['philosophy','ethics','moral','meaning','existence','truth','logic','reason','wisdom','virtue','metaphysics','philosopher','argument','belief','knowledge','philosophical'],
+  'History': ['history','historical','ancient','century','empire','revolution','civilization','battle','dynasty','historian','medieval','war','kingdom','colonial'],
+  'Politics': ['politics','political','government','policy','election','democracy','president','vote','congress','party','senate','citizen','legislation','diplomatic'],
+  'Arts & Culture': ['art','music','film','movie','painting','artist','design','creative','culture','novel','poetry','literature','author','song','album','theatre','photography','fashion'],
+  'Sports': ['sport','sports','team','player','football','basketball','soccer','athlete','championship','coach','tournament','league','olympic'],
+  'Self-Improvement': ['productivity','discipline','focus','routine','goals','success','improve','confidence','procrastination','clarity','intentional','deliberate'],
+  'Nature': ['nature','animal','plant','environment','ocean','forest','climate','wildlife','species','ecosystem','planet','natural','sustainability'],
+  'Food': ['food','recipe','cook','cooking','meal','kitchen','ingredient','flavor','cuisine','chef','baking','vegetable'],
+};
+
+export function analyzeTopics(text) {
+  const tokens = (text || '').toLowerCase().slice(0, 24000).match(/[a-z][a-z']{2,}/g) || [];
+  if (tokens.length < 12) return { topics: [], keywords: [] };
+  const freq = Object.create(null);
+  for (const w of tokens) if (!STOPWORDS.has(w)) freq[w] = (freq[w] || 0) + 1;
+  const scores = [];
+  for (const [topic, kws] of Object.entries(TOPIC_KEYWORDS)) {
+    let s = 0; for (const kw of kws) if (freq[kw]) s += freq[kw];
+    if (s) scores.push([topic, s]);
+  }
+  scores.sort((a, b) => b[1] - a[1]);
+  const threshold = Math.max(2, tokens.length * 0.0025); // need real signal, not one stray hit
+  const topics = scores.filter(([, s]) => s >= threshold).slice(0, 2).map(([t]) => t);
+  const keywords = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([w]) => w);
+  return { topics: topics.length ? topics : ['General'], keywords };
+}
