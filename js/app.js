@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.4'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.5'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1711,21 +1711,22 @@ function chartBuckets(range) {
     .filter(([k]) => { const [Y, M] = k.split('-').map(Number); return Y === y && M - 1 === m; })
     .reduce((s, [, w]) => s + w, 0);
   const out = [];
+  // each bucket also carries `full` — a descriptive label for the hover tooltip.
   if (range === 'week') {
-    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], value: dayWords(d) }); }
+    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], full: d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }), value: dayWords(d) }); }
   } else if (range === 'month') {
     for (let i = 3; i >= 0; i--) {
       let s = 0; for (let j = 0; j < 7; j++) s += dayWords(new Date(now - (i * 7 + j) * DAY));
-      out.push({ label: i === 0 ? 'now' : `-${i}w`, value: s });
+      out.push({ label: i === 0 ? 'now' : `-${i}w`, full: i === 0 ? 'This week' : i === 1 ? 'Last week' : `${i} weeks ago`, value: s });
     }
   } else if (range === 'quarter' || range === 'year') {
     const n = range === 'quarter' ? 3 : 12;
-    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ label:'JFMAMJJASOND'[m.getMonth()], value: monthlySum(m.getFullYear(), m.getMonth()) }); }
+    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ label:'JFMAMJJASOND'[m.getMonth()], full: m.toLocaleDateString(undefined, { month:'long', year:'numeric' }), value: monthlySum(m.getFullYear(), m.getMonth()) }); }
   } else {
     const years = {};
     for (const [k, w] of Object.entries(state.game.history)) { const y = k.slice(0, 4); years[y] = (years[y] || 0) + w; }
     const keys = Object.keys(years).sort();
-    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => out.push({ label:"'" + y.slice(2), value: years[y] || 0 }));
+    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => out.push({ label:"'" + y.slice(2), full: y, value: years[y] || 0 }));
   }
   return out;
 }
@@ -1793,11 +1794,13 @@ function renderStats() {
   }
 }
 
-// SVG line/area chart with a dashed linear-regression trend line.
+// SVG line/area chart with a dashed regression trend line and a hover/touch tooltip
+// that reads out each bucket's words read + reading time + share of the period.
 function lineChart(buckets) {
   const W = 320, H = 132, padX = 12, padTop = 14, padBot = 22;
   const n = buckets.length;
   const max = Math.max(1, ...buckets.map(b => b.value));
+  const periodTotal = buckets.reduce((s, b) => s + b.value, 0);
   const innerW = W - padX * 2, innerH = H - padTop - padBot, base = padTop + innerH;
   const x = (i) => n <= 1 ? W / 2 : padX + (i / (n - 1)) * innerW;
   const y = (val) => padTop + innerH - (val / max) * innerH;
@@ -1806,7 +1809,7 @@ function lineChart(buckets) {
   const area = n ? `${line} L${x(n - 1).toFixed(1)},${base} L${x(0).toFixed(1)},${base} Z` : '';
   let trend = '';
   if (n >= 2) {
-    const mx = (n - 1) / 2, my = buckets.reduce((s, b) => s + b.value, 0) / n;
+    const mx = (n - 1) / 2, my = periodTotal / n;
     let num = 0, den = 0;
     buckets.forEach((b, i) => { num += (i - mx) * (b.value - my); den += (i - mx) ** 2; });
     const slope = den ? num / den : 0, b0 = my - slope * mx;
@@ -1817,8 +1820,40 @@ function lineChart(buckets) {
   const labels = buckets.map((b, i) => `<text x="${x(i).toFixed(1)}" y="${H - 6}" class="lc-lbl">${b.label}</text>`).join('');
   const svg = `<svg viewBox="0 0 ${W} ${H}" class="lc"><defs><linearGradient id="lcfill" x1="0" y1="0" x2="0" y2="1">` +
     `<stop offset="0" stop-color="var(--a1)" stop-opacity="0.32"/><stop offset="1" stop-color="var(--a1)" stop-opacity="0"/></linearGradient></defs>` +
-    `<path d="${area}" fill="url(#lcfill)" stroke="none"/><path d="${line}" class="lc-line"/>${trend}${dots}${labels}</svg>`;
-  return el('div', { class:'card linechart', html: svg });
+    `<line class="lc-cross" x1="0" y1="${padTop}" x2="0" y2="${base}" opacity="0"/>` +
+    `<path d="${area}" fill="url(#lcfill)" stroke="none"/><path d="${line}" class="lc-line"/>${trend}${dots}` +
+    `<circle class="lc-active" r="4.5" opacity="0"/>${labels}</svg>`;
+
+  const card = el('div', { class:'card linechart', html: svg });
+  const tip = el('div', { class:'lc-tip hidden' });
+  card.append(tip);
+  const cross = card.querySelector('.lc-cross'), active = card.querySelector('.lc-active');
+
+  const showAt = (clientX) => {
+    const r = card.getBoundingClientRect();
+    const frac = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    let bi = 0, bestd = Infinity;
+    for (let i = 0; i < n; i++) { const d = Math.abs(x(i) / W - frac); if (d < bestd) { bestd = d; bi = i; } }
+    const b = buckets[bi], px = x(bi);
+    cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('opacity', '1');
+    active.setAttribute('cx', px); active.setAttribute('cy', y(b.value)); active.setAttribute('opacity', '1');
+    const mins = b.value ? fmtTime(b.value / Math.max(60, state.settings.wpm) * 60) : '—';
+    const share = periodTotal ? Math.round((b.value / periodTotal) * 100) : 0;
+    tip.innerHTML = `<div class="lc-tip-t">${b.full || b.label}</div>` +
+      `<div class="lc-tip-v">${fmt(b.value)} words</div>` +
+      `<div class="lc-tip-s">${mins}${periodTotal ? ` · ${share}% of period` : ''}</div>`;
+    tip.style.left = (px / W) * 100 + '%';
+    tip.dataset.side = px / W > 0.72 ? 'r' : px / W < 0.28 ? 'l' : 'c';
+    tip.classList.remove('hidden');
+  };
+  const hide = () => { tip.classList.add('hidden'); cross.setAttribute('opacity', '0'); active.setAttribute('opacity', '0'); };
+
+  card.addEventListener('pointermove', (e) => showAt(e.clientX));
+  card.addEventListener('pointerdown', (e) => { haptic(4); showAt(e.clientX); });
+  card.addEventListener('pointerleave', hide);
+  card.addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') hide(); });
+  card.addEventListener('pointercancel', hide);
+  return card;
 }
 
 // Aggregate "Interests" from the running topic->words map (built as you read).
