@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.10.5'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -405,13 +405,17 @@ function tileColors(d) {
 }
 const docCategory = (d) => d.type === 'vault' ? 'vault' : (d.type === 'epub' || d.type === 'pdf') ? 'book' : d.type === 'url' ? 'article' : 'note';
 const docProgress = (d) => d.type === 'vault' ? vaultProgress(d).pct / 100 : (d.progress || 0);
+// A text counts as "read" permanently once finished — the flag survives a later re-read
+// (progress may drop while re-reading, but the ✓ badge never disappears). Old docs with
+// only progress>=0.99 are treated as finished (lazy migration).
+const isRead = (d) => d.type === 'vault' ? vaultProgress(d).pct >= 100 : (!!d.finished || (d.progress || 0) >= 0.99);
 function matchesFilter(d, f) {
   if (f === 'all') return true;
   if (f.startsWith('col:')) return (d.tags || []).includes(f.slice(4));
   const pr = docProgress(d);
-  if (f === 'reading') return pr > 0 && pr < 0.99;
-  if (f === 'unread') return pr <= 0;
-  if (f === 'finished') return pr >= 0.99;
+  if (f === 'reading') return !isRead(d) && pr > 0;
+  if (f === 'unread') return !isRead(d) && pr <= 0;
+  if (f === 'finished') return isRead(d);
   return docCategory(d) === f;
 }
 const matchesSearch = (d, q) => !q || (`${d.title || ''} ${d.author || ''}`).toLowerCase().includes(q.toLowerCase());
@@ -574,14 +578,14 @@ function docCard(d, mode = 'list') {
   const isVault = d.type === 'vault';
   const vp = isVault ? vaultProgress(d) : null;
   const prog = Math.round(docProgress(d) * 100);
-  const done = prog >= 99;
+  const done = isRead(d);
   const [bg, fg] = tileColors(d);
   const emoji = coverEmoji(d.type);
 
   if (mode === 'grid') {
     const card = el('button', { class:'gcard' });
     const cover = el('div', { class:'gcover', style:`background:${bg};color:${fg}` }, emoji);
-    if (prog > 0) cover.append(el('span', { class:'gbadge' + (done ? ' done' : '') }, done ? '✓' : `${prog}%`));
+    if (done || prog > 0) cover.append(el('span', { class:'gbadge' + (done ? ' done' : '') }, done ? '✓' : `${prog}%`));
     if (prog > 0 && !done) { const pb = el('div', { class:'gbar' }); pb.append(el('i', { style:`width:${prog}%` })); cover.append(pb); }
     card.append(cover, el('div', { class:'gtitle' }, d.title || 'Untitled'),
       el('div', { class:'gmeta' }, isVault ? `${vp.total} notes` : `${fmt(d.words)} words`));
@@ -603,7 +607,7 @@ function docCard(d, mode = 'list') {
   if (isVault) meta.append(el('span', {}, `${vp.total} notes`), el('span', {}, '·'), el('span', {}, `${vp.notesRead}/${vp.total} read`));
   else { meta.append(el('span', {}, `${fmt(d.words)} words`)); if (d.author) meta.append(el('span', {}, '·'), el('span', {}, d.author)); }
   info.append(meta);
-  if (prog > 0 && (prog < 99 || isVault)) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
+  if (!done && prog > 0 && (prog < 99 || isVault)) { const pb = el('div', { class:'pbar' }); pb.append(el('i', { style:`width:${prog}%` })); info.append(pb); }
   card.append(info);
   card.append(done && !isVault ? el('span', { class:'go good-t', html: ICON.check }) : el('div', { class:'go', html: isVault ? ICON.next : ICON.play }));
   bindCard(card, d); return card;
@@ -1056,7 +1060,7 @@ function openVaultNote(vault, i) {
   const note = vault.notes[i]; if (!note) return;
   D.vaultScreen.classList.add('hidden');
   const doc = { title: note.title, subtitle: vault.title, words: note.words,
-    chapters: note.chapters, idx: note.idx || 0, progress: note.progress || 0, type:'md' };
+    chapters: note.chapters, idx: note.idx || 0, progress: note.progress || 0, finished: note.finished, type:'md' };
   openReader(doc, { vaultDoc: vault, i });
 }
 
@@ -1074,15 +1078,19 @@ async function openReader(doc, vaultCtx) {
     D.reader.classList.add('hidden');
     return toast('No readable text in this document', { err:true });
   }
+  // A finished text opens in its completed state (shown at 100%, not auto-played);
+  // "Read again" is the only thing that restarts it, and it keeps the ✓ read badge.
+  const isFinished = !!doc.finished || (doc.progress || 0) >= 0.999;
   R = {
     doc, vaultCtx, flashes: built.flashes, ranges: built.chapterRanges, total: built.flashes.length,
     // Restore from the saved FRACTION, not the raw flash index: flash count depends on
     // the current "words per flash", which may have changed since this doc was saved.
-    idx: Math.min(built.flashes.length - 1, Math.round((doc.progress || 0) * built.flashes.length)),
+    idx: isFinished ? built.flashes.length - 1
+       : Math.min(built.flashes.length - 1, Math.round((doc.progress || 0) * built.flashes.length)),
     playing: false, timer: null,
-    sessionWords: 0, sessionStart: 0, wake: null, done: (doc.progress || 0) >= 0.99,
+    sessionWords: 0, sessionStart: 0, wake: null, done: isFinished, finished: isFinished,
   };
-  if (R.idx >= R.total - 1) R.idx = 0; // finished → restart
+  if (!isFinished && R.idx >= R.total - 1) R.idx = 0; // near-end but not finished → restart
   state.game.sessions = (state.game.sessions || 0) + 1;
   renderReader();
 }
@@ -1155,7 +1163,7 @@ function renderReader() {
 
   const transport = el('div', { class:'transport' });
   transport.append(el('button', { class:'icon-btn', html: ICON.back10, onclick:() => skip(-Math.max(8, Math.round(state.settings.wpm / 30))) }));
-  transport.append(el('button', { class:'play rd-play', html: ICON.play, onclick:() => R.playing ? pause() : play() }));
+  transport.append(el('button', { class:'play rd-play', html: ICON.play, onclick:() => { if (R.finished) readAgain(); else R.playing ? pause() : play(); } }));
   transport.append(el('button', { class:'icon-btn', html: ICON.fwd, onclick:() => skip(Math.max(8, Math.round(state.settings.wpm / 30))) }));
   ctr.append(transport);
 
@@ -1170,7 +1178,17 @@ function renderReader() {
   updateWpmLabel();
   renderFlash(R.idx);
   updatePlayBtn();
-  setTimeout(play, 350);
+  if (R.finished) showDoneBanner(); else setTimeout(play, 350); // don't auto-play a completed text
+}
+
+// A small "Finished ✓ · Read again" banner shown when a completed text is reopened.
+function showDoneBanner() {
+  const stage = $('.rd-stage', D.reader); if (!stage || $('.rd-done', D.reader)) return;
+  const chip = el('div', { class:'rd-done' },
+    el('span', { class:'rd-done-badge', html: ICON.check }),
+    el('span', {}, 'Finished'),
+    el('button', { class:'rd-again', html: ICON.refresh + '<span>Read again</span>', onclick:(e) => { e.stopPropagation(); readAgain(); } }));
+  stage.append(chip);
 }
 
 const wEl = () => $('.rd-word', D.reader);
@@ -1212,16 +1230,17 @@ function renderFlash(i) {
     } else chEl.textContent = pctText(i);
   }
 
-  // counters + scrub
+  // counters + scrub — a finished text reads 100% / 0 left even though the last
+  // flash index is total-1.
   const range = $('.rd-range', D.reader); if (range && +range.value !== i) range.value = i;
-  const wordsRead = Math.round(R.doc.words * (i / R.total));
+  const wordsRead = R.finished ? R.doc.words : Math.round(R.doc.words * (i / R.total));
   const wordsLeft = Math.max(0, R.doc.words - wordsRead);
   $('.rd-read', D.reader).textContent = `${fmt(wordsRead)} read`;
   $('.rd-left', D.reader).innerHTML = `<b>${fmt(wordsLeft)}</b> left · ${fmtTime(wordsLeft / state.settings.wpm * 60)}`;
   $('.rd-pos', D.reader).textContent = pctText(i);
   $('.rd-tot', D.reader).textContent = fmtTime((R.total - i) > 0 ? (R.doc.words - wordsRead) / state.settings.wpm * 60 : 0);
 }
-const pctText = (i) => `${Math.round((i / R.total) * 100)}%`;
+const pctText = (i) => `${R?.finished ? 100 : Math.round((i / R.total) * 100)}%`;
 
 /* ---- chapter navigation ---- */
 function chapterIndexAt(i) {
@@ -1388,14 +1407,27 @@ function openTextView() {
 }
 
 function updateWpmLabel() { const v = $('.rd-wpmval', D.reader); if (v) v.innerHTML = `${state.settings.wpm}<small> wpm</small>`; }
-function updatePlayBtn() { const b = $('.rd-play', D.reader); if (b) b.innerHTML = R.playing ? ICON.pause : ICON.play; }
+function updatePlayBtn() {
+  const b = $('.rd-play', D.reader); if (!b) return;
+  // A finished doc shows a ↻ "Read again" affordance instead of play/pause.
+  b.innerHTML = R.finished ? ICON.refresh : R.playing ? ICON.pause : ICON.play;
+  b.classList.toggle('is-replay', !!R.finished);
+}
 
 function play() {
   if (!R || R.playing) return;
+  if (R.finished) return; // completed → only "Read again" restarts (keeps the ✓ badge)
   if (R.idx >= R.total - 1) { R.idx = 0; R.done = false; }
   R.playing = true; R.sessionStart = performance.now(); R.sessionWords = 0;
   updatePlayBtn(); acquireWake();
   tick();
+}
+// Restart a finished text from the top WITHOUT clearing its permanent read status.
+function readAgain() {
+  if (!R) return;
+  R.finished = false; R.done = false; R.idx = 0;
+  const chip = $('.rd-done', D.reader); if (chip) chip.remove();
+  renderFlash(R.idx); updatePlayBtn(); play();
 }
 function tick() {
   if (!R || !R.playing) return;
@@ -1436,8 +1468,13 @@ function finishDoc() {
   R.playing = false; R.done = true; clearTimeout(R.timer); releaseWake();
   R.idx = R.total - 1; renderFlash(R.idx);
   accrue();
+  // Count a text toward "finished" only the FIRST time it completes, so re-reads
+  // don't inflate the tally (the permanent ✓ read badge is separate).
+  const wasFinished = R.vaultCtx ? !!R.vaultCtx.vaultDoc.notes[R.vaultCtx.i].finished : !!R.doc.finished;
+  R.finished = true;
   writeProgress(true);
-  state.game.finished = (state.game.finished || 0) + 1; checkAchievements(); save();
+  if (!wasFinished) state.game.finished = (state.game.finished || 0) + 1;
+  checkAchievements(); save();
   updatePlayBtn();
   // In a vault, advance to the next unread note automatically; else celebrate.
   if (R.vaultCtx && R.vaultCtx.i < R.vaultCtx.vaultDoc.notes.length - 1) {
@@ -1454,10 +1491,13 @@ function writeProgress(finalize) {
   const idx = finalize ? R.total - 1 : R.idx;
   if (R.vaultCtx) {
     const { vaultDoc, i } = R.vaultCtx;
-    vaultDoc.notes[i].idx = idx; vaultDoc.notes[i].progress = prog; vaultDoc.lastOpened = Date.now();
+    const note = vaultDoc.notes[i];
+    note.idx = idx; note.progress = prog; vaultDoc.lastOpened = Date.now();
+    if (finalize) { note.finished = true; note.finishedAt = Date.now(); } // set once, never cleared
     putDoc(vaultDoc);
   } else {
     R.doc.idx = idx; R.doc.progress = prog; R.doc.lastOpened = Date.now();
+    if (finalize) { R.doc.finished = true; R.doc.finishedAt = Date.now(); } // set once, never cleared
     putDoc(R.doc);
   }
 }
