@@ -53,11 +53,16 @@ const DEFAULT = {
     xp: 0,
     level: 1,
     streak: 0,
+    longestStreak: 0,   // best streak ever reached
     lastActiveDay: null,
     wordsToday: 0,
     todayKey: null,
     history: {},        // 'YYYY-MM-DD' -> words read
+    hours: {},          // hour-of-day (0-23) -> words read (for time-of-day achievements)
+    topicWords: {},     // topic -> words read (running aggregate for the Interests view)
     achievements: [],   // ids unlocked
+    goalHits: 0,        // number of days the daily word goal was met
+    finished: 0,        // texts completed (first completion only)
     bestWpm: 0,
     totalWords: 0,
     totalSeconds: 0,

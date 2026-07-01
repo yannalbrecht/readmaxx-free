@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -49,15 +49,44 @@ const SAMPLES = [
 const xpForLevel = (l) => 60 * (l - 1) * (l - 1);
 const levelFromXp = (xp) => Math.floor(Math.sqrt(xp / 60)) + 1;
 
+// Every test reads a field the app actually writes (see addReading/finishDoc/topics),
+// so no achievement is permanently unreachable. `g` = state.game.
 const ACHIEVEMENTS = [
-  { id:'first',   e:'📖', t:'First Words',     test:g => g.totalWords > 0 },
-  { id:'finish',  e:'🏁', t:'Finished a Text', test:g => g.finished > 0 },
-  { id:'w400',    e:'🚀', t:'Hit 400 WPM',     test:g => g.bestWpm >= 400 },
-  { id:'w600',    e:'⚡', t:'Hit 600 WPM',     test:g => g.bestWpm >= 600 },
-  { id:'w10k',    e:'🔥', t:'10,000 Words',    test:g => g.totalWords >= 10000 },
-  { id:'w100k',   e:'💎', t:'100,000 Words',   test:g => g.totalWords >= 100000 },
-  { id:'streak3', e:'📅', t:'3-Day Streak',    test:g => g.streak >= 3 },
-  { id:'streak7', e:'🗓️', t:'7-Day Streak',    test:g => g.streak >= 7 },
+  // Words read (all-time)
+  { id:'first',  e:'📖', g:'Words', t:'First Words',    test:g => g.totalWords > 0 },
+  { id:'w1k',    e:'✍️', g:'Words', t:'1,000 Words',    test:g => g.totalWords >= 1000 },
+  { id:'w10k',   e:'🔥', g:'Words', t:'10,000 Words',   test:g => g.totalWords >= 10000 },
+  { id:'w50k',   e:'📚', g:'Words', t:'50,000 Words',   test:g => g.totalWords >= 50000 },
+  { id:'w100k',  e:'💎', g:'Words', t:'100,000 Words',  test:g => g.totalWords >= 100000 },
+  { id:'w500k',  e:'🏆', g:'Words', t:'500,000 Words',  test:g => g.totalWords >= 500000 },
+  // Speed (best measured WPM)
+  { id:'w300',   e:'🐇', g:'Speed', t:'Hit 300 WPM',    test:g => g.bestWpm >= 300 },
+  { id:'w400',   e:'🚀', g:'Speed', t:'Hit 400 WPM',    test:g => g.bestWpm >= 400 },
+  { id:'w500',   e:'💨', g:'Speed', t:'Hit 500 WPM',    test:g => g.bestWpm >= 500 },
+  { id:'w600',   e:'⚡', g:'Speed', t:'Hit 600 WPM',    test:g => g.bestWpm >= 600 },
+  { id:'w800',   e:'🌠', g:'Speed', t:'Hit 800 WPM',    test:g => g.bestWpm >= 800 },
+  // Completion (texts finished)
+  { id:'fin1',   e:'🏁', g:'Completion', t:'Finished a Text', test:g => (g.finished||0) >= 1 },
+  { id:'fin5',   e:'📗', g:'Completion', t:'5 Texts Finished',  test:g => (g.finished||0) >= 5 },
+  { id:'fin10',  e:'📘', g:'Completion', t:'10 Texts Finished', test:g => (g.finished||0) >= 10 },
+  { id:'fin25',  e:'📙', g:'Completion', t:'25 Texts Finished', test:g => (g.finished||0) >= 25 },
+  { id:'fin50',  e:'🎓', g:'Completion', t:'50 Texts Finished', test:g => (g.finished||0) >= 50 },
+  // Streaks (best ever)
+  { id:'streak3',  e:'📅', g:'Streaks', t:'3-Day Streak',   test:g => (g.longestStreak||g.streak||0) >= 3 },
+  { id:'streak7',  e:'🗓️', g:'Streaks', t:'7-Day Streak',   test:g => (g.longestStreak||g.streak||0) >= 7 },
+  { id:'streak14', e:'📆', g:'Streaks', t:'14-Day Streak',  test:g => (g.longestStreak||g.streak||0) >= 14 },
+  { id:'streak30', e:'🔥', g:'Streaks', t:'30-Day Streak',  test:g => (g.longestStreak||g.streak||0) >= 30 },
+  { id:'streak100',e:'👑', g:'Streaks', t:'100-Day Streak', test:g => (g.longestStreak||g.streak||0) >= 100 },
+  // Habit (sessions · daily goal · time of day)
+  { id:'sess10',  e:'🎯', g:'Habit', t:'10 Sessions',    test:g => (g.sessions||0) >= 10 },
+  { id:'sess50',  e:'🧠', g:'Habit', t:'50 Sessions',    test:g => (g.sessions||0) >= 50 },
+  { id:'goal1',   e:'✅', g:'Habit', t:'First Daily Goal',test:g => (g.goalHits||0) >= 1 },
+  { id:'goal10',  e:'🌟', g:'Habit', t:'10 Daily Goals', test:g => (g.goalHits||0) >= 10 },
+  { id:'night',   e:'🦉', g:'Habit', t:'Night Owl',      test:g => Object.entries(g.hours||{}).some(([h,w]) => +h < 5 && w > 0) },
+  { id:'early',   e:'🌅', g:'Habit', t:'Early Bird',     test:g => Object.entries(g.hours||{}).some(([h,w]) => +h >= 5 && +h < 8 && w > 0) },
+  // Topics (breadth — needs topic analysis)
+  { id:'topic3',  e:'🧭', g:'Topics', t:'Curious — 3 Topics',  test:g => Object.values(g.topicWords||{}).filter(w => w > 0).length >= 3 },
+  { id:'topic5',  e:'🧩', g:'Topics', t:'Polymath — 5 Topics', test:g => Object.values(g.topicWords||{}).filter(w => w > 0).length >= 5 },
 ];
 
 function ensureToday() {
@@ -74,17 +103,22 @@ function addReading(words, seconds, wpm) {
     g.streak = (g.lastActiveDay === y) ? (g.streak || 0) + 1 : 1;
     g.lastActiveDay = g.todayKey;
   }
+  g.longestStreak = Math.max(g.longestStreak || 0, g.streak || 0);
   const before = g.wordsToday;
   g.wordsToday += words;
   g.history[g.todayKey] = (g.history[g.todayKey] || 0) + words;
+  const hr = new Date().getHours();
+  g.hours = g.hours || {}; g.hours[hr] = (g.hours[hr] || 0) + words;
   g.totalWords += words;
   g.totalSeconds += seconds;
   if (wpm > g.bestWpm) g.bestWpm = Math.round(wpm);
   g.xp += Math.round(words / 8) + Math.round(seconds / 20);
   const lvl = levelFromXp(g.xp);
   if (lvl > g.level) { g.level = lvl; achievementToast('⚡', `Level ${lvl} reached!`); }
-  if (before < state.profile.dailyGoalWords && g.wordsToday >= state.profile.dailyGoalWords)
+  if (before < state.profile.dailyGoalWords && g.wordsToday >= state.profile.dailyGoalWords) {
+    g.goalHits = (g.goalHits || 0) + 1;
     achievementToast('🎯', 'Daily goal complete!');
+  }
   checkAchievements();
   save();
 }
@@ -1578,16 +1612,40 @@ function rangeStartDate(range) {
   return keys.length ? new Date(keys[0] + 'T00:00') : now;
 }
 
-// KPIs for the selected window, read from the all-time daily history map.
-function rangeStats(range) {
-  const start = rangeStartDate(range), today = startOfToday();
+// Earliest day the user actually read anything (for a fair daily-average divisor).
+function firstActivityDate() {
+  const keys = Object.keys(state.game.history).filter(k => state.game.history[k] > 0).sort();
+  return keys.length ? new Date(keys[0] + 'T00:00') : startOfToday();
+}
+
+// Sum words in [start, end] (inclusive) from the daily history map.
+function sumWindow(start, end) {
   let total = 0, best = 0, active = 0;
   for (const [k, w] of Object.entries(state.game.history)) {
     const d = new Date(k + 'T00:00');
-    if (d >= start && d <= today) { total += w; if (w > 0) active++; if (w > best) best = w; }
+    if (d >= start && d <= end && w > 0) { total += w; active++; if (w > best) best = w; }
   }
+  return { total, best, active };
+}
+
+// KPIs for the selected window, read from the all-time daily history map.
+function rangeStats(range) {
+  const start = rangeStartDate(range), today = startOfToday();
+  const { total, best, active } = sumWindow(start, today);
   const spanDays = Math.max(1, Math.round((today - start) / DAY) + 1);
-  return { total, best, active, spanDays, dailyAvg: Math.round(total / spanDays) };
+  // Divide the daily average by days actually elapsed since first use (capped to the
+  // window) — NOT the full window — so a day-one user isn't averaged over 7 empty days.
+  const first = firstActivityDate();
+  const elapsed = Math.max(1, Math.min(spanDays, Math.round((today - Math.max(+first, +start)) / DAY) + 1));
+  // Previous equal-length window, for a period-over-period delta.
+  const prevEnd = new Date(+start - DAY), prevStart = new Date(+start - spanDays * DAY);
+  const prevTotal = sumWindow(prevStart, prevEnd).total;
+  const delta = prevTotal > 0 ? Math.round(((total - prevTotal) / prevTotal) * 100) : (total > 0 ? 100 : 0);
+  return {
+    total, best, active, spanDays, elapsedDays: elapsed, prevTotal, delta,
+    dailyAvg: Math.round(total / elapsed),
+    perActiveDay: Math.round(total / Math.max(1, active)),
+  };
 }
 
 // Chart buckets: ≤12 clean bars whatever the timeframe.
@@ -1635,41 +1693,104 @@ function renderStats() {
   v.append(seg);
 
   const rs = rangeStats(statsRange);
+  const avgWpm = g.totalSeconds > 0 ? Math.round(g.totalWords / (g.totalSeconds / 60)) : 0;
   const minutesSaved = Math.max(0, (g.totalWords / baselineWPM) - (g.totalSeconds / 60));
   const grid = el('div', { class:'stat-grid' });
-  const stat = (n, k, grad) => el('div', { class:'stat' }, el('div', { class:'n' + (grad ? ' grad' : '') }, n), el('div', { class:'k' }, k));
-  grid.append(stat(fmt(rs.total), 'words read', true));
+  const stat = (n, k, grad, delta) => {
+    const s = el('div', { class:'stat' }, el('div', { class:'n' + (grad ? ' grad' : '') }, n), el('div', { class:'k' }, k));
+    if (delta != null && delta !== 0 && statsRange !== 'all')
+      s.insertBefore(el('div', { class:'delta ' + (delta > 0 ? 'up' : 'down') }, `${delta > 0 ? '▲' : '▼'} ${Math.abs(delta)}%`), s.firstChild);
+    return s;
+  };
+  grid.append(stat(fmt(rs.total), 'words read', true, rs.delta));
   grid.append(stat(fmt(rs.dailyAvg), 'daily average', true));
   grid.append(stat(fmt(rs.best), 'best day'));
-  grid.append(stat(`${rs.active}`, statsRange === 'all' ? 'active days' : `of ${rs.spanDays} days`));
-  grid.append(stat(`${g.bestWpm || 0}`, 'best WPM (all-time)'));
+  grid.append(stat(statsRange === 'all' ? `${rs.active}` : `${rs.active}/${rs.elapsedDays}`, statsRange === 'all' ? 'active days' : 'days active'));
+  grid.append(stat(`${avgWpm}`, 'avg WPM'));
+  grid.append(stat(`${g.bestWpm || 0}`, 'best WPM'));
   grid.append(stat(`${g.streak || 0} 🔥`, 'day streak'));
+  grid.append(stat(`${g.finished || 0}`, 'texts finished'));
+  grid.append(stat(fmtTime(g.totalSeconds || 0), 'time read'));
   v.append(grid);
 
-  // adaptive chart
+  // trend chart (line + area + regression trend line)
   v.append(el('div', { class:'sec-title' }, el('h3', {}, RANGES[statsRange]),
     el('a', {}, `${fmtTime(minutesSaved * 60)} saved`)));
-  const buckets = chartBuckets(statsRange);
-  const max = Math.max(100, ...buckets.map(b => b.value));
-  const chart = el('div', { class:'card chart' });
-  buckets.forEach(b => {
-    const bar = el('div', { class:'bar', style:`height:${Math.max(4, (b.value / max) * 100)}%` });
-    bar.append(el('span', {}, b.label));
-    chart.append(bar);
-  });
-  v.append(chart);
+  v.append(lineChart(chartBuckets(statsRange)));
 
-  // achievements
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Achievements'),
-    el('a', {}, `${g.achievements.length}/${ACHIEVEMENTS.length}`)));
-  const recs = el('div', { class:'card records', style:'padding:4px 16px' });
-  for (const a of ACHIEVEMENTS) {
-    const got = g.achievements.includes(a.id);
-    recs.append(el('div', { class:'rec' + (got ? '' : ' locked') },
-      el('span', { class:'e' }, a.e), el('span', {}, a.t),
-      el('span', { class:'v' }, got ? '✓' : '🔒')));
+  // interests (aggregate topics) — filled below the chart
+  v.append(renderInterests());
+
+  // achievements — grouped, earned first within each group
+  const gotCount = ACHIEVEMENTS.filter(a => g.achievements.includes(a.id)).length;
+  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Achievements'), el('a', {}, `${gotCount}/${ACHIEVEMENTS.length}`)));
+  for (const grp of [...new Set(ACHIEVEMENTS.map(a => a.g))]) {
+    const items = ACHIEVEMENTS.filter(a => a.g === grp)
+      .sort((a, b) => (g.achievements.includes(b.id) ? 1 : 0) - (g.achievements.includes(a.id) ? 1 : 0));
+    const recs = el('div', { class:'card records', style:'padding:4px 16px' });
+    for (const a of items) {
+      const got = g.achievements.includes(a.id);
+      recs.append(el('div', { class:'rec' + (got ? '' : ' locked') },
+        el('span', { class:'e' }, a.e), el('span', {}, a.t), el('span', { class:'v' }, got ? '✓' : '🔒')));
+    }
+    v.append(el('div', { class:'ach-group' }, grp), recs);
   }
-  v.append(recs);
+}
+
+// SVG line/area chart with a dashed linear-regression trend line.
+function lineChart(buckets) {
+  const W = 320, H = 132, padX = 12, padTop = 14, padBot = 22;
+  const n = buckets.length;
+  const max = Math.max(1, ...buckets.map(b => b.value));
+  const innerW = W - padX * 2, innerH = H - padTop - padBot, base = padTop + innerH;
+  const x = (i) => n <= 1 ? W / 2 : padX + (i / (n - 1)) * innerW;
+  const y = (val) => padTop + innerH - (val / max) * innerH;
+  const pts = buckets.map((b, i) => [x(i), y(b.value)]);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const area = n ? `${line} L${x(n - 1).toFixed(1)},${base} L${x(0).toFixed(1)},${base} Z` : '';
+  let trend = '';
+  if (n >= 2) {
+    const mx = (n - 1) / 2, my = buckets.reduce((s, b) => s + b.value, 0) / n;
+    let num = 0, den = 0;
+    buckets.forEach((b, i) => { num += (i - mx) * (b.value - my); den += (i - mx) ** 2; });
+    const slope = den ? num / den : 0, b0 = my - slope * mx;
+    const clamp = (v) => Math.max(0, Math.min(max, v));
+    trend = `<line x1="${x(0)}" y1="${y(clamp(b0)).toFixed(1)}" x2="${x(n - 1)}" y2="${y(clamp(b0 + slope * (n - 1))).toFixed(1)}" class="lc-trend"/>`;
+  }
+  const dots = pts.map((p) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" class="lc-dot"/>`).join('');
+  const labels = buckets.map((b, i) => `<text x="${x(i).toFixed(1)}" y="${H - 6}" class="lc-lbl">${b.label}</text>`).join('');
+  const svg = `<svg viewBox="0 0 ${W} ${H}" class="lc"><defs><linearGradient id="lcfill" x1="0" y1="0" x2="0" y2="1">` +
+    `<stop offset="0" stop-color="var(--a1)" stop-opacity="0.32"/><stop offset="1" stop-color="var(--a1)" stop-opacity="0"/></linearGradient></defs>` +
+    `<path d="${area}" fill="url(#lcfill)" stroke="none"/><path d="${line}" class="lc-line"/>${trend}${dots}${labels}</svg>`;
+  return el('div', { class:'card linechart', html: svg });
+}
+
+// Aggregate "Interests" from the running topic->words map (built as you read).
+function renderInterests() {
+  const tw = state.game.topicWords || {};
+  const entries = Object.entries(tw).filter(([, w]) => w > 0).sort((a, b) => b[1] - a[1]);
+  const wrap = el('div', {});
+  wrap.append(el('div', { class:'sec-title' }, el('h3', {}, 'Interests'),
+    el('a', {}, entries.length ? `${entries.length} topics` : '')));
+  if (!entries.length) {
+    wrap.append(el('div', { class:'card', style:'padding:16px;color:var(--faint);font-size:13px;text-align:center' },
+      'Read a few texts and your top topics will appear here.'));
+    return wrap;
+  }
+  const top = entries.slice(0, 6);
+  const max = top[0][1] || 1;
+  const summary = top.slice(0, 3).map(([t]) => t).join(', ');
+  wrap.append(el('div', { class:'interest-sum' }, `Mostly ${summary}.`));
+  const card = el('div', { class:'card', style:'padding:12px 16px' });
+  for (const [topic, w] of top) {
+    const row = el('div', { class:'interest-row' });
+    row.append(el('div', { class:'ir-top' }, el('span', { class:'ir-name' }, topic), el('span', { class:'ir-val' }, `${fmt(w)} words`)));
+    const bar = el('div', { class:'ir-bar' }); bar.append(el('i', { style:`width:${Math.max(4, (w / max) * 100)}%` }));
+    row.append(bar);
+    card.append(row);
+  }
+  wrap.append(card);
+  return wrap;
 }
 
 /* Build a branded 1080² PNG of the current stats window and share/download it. */
