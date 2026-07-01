@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.11.3'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.11.4'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1565,7 +1565,7 @@ function finishDoc() {
   writeProgress(true);
   if (!wasFinished) state.game.finished = (state.game.finished || 0) + 1;
   checkAchievements(); save();
-  updatePlayBtn();
+  updatePlayBtn(); showDoneBanner(); // completed state appears immediately, not just on reopen
   // In a vault, advance to the next unread note automatically; else celebrate.
   if (R.vaultCtx && R.vaultCtx.i < R.vaultCtx.vaultDoc.notes.length - 1) {
     achievementToast('✅', 'Note done — next up');
@@ -1824,7 +1824,7 @@ function lineChart(buckets) {
 // Aggregate "Interests" from the running topic->words map (built as you read).
 function renderInterests() {
   const tw = state.game.topicWords || {};
-  const entries = Object.entries(tw).filter(([, w]) => w > 0).sort((a, b) => b[1] - a[1]);
+  const entries = Object.entries(tw).filter(([t, w]) => w > 0 && t !== 'General').sort((a, b) => b[1] - a[1]);
   const wrap = el('div', {});
   wrap.append(el('div', { class:'sec-title' }, el('h3', {}, 'Interests'),
     el('a', {}, entries.length ? `${entries.length} topics` : '')));
