@@ -12,6 +12,16 @@ export const ACCENTS = {
   mono:   { a1:'#c8c4e0', a2:'#8b87a8', name:'Mono' },
 };
 
+// Kindle-style display themes. `lock:true` = the theme owns its accent (accent picker
+// hidden and no inline accent overrides). `sw` = [background, ink] for picker swatches.
+export const THEMES = {
+  nebula: { name:'Nebula',    sw:['#08070d','#8b6cff'] },
+  paper:  { name:'Paper',     sw:['#f6f5f2','#1d1a26'] },
+  sepia:  { name:'Sepia',     sw:['#f7ecd7','#4a3b28'] },
+  mono:   { name:'Mono',      sw:['#000000','#f5f5f5'], lock:true },
+  red:    { name:'Night Red', sw:['#000000','#ff5a45'], lock:true },
+};
+
 // Reading faces offered in Settings. `css` is the font-family stack.
 export const FONTS = {
   lexend:  { name:'Lexend',     css:'"Lexend", var(--font)' },
@@ -40,6 +50,7 @@ const DEFAULT = {
     orp: true,         // highlight pivot letter
     showContext: true, // show surrounding sentence
     accent: 'violet',
+    theme: 'nebula',   // display theme (see THEMES)
     font: 'lexend',    // reading face (see FONTS)
     scale: 'm',        // reading size (see SCALES)
     bigFont: false,    // legacy extra-large toggle
@@ -157,17 +168,29 @@ export function uid() {
   return 'd' + Date.now().toString(36) + Math.floor(performance.now()*1000 % 1e6).toString(36);
 }
 
-/* apply accent + reading font + size to :root */
+/* apply display theme + accent + reading font + size to :root */
 export function applyTheme() {
   const root = document.documentElement;
-  const a = ACCENTS[state.settings.accent] || ACCENTS.violet;
-  root.style.setProperty('--a1', a.a1);
-  root.style.setProperty('--a2', a.a2);
-  root.style.setProperty('--accent', a.a1);
+  const tKey = THEMES[state.settings.theme] ? state.settings.theme : 'nebula';
+  root.dataset.theme = tKey;
+  if (THEMES[tKey].lock) {
+    // mono/red own their palette — inline accent overrides would beat the CSS
+    root.style.removeProperty('--a1');
+    root.style.removeProperty('--a2');
+    root.style.removeProperty('--accent');
+  } else {
+    const a = ACCENTS[state.settings.accent] || ACCENTS.violet;
+    root.style.setProperty('--a1', a.a1);
+    root.style.setProperty('--a2', a.a2);
+    root.style.setProperty('--accent', a.a1);
+  }
   const f = FONTS[state.settings.font] || FONTS.lexend;
   root.style.setProperty('--read-font', f.css);
   root.style.setProperty('--read-scale', SCALES[state.settings.scale] ?? 1);
   root.classList.toggle('bigfont', state.settings.bigFont);
+  // keep the browser/PWA chrome in step with the theme background
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#08070d');
 }
 
 /* Capability flag — iOS Safari has no Vibration API, so haptics is Android-only.

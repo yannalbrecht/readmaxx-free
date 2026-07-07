@@ -4,7 +4,7 @@
    Imports the engine (rsvp), state (store) and DOM helpers (ui).
    ============================================================ */
 import {
-  state, save, applyTheme, ACCENTS, FONTS, SCALES, HAS_VIBRATE, dayKey,
+  state, save, applyTheme, ACCENTS, THEMES, FONTS, SCALES, HAS_VIBRATE, dayKey,
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
 } from './store.js';
 import {
@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.12.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.12.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1655,6 +1655,7 @@ function readerSettings() {
   body.append(toggleRow('Show context', 'showContext', () => renderFlash(R.idx)));
   body.append(toggleRow('Tap screen to pause', 'tapToPause'));
   body.append(stepperRow('Words per flash', 'chunk', 1, 4, () => rebuildFlashes()));
+  body.append(themeRow()); // Kindle-style: switch display theme without leaving the book
   body.append(segRow('Reading size', 'scale', SCALES, () => { applyTheme(); }));
   body.append(fontRow());
   sheet({ title:'Reading settings', body });
@@ -1979,7 +1980,8 @@ function renderProfile() {
   // Appearance
   v.append(groupTitle('Appearance'));
   const g2 = el('div', { class:'set-group' });
-  g2.append(accentRow());
+  g2.append(themeRow(() => renderProfile())); // re-render: lock themes hide the Accent row
+  if (!THEMES[state.settings.theme]?.lock) g2.append(accentRow());
   g2.append(fontRow(true));
   g2.append(segRow('Reading size', 'scale', SCALES, () => applyTheme(), true));
   v.append(g2);
@@ -2083,6 +2085,26 @@ function accentRow() {
     const b = el('button', { class:'swatch' + (state.settings.accent === k ? ' on' : ''),
       style:`background:linear-gradient(120deg,${a.a1},${a.a2})` });
     b.addEventListener('click', () => { state.settings.accent = k; applyTheme(); save(); haptic(6); [...sw.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); });
+    sw.append(b);
+  }
+  row.append(sw);
+  return row;
+}
+// Kindle-style display theme picker: "Aa" swatches previewing each theme's page + ink.
+// onPick lets callers re-render around the change (profile hides Accent for lock themes).
+function themeRow(onPick) {
+  const row = el('div', { class:'set theme-set' });
+  row.append(el('div', { class:'st' }, 'Theme'));
+  const sw = el('div', { class:'theme-swatches' });
+  for (const [k, t] of Object.entries(THEMES)) {
+    const b = el('button', { class:'tswatch' + (state.settings.theme === k ? ' on' : '') },
+      el('span', { class:'tsw-chip', style:`background:${t.sw[0]};color:${t.sw[1]}` }, 'Aa'),
+      el('span', { class:'tsw-name' }, t.name));
+    b.addEventListener('click', () => {
+      state.settings.theme = k; applyTheme(); save(); haptic(6);
+      [...sw.querySelectorAll('.tswatch')].forEach(c => c.classList.remove('on')); b.classList.add('on');
+      onPick?.(k);
+    });
     sw.append(b);
   }
   row.append(sw);
