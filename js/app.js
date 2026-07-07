@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.12.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.13.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -91,21 +91,78 @@ const ACHIEVEMENTS = [
 
 function ensureToday() {
   const k = dayKey();
-  if (state.game.todayKey !== k) { state.game.todayKey = k; state.game.wordsToday = 0; }
+  if (state.game.todayKey !== k) {
+    const g = state.game;
+    g.todayKey = k;
+    g.wordsToday = 0; g.secondsToday = 0; g.sessionsToday = 0; g.finishedToday = 0; g.bestWpmToday = 0;
+  }
 }
+
+/* ---------- Duolingo-style streak engine ----------
+   A streak day is earned by ANY real reading (≥150 words cumulative) — deliberately
+   decoupled from the daily word goal (Duolingo's highest-impact streak change).
+   Freezes: max 2, earned 1 per 7 consecutive days, auto-consumed silently on missed
+   days; the calendar shows a snowflake. Displayed streak is truthful (0 when broken). */
+const STREAK_DAY_WORDS = 150;
+const MAX_FREEZES = 2;
+const MILESTONES = [3, 7, 30, 100, 365];
+
+const yesterdayKey = () => dayKey(new Date(Date.now() - 864e5));
+function daysBetween(k1, k2) { // dayKey → dayKey, whole days
+  return Math.round((new Date(k2 + 'T00:00') - new Date(k1 + 'T00:00')) / 864e5);
+}
+
+// Run at boot/home-render: consume freezes for missed days so a saved streak
+// survives BEFORE the user reads again.
+function reconcileStreak() {
+  const g = state.game;
+  if (!g.lastActiveDay) return;
+  const gap = daysBetween(g.lastActiveDay, dayKey());
+  if (gap <= 1) return;                       // active yesterday/today — nothing missed
+  const missed = gap - 1;
+  if ((g.freezes || 0) >= missed && (g.streak || 0) > 0) {
+    g.freezes -= missed;
+    for (let i = 1; i <= missed; i++) {
+      const d = dayKey(new Date(new Date(g.lastActiveDay + 'T00:00').getTime() + i * 864e5));
+      g.frozenDays = g.frozenDays || {}; g.frozenDays[d] = true;
+    }
+    g.lastActiveDay = yesterdayKey();          // streak continues as if read yesterday
+    save();
+    toast(`❄️ A Streak Freeze saved your ${g.streak}-day streak`, { ms: 3200 });
+  }
+  // else: streak is broken — displayStreak() shows 0; the counter resets on next read
+}
+
+// Truthful streak for display: 0 unless the chain reaches yesterday or today.
+function displayStreak() {
+  const g = state.game;
+  if (!g.lastActiveDay) return 0;
+  return daysBetween(g.lastActiveDay, dayKey()) <= 1 ? (g.streak || 0) : 0;
+}
+const streakEarnedToday = () => state.game.lastActiveDay === dayKey() && (state.game.wordsToday || 0) >= STREAK_DAY_WORDS;
 
 function addReading(words, seconds, wpm) {
   if (words <= 0) return;
   ensureToday();
   const g = state.game;
-  if (g.lastActiveDay !== g.todayKey) {
-    const y = dayKey(new Date(Date.now() - 864e5));
-    g.streak = (g.lastActiveDay === y) ? (g.streak || 0) + 1 : 1;
-    g.lastActiveDay = g.todayKey;
-  }
-  g.longestStreak = Math.max(g.longestStreak || 0, g.streak || 0);
   const before = g.wordsToday;
   g.wordsToday += words;
+  g.secondsToday = (g.secondsToday || 0) + seconds;
+  if (words >= 50) g.sessionsToday = (g.sessionsToday || 0) + 1;
+  if (wpm > (g.bestWpmToday || 0) && words >= 100) g.bestWpmToday = Math.round(wpm);
+  // streak day earned once real reading accumulates (not by a 5-word accidental open)
+  if (g.lastActiveDay !== g.todayKey && g.wordsToday >= STREAK_DAY_WORDS) {
+    const wasChainAlive = g.lastActiveDay === yesterdayKey();
+    g.streak = wasChainAlive ? (g.streak || 0) + 1 : 1;
+    g.lastActiveDay = g.todayKey;
+    // consistency earns protection: 1 freeze per 7 consecutive days (capped)
+    g.freezeProgress = wasChainAlive || g.streak === 1 ? (g.freezeProgress || 0) + 1 : 1;
+    if (g.freezeProgress >= 7) {
+      g.freezeProgress = 0;
+      if ((g.freezes || 0) < MAX_FREEZES) { g.freezes = (g.freezes || 0) + 1; achievementToast('❄️', 'Streak Freeze earned!'); }
+    }
+  }
+  g.longestStreak = Math.max(g.longestStreak || 0, g.streak || 0);
   g.history[g.todayKey] = (g.history[g.todayKey] || 0) + words;
   const hr = new Date().getHours();
   g.hours = g.hours || {}; g.hours[hr] = (g.hours[hr] || 0) + words;
@@ -119,8 +176,73 @@ function addReading(words, seconds, wpm) {
     g.goalHits = (g.goalHits || 0) + 1;
     achievementToast('🎯', 'Daily goal complete!');
   }
+  updateQuests();
   checkAchievements();
   save();
+}
+
+/* ---------- daily quests (3/day, date-seeded, deterministic) ---------- */
+const QUEST_XP = [10, 20, 30]; // bronze / silver / gold
+const QUEST_MEDAL = ['🥉', '🥈', '🥇'];
+
+function seededPick(seedStr, arr, salt) { // deterministic template choice per day
+  let h = 2166136261 ^ salt;
+  for (const c of seedStr) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return arr[(h >>> 0) % arr.length];
+}
+
+function questTemplates(goal, wpm) {
+  const w = (f, min) => Math.max(min, Math.round(goal * f / 100) * 100);
+  return {
+    bronze: [
+      { metric:'wordsToday',   target: w(0.2, 200),  label: t => `Read ${fmt(t)} words` },
+      { metric:'secondsToday', target: 180,          label: () => 'Read for 3 minutes' },
+      { metric:'sessionsToday',target: 1,            label: () => 'Do a reading session' },
+    ],
+    silver: [
+      { metric:'wordsToday',   target: w(0.6, 600),  label: t => `Read ${fmt(t)} words` },
+      { metric:'secondsToday', target: 480,          label: () => 'Read for 8 minutes' },
+      { metric:'sessionsToday',target: 2,            label: () => 'Do 2 reading sessions' },
+    ],
+    gold: [
+      { metric:'wordsToday',   target: w(1.2, 1200), label: t => `Read ${fmt(t)} words` },
+      { metric:'secondsToday', target: 900,          label: () => 'Read for 15 minutes' },
+      { metric:'finishedToday',target: 1,            label: () => 'Finish a text' },
+      { metric:'bestWpmToday', target: Math.max(350, state.settings.wpm + 50), label: t => `Hit ${t}+ WPM in a session` },
+    ],
+  };
+}
+
+function ensureQuests() {
+  ensureToday();
+  const g = state.game, k = g.todayKey;
+  if (g.questsDay === k && g.quests?.length === 3) return;
+  const tpl = questTemplates(state.profile.dailyGoalWords || 2000, state.settings.wpm);
+  g.quests = ['bronze', 'silver', 'gold'].map((tier, i) => {
+    const t = seededPick(k, tpl[tier], i * 7919);
+    return { metric: t.metric, target: t.target, tier: i, label: t.label(t.target), done: false, claimed: false };
+  });
+  g.questsDay = k;
+  save();
+}
+
+const questProgress = (q) => Math.min(q.target, state.game[q.metric] || 0);
+
+// Called after every addReading: mark newly-completed quests, grant XP, all-3 bonus.
+function updateQuests() {
+  ensureQuests();
+  const g = state.game;
+  for (const q of g.quests) {
+    if (!q.done && questProgress(q) >= q.target) {
+      q.done = true;
+      if (!q.claimed) { q.claimed = true; g.xp += QUEST_XP[q.tier]; achievementToast(QUEST_MEDAL[q.tier], `Quest complete! +${QUEST_XP[q.tier]} XP`); }
+    }
+  }
+  if (g.quests.every(q => q.done) && g.questsRewardDay !== g.todayKey) {
+    g.questsRewardDay = g.todayKey;
+    if ((g.freezes || 0) < MAX_FREEZES) { g.freezes = (g.freezes || 0) + 1; achievementToast('❄️', 'All quests done — Streak Freeze earned!'); }
+    else { g.xp += 50; achievementToast('🎁', 'All quests done! +50 XP'); }
+  }
 }
 
 function checkAchievements() {
@@ -139,6 +261,8 @@ function checkAchievements() {
 function boot() {
   applyTheme();
   ensureToday();
+  reconcileStreak();
+  ensureQuests();
   if (!state.profile.onboarded) startOnboarding();
   else enterApp();
   // Fade the splash via setTimeout (NOT requestAnimationFrame — rAF never fires
@@ -489,20 +613,34 @@ function readingEquivalent(words) {
 async function renderHome() {
   const v = D.home; clear(v);
   const g = state.game, p = state.profile;
+  reconcileStreak(); ensureQuests();
 
   const head = el('div', { class:'home-head' });
   head.append(el('div', {}, el('div', { class:'home-hi' }, greeting()),
     el('div', { class:'home-name' }, p.name ? p.name : 'Reader')));
   const right = el('div', { class:'row gap10' });
-  right.append(el('div', { class:'streak-pill' }, el('span', { class:'fire' }, '🔥'), String(g.streak || 0)));
+  // Streak pill: truthful count, flame lit only when today is earned, at-risk styling
+  // in the evening, freeze pips, tap → streak calendar.
+  const ds = displayStreak();
+  const earned = streakEarnedToday();
+  const atRisk = !earned && ds > 0 && new Date().getHours() >= 17;
+  const pill = el('button', {
+    class:'streak-pill' + (earned ? ' lit' : '') + (atRisk ? ' risk' : ''),
+    'aria-label':'Streak calendar', onclick:() => { haptic(6); streakSheet(); } },
+    el('span', { class:'flame', html: ICON.flame }), String(ds));
+  if ((g.freezes || 0) > 0) pill.append(el('span', { class:'freeze-pips' }, '❄'.repeat(g.freezes)));
+  right.append(pill);
   right.append(el('button', { class:'avatar', style:'width:44px;height:44px;font-size:20px',
     onclick:() => { haptic(6); showView('profile'); } }, p.avatar || '🚀'));
   head.append(right);
   v.append(head);
 
-  // daily goal ring
+  if (atRisk) v.append(el('button', { class:'risk-banner', onclick:() => { haptic(6); streakSheet(); } },
+    el('span', { class:'flame', html: ICON.flame }), `Read today to keep your ${ds}-day streak`));
+
+  // daily goal ring — tappable → goal sheet
   const pct = Math.min(100, Math.round(p.dailyGoalWords ? (g.wordsToday / p.dailyGoalWords) * 100 : 0));
-  const goal = el('div', { class:'card goal-card' });
+  const goal = el('button', { class:'card goal-card', onclick:() => { haptic(6); goalSheet(); } });
   goal.append(el('div', { class:'ring', style:`--p:${pct}` }, el('b', {}, `${pct}%`)));
   const gm = el('div', { class:'goal-meta' });
   gm.append(el('div', { class:'t' }, pct >= 100 ? 'Daily goal complete 🎉' : 'Daily reading goal'));
@@ -511,6 +649,9 @@ async function renderHome() {
   const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${pct}%` })); gm.append(mb);
   goal.append(gm);
   v.append(goal);
+
+  // daily quests
+  v.append(questCard());
 
   // single import entry
   v.append(el('button', { class:'import-btn', onclick:() => { haptic(6); importSheet(); } },
@@ -1154,6 +1295,8 @@ async function openReader(doc, vaultCtx) {
        : Math.min(built.flashes.length - 1, Math.round((doc.progress || 0) * built.flashes.length)),
     playing: false, timer: null,
     sessionWords: 0, sessionStart: 0, wake: null, done: isFinished, finished: isFinished,
+    visitWords: 0, visitSecs: 0, visitWpm: 0, xpAtOpen: state.game.xp,
+    streakWasEarned: streakEarnedToday(), summaryShown: false,
   };
   if (!isFinished && R.idx >= R.total - 1) R.idx = 0; // near-end but not finished → restart
   state.game.sessions = (state.game.sessions || 0) + 1;
@@ -1527,7 +1670,10 @@ function updatePlayBtn() {
 function play() {
   if (!R || R.playing) return;
   if (R.finished) return; // completed → only "Read again" restarts (keeps the ✓ badge)
-  if (R.idx >= R.total - 1) { R.idx = 0; R.done = false; }
+  // Paused past the final flash → the text was read to the end: finish it properly.
+  // (No restart-from-0 here: openReader already resets non-finished docs that load
+  // at the end, and idx is post-increment — flash idx-1 was the last one SHOWN.)
+  if (R.idx >= R.total) { finishDoc(); return; }
   R.playing = true; R.sessionStart = performance.now(); R.sessionWords = 0;
   updatePlayBtn(); acquireWake();
   tick();
@@ -1567,6 +1713,10 @@ function accrue() {
     const topics = R.doc.topics || [];
     if (topics.length) { state.game.topicWords = state.game.topicWords || {}; for (const t of topics) state.game.topicWords[t] = (state.game.topicWords[t] || 0) + R.sessionWords; }
     addReading(R.sessionWords, secs, actualWpm);
+    // visit totals feed the post-session summary
+    R.visitWords = (R.visitWords || 0) + R.sessionWords;
+    R.visitSecs = (R.visitSecs || 0) + secs;
+    R.visitWpm = Math.max(R.visitWpm || 0, actualWpm);
   }
   R.sessionWords = 0; R.sessionStart = performance.now();
 }
@@ -1588,14 +1738,16 @@ function finishDoc() {
   R.finished = true;
   writeProgress(true);
   if (!wasFinished) state.game.finished = (state.game.finished || 0) + 1;
+  state.game.finishedToday = (state.game.finishedToday || 0) + 1;
+  updateQuests();
   checkAchievements(); save();
   updatePlayBtn(); showDoneBanner(); // completed state appears immediately, not just on reopen
-  // In a vault, advance to the next unread note automatically; else celebrate.
+  // In a vault, advance to the next unread note automatically; else the summary celebrates.
   if (R.vaultCtx && R.vaultCtx.i < R.vaultCtx.vaultDoc.notes.length - 1) {
     achievementToast('✅', 'Note done — next up');
     setTimeout(() => gotoNote(1), 900);
   } else {
-    achievementToast('🏁', R.vaultCtx ? 'Vault complete!' : 'Finished!');
+    showSummary({ finished: true });
   }
 }
 // Persist progress to the right place: a standalone doc, or a note inside a vault.
@@ -1619,10 +1771,121 @@ function saveProgress() { writeProgress(R && R.done); }
 function closeReader() {
   const vaultCtx = R?.vaultCtx;
   if (R) { pause(); saveProgress(); }
+  // A meaningful visit that ends without a natural finish still deserves its summary
+  // (the live feedback loop) — only once per visit.
+  const wantSummary = R && !R.summaryShown && !vaultCtx && (R.visitWords || 0) >= 250;
+  const visit = R ? { words: R.visitWords, secs: R.visitSecs, wpm: R.visitWpm, xpAtOpen: R.xpAtOpen, streakWasEarned: R.streakWasEarned } : null;
   R = null;
   D.reader.classList.add('hidden');
   if (vaultCtx) openVaultBrowser(vaultCtx.vaultDoc.id); // back to vault, progress refreshed
   else showView('home');
+  if (wantSummary) showSummaryFor(visit, false);
+}
+
+/* ---------- post-session summary (the Duolingo-style feedback loop) ----------
+   Choreography: title → stat cards deal in with count-ups → quest bars fill →
+   streak tick (first earn of the day) → milestone takeover → explicit "done for
+   today" exit signal when the goal is met. */
+function showSummary(opts = {}) {
+  if (!R || R.summaryShown) return;
+  R.summaryShown = true;
+  showSummaryFor({ words: R.visitWords, secs: R.visitSecs, wpm: R.visitWpm,
+    xpAtOpen: R.xpAtOpen, streakWasEarned: R.streakWasEarned }, !!opts.finished);
+}
+
+// simple count-up (setTimeout, not rAF — must animate even in throttled tabs)
+function countUp(node, to, format = (v) => fmt(v), dur = 700) {
+  const steps = 18; let i = 0;
+  const tick = () => { i++; node.textContent = format(Math.round(to * (i / steps))); if (i < steps) setTimeout(tick, dur / steps); };
+  if (to <= 0) { node.textContent = format(0); return; }
+  tick();
+}
+
+function showSummaryFor(visit, finished) {
+  const g = state.game;
+  const earnedNow = streakEarnedToday() && !visit.streakWasEarned;
+  const ds = displayStreak();
+  const milestone = earnedNow && MILESTONES.includes(ds) && !(g.milestonesSeen || []).includes(ds) ? ds : 0;
+  const xpGained = Math.max(0, g.xp - (visit.xpAtOpen ?? g.xp));
+  const goalMet = g.wordsToday >= (state.profile.dailyGoalWords || Infinity);
+
+  const wrap = el('div', { class:'summary' });
+  const card = el('div', { class:'sum-card' });
+  card.append(el('div', { class:'sum-title' }, finished ? 'Text finished! 🏁' : 'Session complete!'));
+
+  // stat cards, dealt in one by one
+  const stats = el('div', { class:'sum-stats' });
+  const mkStat = (cls, label, delay) => {
+    const v = el('b', {}, '0');
+    const s = el('div', { class:'sum-stat ' + cls, style:`animation-delay:${delay}ms` }, v, el('span', {}, label));
+    stats.append(s); return v;
+  };
+  const vWords = mkStat('gold', 'words', 0);
+  const vWpm = mkStat('blue', 'WPM', 140);
+  const vTime = mkStat('green', 'time', 280);
+  const vXp = mkStat('violet', 'XP earned', 420);
+  card.append(stats);
+
+  // quest bars (fill after the cards land)
+  ensureQuests();
+  const qwrap = el('div', { class:'sum-quests' });
+  const fills = [];
+  for (const q of g.quests) {
+    const pr = questProgress(q), pct = Math.min(100, Math.round((pr / q.target) * 100));
+    const row = el('div', { class:'quest sm' + (q.done ? ' done' : '') });
+    row.append(el('span', { class:'q-medal' }, QUEST_MEDAL[q.tier]));
+    const mid = el('div', { class:'q-mid' });
+    mid.append(el('div', { class:'q-label' }, q.label));
+    const bar = el('div', { class:'q-bar' }); const fill = el('i', { style:'width:0%' });
+    bar.append(fill); mid.append(bar); row.append(mid);
+    row.append(el('span', { class:'q-state' }, q.done ? '✓' : ''));
+    qwrap.append(row); fills.push([fill, pct]);
+  }
+  card.append(qwrap);
+
+  // streak strip — flame ignites when today was just earned
+  if (earnedNow) {
+    const strip = el('div', { class:'sum-streak' });
+    strip.append(el('span', { class:'flame', html: ICON.flame }));
+    const n = el('b', {}, String(Math.max(0, ds - 1)));
+    strip.append(n, el('span', {}, ds === 1 ? 'streak started!' : 'day streak'));
+    card.append(strip);
+    setTimeout(() => { strip.classList.add('lit'); n.textContent = String(ds); haptic(14); }, 900);
+  }
+  if (goalMet) card.append(el('div', { class:'sum-doneline' }, '✓ You’re done for today. See you tomorrow!'));
+
+  card.append(el('button', { class:'btn', style:'margin-top:14px', onclick:() => {
+    if (milestone) { renderMilestone(wrap, milestone); return; }
+    wrap.remove(); if (!D.home.classList.contains('hidden')) renderHome();
+  } }, milestone ? 'Continue' : 'Done'));
+  wrap.append(card);
+  document.body.append(wrap);
+
+  // run the choreography
+  setTimeout(() => countUp(vWords, visit.words || 0), 60);
+  setTimeout(() => countUp(vWpm, visit.wpm || 0, v => String(v)), 200);
+  setTimeout(() => { vTime.parentElement.querySelector('b').textContent = fmtTime(visit.secs || 0); }, 340);
+  setTimeout(() => countUp(vXp, xpGained, v => '+' + v), 480);
+  setTimeout(() => { for (const [f, p] of fills) f.style.width = p + '%'; }, 650);
+}
+
+// Full-screen milestone celebration (3/7/30/100/365) — shown once per milestone.
+function renderMilestone(wrap, ms) {
+  const g = state.game;
+  g.milestonesSeen = g.milestonesSeen || []; g.milestonesSeen.push(ms); save();
+  clear(wrap);
+  const card = el('div', { class:'sum-card milestone' });
+  for (let i = 0; i < 24; i++) card.append(el('span', { class:'confetti', style:`--i:${i}` }));
+  card.append(el('span', { class:'flame giant', html: ICON.flame }));
+  const n = el('div', { class:'ms-n' }, String(ms - 1));
+  card.append(n, el('div', { class:'ms-l' }, `${ms}-day streak!`));
+  card.append(el('div', { class:'ms-sub' }, ms >= 30 ? 'You’re unstoppable.' : 'A real habit is forming.'));
+  const share = el('button', { class:'btn ghost sm', onclick: shareStats }, 'Share it');
+  const done = el('button', { class:'btn sm', onclick:() => { wrap.remove(); if (!D.home.classList.contains('hidden')) renderHome(); } }, 'Keep reading');
+  card.append(el('div', { class:'ms-btns' }, share, done));
+  wrap.append(card);
+  haptic(20);
+  setTimeout(() => { n.textContent = String(ms); n.classList.add('pop'); }, 500);
 }
 
 /* screen wake lock so the display doesn't dim mid-read */
@@ -2141,18 +2404,108 @@ function speedSheet() {
   body.append(el('button', { class:'btn mt16', onclick:() => { closeSheet(); renderProfile(); } }, 'Done'));
   sheet({ title:'Default reading speed', body });
 }
+// Goal picker framed in minutes/day (Duolingo commitment framing), mapped to words
+// via the user's own speed, plus a custom words stepper. Nothing applies until
+// "Commit to my goal" — an active choice, not a passive dial.
 function goalSheet() {
   const body = el('div', { class:'stack' });
-  const opts = [500, 1000, 2000, 4000, 8000];
-  for (const o of opts) {
-    const b = el('button', { class:'opt' + (state.profile.dailyGoalWords === o ? ' sel' : '') },
-      el('div', { class:'opt-t' }, `${fmt(o)} words`),
-      el('div', { class:'opt-d' }, `~${Math.round(o / 250)} min at 250 WPM`),
+  const wpm = Math.max(150, state.settings.wpm);
+  const tiers = [
+    { name:'Casual',  mins:5 },  { name:'Regular', mins:10 },
+    { name:'Serious', mins:15 }, { name:'Intense', mins:20 },
+  ].map(t => ({ ...t, words: Math.max(200, Math.round((t.mins * wpm) / 100) * 100) }));
+  let pick = state.profile.dailyGoalWords || 2000;
+  const rows = [];
+  const custom = el('div', { class:'goal-custom' });
+  const cVal = el('b', {}, fmt(pick));
+  const syncSel = () => {
+    rows.forEach(([b, w]) => b.classList.toggle('sel', pick === w));
+    custom.classList.toggle('sel', !tiers.some(t => t.words === pick));
+    cVal.textContent = fmt(pick);
+  };
+  for (const t of tiers) {
+    const b = el('button', { class:'opt' },
+      el('div', {}, el('div', { class:'opt-t' }, `${t.name} — ${t.mins} min/day`),
+        el('div', { class:'opt-d' }, `${fmt(t.words)} words at your ${wpm} WPM`)),
       el('span', { class:'tick', html: ICON.check }));
-    b.addEventListener('click', () => { state.profile.dailyGoalWords = o; save(); haptic(6); closeSheet(); renderProfile(); });
-    body.append(b);
+    b.addEventListener('click', () => { pick = t.words; haptic(6); syncSel(); });
+    rows.push([b, t.words]); body.append(b);
   }
-  sheet({ title:'Daily word goal', body });
+  const step = (d) => { pick = Math.max(200, Math.min(50000, pick + d)); haptic(4); syncSel(); };
+  custom.append(el('button', { class:'icon-btn sm', onclick:() => step(-250), html:'<span style="font-size:20px">−</span>' }),
+    el('div', { class:'goal-custom-v' }, 'Custom: ', cVal, ' words'),
+    el('button', { class:'icon-btn sm', onclick:() => step(250), html:'<span style="font-size:20px">+</span>' }));
+  body.append(custom);
+  body.append(el('button', { class:'btn', onclick:() => {
+    state.profile.dailyGoalWords = pick; save(); haptic(10); closeSheet();
+    toast('Goal committed 🎯');
+    if (!D.home.classList.contains('hidden')) renderHome();
+    if (!D.profile.classList.contains('hidden')) renderProfile();
+  } }, 'Commit to my goal'));
+  syncSel();
+  sheet({ title:'Daily reading goal', sub:'How much do you want to read each day?', body });
+}
+
+/* ---------- daily quest card (home) ---------- */
+function questCard() {
+  ensureQuests();
+  const g = state.game;
+  const card = el('div', { class:'card quest-card' });
+  card.append(el('div', { class:'qc-head' }, el('span', {}, 'Daily quests'),
+    el('span', { class:'qc-count' }, `${g.quests.filter(q => q.done).length}/3`)));
+  for (const q of g.quests) {
+    const pr = questProgress(q), pct = Math.min(100, Math.round((pr / q.target) * 100));
+    const row = el('div', { class:'quest' + (q.done ? ' done' : '') });
+    row.append(el('span', { class:'q-medal' }, QUEST_MEDAL[q.tier]));
+    const mid = el('div', { class:'q-mid' });
+    mid.append(el('div', { class:'q-label' }, q.label));
+    const bar = el('div', { class:'q-bar' }); bar.append(el('i', { style:`width:${pct}%` }));
+    mid.append(bar);
+    row.append(mid);
+    row.append(el('span', { class:'q-state' }, q.done ? '✓' : q.metric === 'secondsToday' ? `${Math.floor(pr / 60)}/${Math.floor(q.target / 60)}` : `${fmt(pr)}/${fmt(q.target)}`));
+    card.append(row);
+  }
+  return card;
+}
+
+/* ---------- streak calendar sheet ---------- */
+function streakSheet() {
+  const g = state.game;
+  const body = el('div', { class:'stack' });
+  const ds = displayStreak();
+  const head = el('div', { class:'streak-hero' + (streakEarnedToday() ? ' lit' : '') });
+  head.append(el('span', { class:'flame big', html: ICON.flame }), el('div', { class:'sh-n' }, String(ds)),
+    el('div', { class:'sh-l' }, ds === 1 ? 'day streak' : 'day streak'));
+  body.append(head);
+  if (!streakEarnedToday()) body.append(el('div', { class:'sh-hint' },
+    ds > 0 ? `Read ${STREAK_DAY_WORDS}+ words today to keep it going` : `Read ${STREAK_DAY_WORDS}+ words to start a streak`));
+
+  // month grid
+  const now = new Date(); const y = now.getFullYear(), m = now.getMonth();
+  const first = new Date(y, m, 1), startDow = first.getDay(), days = new Date(y, m + 1, 0).getDate();
+  const grid = el('div', { class:'cal-grid' });
+  for (const d of ['S','M','T','W','T','F','S']) grid.append(el('span', { class:'cal-dow' }, d));
+  for (let i = 0; i < startDow; i++) grid.append(el('span', {}));
+  const todayK = dayKey();
+  for (let d = 1; d <= days; d++) {
+    const k = dayKey(new Date(y, m, d));
+    const read = (g.history[k] || 0) >= STREAK_DAY_WORDS;
+    const frozen = !!(g.frozenDays || {})[k];
+    const cell = el('span', { class:'cal-day' + (read ? ' read' : '') + (frozen ? ' frozen' : '') + (k === todayK ? ' today' : '') });
+    cell.append(read ? el('i', { class:'flame', html: ICON.flame }) : frozen ? el('i', {}, '❄') : el('i', { class:'cal-n' }, String(d)));
+    grid.append(cell);
+  }
+  body.append(el('div', { class:'card', style:'padding:14px' }, grid));
+
+  // footer facts
+  const next = MILESTONES.find(ms => ms > ds);
+  const facts = el('div', { class:'streak-facts' });
+  facts.append(el('div', { class:'sf' }, el('b', {}, `❄ ${g.freezes || 0}/${MAX_FREEZES}`), el('span', {}, 'freezes held')));
+  if (next) facts.append(el('div', { class:'sf' }, el('b', {}, `${next - ds}`), el('span', {}, `days to ${next}-day milestone`)));
+  facts.append(el('div', { class:'sf' }, el('b', {}, String(g.longestStreak || 0)), el('span', {}, 'longest ever')));
+  body.append(facts);
+  body.append(el('div', { class:'sh-hint' }, 'Freezes are earned every 7 days in a row and protect your streak automatically if you miss a day.'));
+  sheet({ title:'Your streak', body });
 }
 function pickAvatar() {
   const body = el('div', { class:'src-row', style:'grid-template-columns:repeat(5,1fr)' });

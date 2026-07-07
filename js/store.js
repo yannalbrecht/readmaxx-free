@@ -78,6 +78,18 @@ const DEFAULT = {
     totalWords: 0,
     totalSeconds: 0,
     sessions: 0,
+    // Duolingo-style habit engine
+    freezes: 0,         // streak freezes held (max 2) — earned, never bought
+    freezeProgress: 0,  // consecutive earned days toward the next freeze (7 → +1)
+    frozenDays: {},     // 'YYYY-MM-DD' -> true (days a freeze saved)
+    milestonesSeen: [], // streak milestones already celebrated (3/7/30/100/365)
+    secondsToday: 0,    // daily counters for quests (reset in ensureToday)
+    sessionsToday: 0,
+    finishedToday: 0,
+    bestWpmToday: 0,
+    questsDay: null,    // dayKey the current quests were generated for
+    quests: [],         // [{metric,target,tier,label,done,claimed}]
+    questsRewardDay: null, // dayKey the all-3 bonus was granted
   },
 };
 
