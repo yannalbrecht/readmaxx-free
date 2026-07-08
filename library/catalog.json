@@ -90,7 +90,8 @@
    "bio": "Charlie Munger (1924-2023) was the long-time vice chairman of Berkshire Hathaway and the long-time business partner of Warren Buffett. He is widely regarded as one of the most influential thinkers of the modern era, particularly for his emphasis on mental models, multidisciplinary learning, and rational decision-making.",
    "phase": 3,
    "order": 9,
-   "texts": 7
+   "texts": 7,
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Charlie_Munger_%28cropped%29.jpg/250px-Charlie_Munger_%28cropped%29.jpg"
   },
   {
    "id": "naval-ravikant",
@@ -99,7 +100,8 @@
    "order": 90,
    "texts": 36,
    "tagline": "The Almanack — a free guide to wealth and happiness, curated by Eric Jorgenson.",
-   "bio": "Angel investor and philosopher. The Almanack of Naval Ravikant collects his wisdom on wealth, judgment and happiness. The entire book is free to read online — the project is a public service by Eric Jorgenson."
+   "bio": "Angel investor and philosopher. The Almanack of Naval Ravikant collects his wisdom on wealth, judgment and happiness. The entire book is free to read online — the project is a public service by Eric Jorgenson.",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/5/55/Naval_Ravikant_%28cropped%29.jpg"
   },
   {
    "id": "marcus-aurelius",
@@ -107,8 +109,9 @@
    "phase": 6,
    "order": 100,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The private journal of a Roman emperor — Stoic reflections on duty, mortality and mastering your own mind.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MSR-ra-61-b-1-DM.jpg/250px-MSR-ra-61-b-1-DM.jpg"
   },
   {
    "id": "epictetus",
@@ -116,8 +119,9 @@
    "phase": 6,
    "order": 101,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "A short handbook of Stoic practice: concern yourself only with what’s in your control, and calmly accept the rest.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece_%28cropped%29.jpg/250px-Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece_%28cropped%29.jpg"
   },
   {
    "id": "seneca",
@@ -125,8 +129,9 @@
    "phase": 6,
    "order": 103,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Seneca’s letters and essays on living well — happiness, gratitude, anger and clemency.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Duble_herma_of_Socrates_and_Seneca_Antikensammlung_Berlin_07.jpg/250px-Duble_herma_of_Socrates_and_Seneca_Antikensammlung_Berlin_07.jpg"
   },
   {
    "id": "plato",
@@ -134,8 +139,9 @@
    "phase": 6,
    "order": 105,
    "texts": 3,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Socrates’ defense at his trial — the origin of “the unexamined life is not worth living.”",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Plato_Silanion_Musei_Capitolini_MC1377.png/250px-Plato_Silanion_Musei_Capitolini_MC1377.png"
   },
   {
    "id": "boethius",
@@ -143,8 +149,9 @@
    "phase": 6,
    "order": 108,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Written in prison awaiting death — how philosophy consoles the mind against the turning wheel of fortune.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Boethius.jpeg/250px-Boethius.jpeg"
   },
   {
    "id": "ren-descartes",
@@ -152,8 +159,9 @@
    "phase": 6,
    "order": 109,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The birth of modern philosophy: “I think, therefore I am,” and a method for reasoning toward truth.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg/250px-Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg"
   },
   {
    "id": "blaise-pascal",
@@ -161,8 +169,9 @@
    "phase": 6,
    "order": 110,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Pascal’s piercing fragments on faith, reason and the human condition — including his famous wager.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Blaise_Pascal_Versailles.JPG/250px-Blaise_Pascal_Versailles.JPG"
   },
   {
    "id": "bertrand-russell",
@@ -170,8 +179,9 @@
    "phase": 6,
    "order": 111,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Russell’s lucid, humane introduction to philosophy’s biggest question: what can we actually know?",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Bertrand_Russell_smoking_in_1936.jpg/250px-Bertrand_Russell_smoking_in_1936.jpg"
   },
   {
    "id": "arthur-schopenhauer",
@@ -179,8 +189,9 @@
    "phase": 6,
    "order": 112,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Practical philosophy on what truly makes a life happy — who you are matters more than what you have.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Arthur_Schopenhauer_by_J_Sch%C3%A4fer%2C_1859b.jpg/250px-Arthur_Schopenhauer_by_J_Sch%C3%A4fer%2C_1859b.jpg"
   },
   {
    "id": "friedrich-nietzsche",
@@ -188,8 +199,9 @@
    "phase": 6,
    "order": 114,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Nietzsche’s poetic masterwork — the Übermensch, eternal recurrence, and the call to create your own values.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nietzsche187a.jpg/250px-Nietzsche187a.jpg"
   },
   {
    "id": "ralph-waldo-emerson",
@@ -197,8 +209,9 @@
    "phase": 6,
    "order": 116,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Emerson’s foundational essays, including “Self-Reliance” — trust yourself and think for yourself.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Ralph_Waldo_Emerson_by_Josiah_Johnson_Hawes_1857.jpg/250px-Ralph_Waldo_Emerson_by_Josiah_Johnson_Hawes_1857.jpg"
   },
   {
    "id": "francis-bacon",
@@ -206,8 +219,9 @@
    "phase": 6,
    "order": 118,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Francis Bacon’s terse, endlessly quotable essays on studies, adversity, ambition and more.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Somer_Francis_Bacon.jpg/250px-Somer_Francis_Bacon.jpg"
   },
   {
    "id": "g-k-chesterton",
@@ -215,8 +229,9 @@
    "phase": 6,
    "order": 119,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Chesterton’s witty defense of wonder and faith — a spiritual autobiography of ideas.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Gilbert_Chesterton.jpg/250px-Gilbert_Chesterton.jpg"
   },
   {
    "id": "benjamin-franklin",
@@ -224,8 +239,9 @@
    "phase": 6,
    "order": 120,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Franklin’s own account of his rise, his thirteen virtues, and a lifetime of deliberate self-improvement.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Joseph_Siffrein_Duplessis_-_Benjamin_Franklin_-_Google_Art_Project.jpg/250px-Joseph_Siffrein_Duplessis_-_Benjamin_Franklin_-_Google_Art_Project.jpg"
   },
   {
    "id": "samuel-smiles",
@@ -233,8 +249,9 @@
    "phase": 6,
    "order": 121,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The Victorian bestseller that coined “self-help” — perseverance and character as the roots of achievement.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Samuel_Smiles_by_Sir_George_Reid.jpg/250px-Samuel_Smiles_by_Sir_George_Reid.jpg"
   },
   {
    "id": "james-allen",
@@ -242,7 +259,7 @@
    "phase": 6,
    "order": 122,
    "texts": 1,
-   "tagline": "",
+   "tagline": "A tiny, potent classic: your thoughts shape your circumstances and forge your character.",
    "bio": ""
   },
   {
@@ -251,8 +268,9 @@
    "phase": 6,
    "order": 123,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The 1910 manual on creating wealth through purposeful thought and action that seeded modern success writing.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/7_Chakras.JPG/250px-7_Chakras.JPG"
   },
   {
    "id": "russell-conwell",
@@ -260,8 +278,9 @@
    "phase": 6,
    "order": 124,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The famous lecture arguing that real opportunity lies right where you already stand.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Russell_Herman_Conwell.jpg/250px-Russell_Herman_Conwell.jpg"
   },
   {
    "id": "william-james",
@@ -269,8 +288,9 @@
    "phase": 6,
    "order": 125,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "William James on habit, attention and interest — including the enduring chapter on “The Laws of Habit.”",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/William_James_b1842c.jpg/250px-William_James_b1842c.jpg"
   },
   {
    "id": "laozi",
@@ -278,8 +298,9 @@
    "phase": 6,
    "order": 126,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The founding text of Taoism — effortless action, humility, and living in harmony with the Way.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Laozi_%28Chinese_characters%29.svg/250px-Laozi_%28Chinese_characters%29.svg.png"
   },
   {
    "id": "sun-tzu",
@@ -287,8 +308,9 @@
    "phase": 6,
    "order": 127,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The oldest treatise on strategy — winning without fighting, and knowing both yourself and your opponent.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/%E5%90%B4%E5%8F%B8%E9%A9%AC%E5%AD%99%E6%AD%A6.jpg/250px-%E5%90%B4%E5%8F%B8%E9%A9%AC%E5%AD%99%E6%AD%A6.jpg"
   },
   {
    "id": "confucius",
@@ -296,8 +318,9 @@
    "phase": 6,
    "order": 128,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The collected sayings of Confucius on virtue, learning, and how to live and lead well.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Confucius_Tang_Dynasty.jpg/250px-Confucius_Tang_Dynasty.jpg"
   },
   {
    "id": "vyasa",
@@ -305,8 +328,9 @@
    "phase": 6,
    "order": 129,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Edwin Arnold’s verse rendering of the Gita — Krishna’s counsel on duty, action and the self.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Sculpture_of_Vyasa.jpeg/250px-Sculpture_of_Vyasa.jpeg"
   },
   {
    "id": "kahlil-gibran",
@@ -314,8 +338,9 @@
    "phase": 6,
    "order": 130,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Gibran’s beloved prose-poems on love, work, freedom and the great passages of life.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Kahlil_Gibran_1913.jpg/250px-Kahlil_Gibran_1913.jpg"
   },
   {
    "id": "niccol-machiavelli",
@@ -323,8 +348,9 @@
    "phase": 6,
    "order": 131,
    "texts": 1,
-   "tagline": "",
-   "bio": ""
+   "tagline": "The unflinching handbook on gaining and holding power — realism over idealism.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg/250px-Portrait_of_Niccol%C3%B2_Machiavelli_by_Santi_di_Tito.jpg"
   },
   {
    "id": "henry-david-thoreau",
@@ -332,8 +358,9 @@
    "phase": 6,
    "order": 132,
    "texts": 2,
-   "tagline": "",
-   "bio": ""
+   "tagline": "Two years alone at Walden Pond — a manifesto for simple, deliberate, self-reliant living.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Benjamin_D._Maxham_-_Henry_David_Thoreau_-_Restored.jpg/250px-Benjamin_D._Maxham_-_Henry_David_Thoreau_-_Restored.jpg"
   }
  ],
  "texts": [
@@ -350,7 +377,8 @@
     "personal-growth"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/reading-change-your-life-with-one-simple-habit/"
+   "url": "https://thedankoe.com/letters/reading-change-your-life-with-one-simple-habit/",
+   "preview": "The worst place you can be is stuck right before rock bottom. Not painful enough to change. Just comfortable enough to stay the same. I’m glad I got arrested that summer of freshman year in college. What happened, you ask? After my roommate’s girlfriend left him for another guy, he wasn’t feeling to great. He needed…"
   },
   {
    "id": "dan-koe--how-to-focus-for-12-hours-a-day",
@@ -365,7 +393,8 @@
     "deep-work"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-focus-for-12-hours-a-day/"
+   "url": "https://thedankoe.com/letters/how-to-focus-for-12-hours-a-day/",
+   "preview": "You won’t find rare results in an average lifestyle. If you feel lost, tired, and can’t focus on making progress toward the life you promised yourself you would live, sometimes the only thing you can do is to flip the switch. Create a glitch in the matrix. Become a completely different person. Change your habits all…"
   },
   {
    "id": "dan-koe--how-to-remember-everything-you-read-with-ai",
@@ -380,7 +409,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-remember-everything-you-read-with-ai/"
+   "url": "https://thedankoe.com/letters/how-to-remember-everything-you-read-with-ai/",
+   "preview": "At first, I was upset. Now, I just feel bad for this guy: Screenshot There’s some truth behind what he’s saying, but that’s because most people, in general, don’t know how to read. Not because they’re illiterate, but because they learned how to read in a Prussian style education system designed to create obedient…"
   },
   {
    "id": "dan-koe--how-to-unfck-your-life-evidence-based",
@@ -395,7 +425,8 @@
     "life-change"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-unfck-your-life-evidence-based/"
+   "url": "https://thedankoe.com/letters/how-to-unfck-your-life-evidence-based/",
+   "preview": "Your life feels terrible because your mind is filled with beliefs that interpret it as terrible. But here’s the truth that psychology points to: You’re in the perfect position to change your life. However, most people don’t know this, and they get stuck in their situation for years. Sometimes decades. They never…"
   },
   {
    "id": "dan-koe--how-to-think-originally",
@@ -410,7 +441,8 @@
     "independence"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-think-originally/"
+   "url": "https://thedankoe.com/letters/how-to-think-originally/",
+   "preview": "Before we begin, a few updates: Kortex, the writing and second brain software we’ve been building, is seeing quite a few improvements this month: Desktop app ( released yesterday with floating capture and docs) Light mode (releasing today) Mobile app (releasing this week) Offline mode (releasing this month) Voice…"
   },
   {
    "id": "dan-koe--the-deep-work-routine-that-changed-my-life",
@@ -425,7 +457,8 @@
     "routine"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/the-deep-work-routine-that-changed-my-life/"
+   "url": "https://thedankoe.com/letters/the-deep-work-routine-that-changed-my-life/",
+   "preview": "Block out 1 hour a day, minimum. Work on 1 meaningful project. Aim for 1 vision for your future. Take it 1 day at a time. You don’t need more motivation, you need more clarity. You don’t need more time, you need more focus. If you want more of both, understand this: Your mind is a supercomputer. Your attention is the…"
   },
   {
    "id": "dan-koe--how-to-build-a-better-personal-brand",
@@ -440,7 +473,8 @@
     "online-business"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-build-a-better-personal-brand-than-99-of-people/"
+   "url": "https://thedankoe.com/letters/how-to-build-a-better-personal-brand-than-99-of-people/",
+   "preview": "What most people don’t understand is that a “personal brand” isn’t a business model. It’s a traffic source. It’s a trust mechanism. Founders build a personal brand to get users for their startup. Ecommerce brands use UGC to sell physical products. You can quite literally sell anything – from bags of coffee to nudes –…"
   },
   {
    "id": "dan-koe--how-to-be-more-disagreeable",
@@ -455,7 +489,8 @@
     "persuasion"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-be-more-disagreeable-create-a-reality-distortion-field/"
+   "url": "https://thedankoe.com/letters/how-to-be-more-disagreeable-create-a-reality-distortion-field/",
+   "preview": "I’ve learned a lot about myself over the past year. In particular, I’ve realized I’m generally unpleasant to be around. I prefer being alone. I hate being out of routine for more than 2-3 days. I’m either thinking about nothing or everything with little in between. Mulling over ideas. Strategizing a project.…"
   },
   {
    "id": "dan-koe--how-to-think-like-a-genius-the-map-of-all-knowledge",
@@ -470,7 +505,8 @@
     "genius"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/how-to-think-like-a-genius-the-map-of-all-knowledge/"
+   "url": "https://thedankoe.com/letters/how-to-think-like-a-genius-the-map-of-all-knowledge/",
+   "preview": "The mark of a free individual is that they get what they want in life. This requires them to learn how to learn, how to earn, and how to think. The last one – how to think – is the most important because your thoughts influence what you learn, how you act, and whether or not you can create a strategy that allows you…"
   },
   {
    "id": "dan-koe--the-death-of-thoughtful-creation",
@@ -485,7 +521,8 @@
     "thoughtful-work"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/the-death-of-thoughtful-creation-how-to-get-ahead-of-everyone-else/"
+   "url": "https://thedankoe.com/letters/the-death-of-thoughtful-creation-how-to-get-ahead-of-everyone-else/",
+   "preview": "The easiest way to get ahead in life is to commit to a period of skill development. 6-12 months. Pure focus for 2-4 hours a day. Learning and building. Not just binge watching tutorials, but creating quality projects that you, others, or businesses could actually benefit from. Most people won’t do it but those who do…"
   },
   {
    "id": "dan-koe--20-30-years-old-is-the-tutorial-phase",
@@ -500,7 +537,8 @@
     "life-advice"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/20-30-years-old-is-the-tutorial-phase-dont-fck-it-up/"
+   "url": "https://thedankoe.com/letters/20-30-years-old-is-the-tutorial-phase-dont-fck-it-up/",
+   "preview": "This letter is going to piss some people off because it’s for a specific type of person. I’m going to sound like an inconsiderate asshole to most people but that’s the only way I can get the severity of this situation across. With that said, consider nuance turned off as of right now . The people who get angry at the…"
   },
   {
    "id": "dan-koe--these-3-decisions-will-determine-if-you-get-rich",
@@ -515,7 +553,8 @@
     "mindset"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/these-3-decisions-will-determine-if-you-get-rich/"
+   "url": "https://thedankoe.com/letters/these-3-decisions-will-determine-if-you-get-rich/",
+   "preview": "The only way to get rich is to (1) value your time at a delusional dollar amount, (2) be obsessed with getting rich, and (3) give yourself no other option but to get rich. Now, I know there are a few people in the back screaming that “money isn’t everything!” or regurgitating a shallow “money doesn’t buy happiness”…"
   },
   {
    "id": "dan-koe--you-can-learn-anything-in-2-weeks",
@@ -530,7 +569,8 @@
     "growth"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/you-can-learn-anything-in-2-weeks/"
+   "url": "https://thedankoe.com/letters/you-can-learn-anything-in-2-weeks/",
+   "preview": "You can learn anything in 2 weeks. And no, I don’t mean you can become a master at any skill or topic. I mean you can acquire the specific knowledge necessary to get results toward a specific goal. And if that doesn’t make you extremely excited about how much you can speed up the progress you’re making toward the big…"
   },
   {
    "id": "dan-koe--you-have-about-36-months-to-make-it",
@@ -545,7 +585,8 @@
     "future"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/you-have-about-36-months-to-make-it/"
+   "url": "https://thedankoe.com/letters/you-have-about-36-months-to-make-it/",
+   "preview": "I’ve been seeing this statement circulate online: “You have about 36 months to make it.” And it makes sense: AI is and will continue to replace jobs no matter how much people fight against it. Money as we know it will change or even cease to exist because millions of ASIs (artificial superintelligences) will rapidly…"
   },
   {
    "id": "dan-koe--self-discipline-is-easy-actually",
@@ -560,7 +601,8 @@
     "mindset"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/self-discipline-is-easy-actually/"
+   "url": "https://thedankoe.com/letters/self-discipline-is-easy-actually/",
+   "preview": "If you have to force yourself to do it, you will lose. That’s what most people get wrong about discipline. They hear that word… discipline… and a montage of grueling workouts with David Goggins running and screaming starts playing in their mind. They think they need to lash themselves to do the work that leads to…"
   },
   {
    "id": "dan-koe--you-dont-need-a-niche-you-need-a-point-of-view",
@@ -575,7 +617,8 @@
     "content-creation"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/you-dont-need-a-niche-you-need-a-point-of-view/"
+   "url": "https://thedankoe.com/letters/you-dont-need-a-niche-you-need-a-point-of-view/",
+   "preview": "If you’re a writer, creator, freelancer, or anyone else who is trying to “make it” doing something meaningful, you’re probably on social media. If you aren’t, you either have a method that works for you (this letter won’t apply to you) or you’re wasting your time and should probably be on social media. The thing is,…"
   },
   {
    "id": "dan-koe--human-3-0-a-map-to-reach-the-top-1",
@@ -590,7 +633,8 @@
     "mindset"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/human-3-0-a-map-to-reach-the-top-1/"
+   "url": "https://thedankoe.com/letters/human-3-0-a-map-to-reach-the-top-1/",
+   "preview": "As corny as this may sound, I’ve always wanted to become a force to be reckoned with. An absolute unit of an individual. Not just having a nice and muscular body, but to be fully developed in every domain of life. I wanted to become multidimensionally jacked. I wanted to max out all of my stats. I didn’t want to be an…"
   },
   {
    "id": "dan-koe--a-complete-knowledge-base-of-human-3-0",
@@ -605,7 +649,8 @@
     "identity"
    ],
    "src": "web",
-   "url": "https://thedankoe.com/letters/a-complete-knowledge-base-of-human-3-0/"
+   "url": "https://thedankoe.com/letters/a-complete-knowledge-base-of-human-3-0/",
+   "preview": "Earlier this week, I wrote HUMAN 3.0 – A Map To Reach The 1%. I’ve been baffled by the responses everyone has had to it. So I feel like there’s something here. Something important. In the Metatype prompt , I’ve had people respond that it brought them to tears. Crazy. I wanted to create a knowledge base for H3.0 that I…"
   },
   {
    "id": "shane-parrish--the-feynman-technique-the-best-way-to-learn-anything",
@@ -620,7 +665,8 @@
     "understanding"
    ],
    "src": "web",
-   "url": "https://fs.blog/2012/04/feynman-technique/"
+   "url": "https://fs.blog/2012/04/feynman-technique/",
+   "preview": "Learning Feynman Technique: The Ultimate Guide to Learning Anything Faster The Feynman Technique is the most effective method to unlock your potential, develop deep understanding, and quickly learn any subject. Richard Feynman was not only a Nobel laureate in Physics but also a master of demystifying complex topics.…"
   },
   {
    "id": "shane-parrish--the-buffett-formula-how-to-get-smarter",
@@ -635,7 +681,8 @@
     "mental-models"
    ],
    "src": "web",
-   "url": "https://fs.blog/2013/05/the-buffett-formula/"
+   "url": "https://fs.blog/2013/05/the-buffett-formula/",
+   "preview": "Reading The Buffett Formula: Going to Bed Smarter Than When You Woke Up Your mind grows stronger or weaker each day, depending on how you use it. Warren Buffett and Charlie Munger built their extraordinary success on a foundation of continuous learning. They showed consistent learning compounds, building…"
   },
   {
    "id": "shane-parrish--your-response-to-mistakes-defines-you",
@@ -650,7 +697,8 @@
     "resilience"
    ],
    "src": "web",
-   "url": "https://fs.blog/2014/09/mistakes/"
+   "url": "https://fs.blog/2014/09/mistakes/",
+   "preview": "Philosophy Your Response to Mistakes Defines You Sometimes we lose our way. We all make mistakes. We focus on the wrong things. We pursue goals at all costs . We teeter on ethical and moral cliffs . We get too far down a slippery slope. We steal. We cheat. We lie. We deceive others. We deceive ourselves. We don’t open…"
   },
   {
    "id": "shane-parrish--mental-models-the-best-way-to-make-intelligent-decisions",
@@ -665,7 +713,8 @@
     "frameworks"
    ],
    "src": "web",
-   "url": "https://fs.blog/mental-models/"
+   "url": "https://fs.blog/mental-models/",
+   "preview": "Mental Models: The Best Way to Make Intelligent Decisions (~100 Models Explained) A mental model is a simplified explanation of how something works. Any idea, belief, or concept can be boiled down to its essence. Like a map, mental models highlight key information while ignoring irrelevant details. They’re tools for…"
   },
   {
    "id": "shane-parrish--the-munger-operating-system-how-to-live-a-life-that-really-w",
@@ -680,7 +729,8 @@
     "wisdom"
    ],
    "src": "web",
-   "url": "https://fs.blog/2016/04/munger-operating-system/"
+   "url": "https://fs.blog/2016/04/munger-operating-system/",
+   "preview": "Philosophy The Munger Operating System: How to Live a Life That Really Works In 2007, Charlie Munger gave the commencement address at USC Law School, opening his speech by saying, “Well, no doubt many of you are wondering why the speaker is so old. Well, the answer is obvious: He hasn’t died yet.” Fortunately for us,…"
   },
   {
    "id": "shane-parrish--second-order-thinking-what-smart-people-use-to-outperform",
@@ -695,7 +745,8 @@
     "problem-solving"
    ],
    "src": "web",
-   "url": "https://fs.blog/2016/04/second-order-thinking/"
+   "url": "https://fs.blog/2016/04/second-order-thinking/",
+   "preview": "Mental Models Second-Order Thinking: What Smart People Use to Outperform Understanding how to think things through – to push your mind past the first step – can help you solve problems, avoid problems, and take better actions. The best way to examine the long-term consequences of our decisions is to think things…"
   },
   {
    "id": "shane-parrish--how-to-read-a-book",
@@ -710,7 +761,8 @@
     "knowledge"
    ],
    "src": "web",
-   "url": "https://fs.blog/how-to-read-a-book/"
+   "url": "https://fs.blog/how-to-read-a-book/",
+   "preview": "The Best Summary of How to Read a Book by Mortimer Adler A brief, no fluff, summary of Mortimer Adlers’ How to Read a Book . Let’s explore the four reading levels and how they can help you learn more. In How to Read a Book , Mortimer Adler identifies four levels of reading: Elementary Reading Inspectional Reading…"
   },
   {
    "id": "shane-parrish--the-most-respectful-interpretation",
@@ -725,7 +777,8 @@
     "relationships"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/01/most-respectful-interpretation/"
+   "url": "https://fs.blog/2017/01/most-respectful-interpretation/",
+   "preview": "Thinking The Most Respectful Interpretation Many of us jump to negative conclusions rather than generous ones. Taking the most respectful interpretation of events changes how you see others and how they behave toward you. Consider this situation: You email a colleague with a question expecting a prompt response, but…"
   },
   {
    "id": "shane-parrish--proximate-vs-root-causes-why-you-should-keep-digging-to-find",
@@ -740,7 +793,8 @@
     "analysis"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/05/proximate-vs-root-causes/"
+   "url": "https://fs.blog/2017/05/proximate-vs-root-causes/",
+   "preview": "Mental Models Proximate vs Root Causes: Keep Digging to Find the Answer “Anything perceived has a cause. All conclusions have premises. All effects have causes . All actions have motives.” — Arthur Schopenhauer The Basics One of the first principles we learn as babies is that of cause and effect. Infants learn that…"
   },
   {
    "id": "shane-parrish--all-models-are-wrong-but-some-are-useful",
@@ -755,7 +809,8 @@
     "frameworks"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/06/all-models-are-wrong/"
+   "url": "https://fs.blog/2017/06/all-models-are-wrong/",
+   "preview": "Mental Models All Models Are Wrong How is your journey towards understanding Farnam Street’s latticework of mental models going? Is it proving useful? Changing your view of the world? If the answer is that it’s going well that’s good. There’s just one tiny hitch. All models are wrong. Yep. It’s the truth. However,…"
   },
   {
    "id": "shane-parrish--habits-vs-goals-a-look-at-the-benefits-of-a-systematic-appro",
@@ -770,7 +825,8 @@
     "productivity"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/06/habits-vs-goals/"
+   "url": "https://fs.blog/2017/06/habits-vs-goals/",
+   "preview": "Productivity , Self-Improvement Habits vs. Goals: A Look at the Benefits of a Systematic Approach to Life Nothing will change your future trajectory like your habits. We all have goals, big or small, things we want to achieve within a certain time frame. Maybe you want to make a million dollars by the time you turn…"
   },
   {
    "id": "shane-parrish--the-difference-between-amateurs-and-professionals",
@@ -785,7 +841,8 @@
     "growth"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/08/amateurs-professionals/"
+   "url": "https://fs.blog/2017/08/amateurs-professionals/",
+   "preview": "Self-Improvement Turning Pro: The Difference Between Amateurs and Professionals Why do some people consistently outperform and achieve remarkable results while others struggle to tread water? There is one thing that stands out more than others: mindset. If you want results, you need to approach things like a…"
   },
   {
    "id": "shane-parrish--a-two-step-process-for-making-effective-decisions",
@@ -800,7 +857,8 @@
     "thinking"
    ],
    "src": "web",
-   "url": "https://fs.blog/2013/04/munger-two-step/"
+   "url": "https://fs.blog/2013/04/munger-two-step/",
+   "preview": "Decision Making The Munger Two Step A simple and easy approach to decision making that prevents us from being manipulated. Understand the forces at play. Understand how your subconscious might be leading you astray. While most of us make decisions daily, few of us have a useful framework for thinking that protects us…"
   },
   {
    "id": "shane-parrish--adding-mental-models-to-your-minds-toolbox",
@@ -815,7 +873,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://fs.blog/2014/11/charlie-munger-mental-toolbox/"
+   "url": "https://fs.blog/2014/11/charlie-munger-mental-toolbox/",
+   "preview": "Mental Models Charlie Munger: Adding Mental Tools to Your Toolbox In The Art of War , Sun Tzu said: “The general who wins a battle makes many calculations in his temple before the battle is fought.” Those ‘calculations’ are the tools we have available to think better. One of the best questions you can ask is how we…"
   },
   {
    "id": "shane-parrish--charlie-munger-on-getting-rich-wisdom-focus-fake-knowledge-a",
@@ -830,7 +889,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/02/charlie-munger-wisdom/"
+   "url": "https://fs.blog/2017/02/charlie-munger-wisdom/",
+   "preview": "Thinking Charlie Munger on Getting Rich, Wisdom, Focus, Fake Knowledge and More “In the chronicles of American financial history,” writes David Clark in The Tao of Charlie Munger: A Compilation of Quotes from Berkshire Hathaway’s Vice Chairman on Life, Business, and the Pursuit of Wealth , ” Charlie Munger will be…"
   },
   {
    "id": "shane-parrish--how-using-a-decision-journal-can-help-you-make-better-decisi",
@@ -845,7 +905,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://fs.blog/2014/02/decision-journal/"
+   "url": "https://fs.blog/2014/02/decision-journal/",
+   "preview": "Decision Making Decision Journal: Template and Example Included One of the strangest things about being human is that we can’t trust our own memories of what we were thinking. Not because we forget but rather because our brains actively edit the past to make us look better and smarter. This wouldn’t matter much except…"
   },
   {
    "id": "shane-parrish--the-butterfly-effect-everything-you-need-to-know-about-this-",
@@ -860,7 +921,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://fs.blog/2017/08/the-butterfly-effect/"
+   "url": "https://fs.blog/2017/08/the-butterfly-effect/",
+   "preview": "Mental Models The Butterfly Effect: How Tiny Actions Unleash Global Consequences What if saving one life could doom millions? In Stephen King’s 11/22/63 , a man named Jake discovers a portal that transports him back to 1958. Determined to prevent the assassination of President John F. Kennedy, he believes this single…"
   },
   {
    "id": "shane-parrish--the-top-3-most-effective-ways-to-take-notes-while-reading",
@@ -875,7 +937,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://fs.blog/2013/11/taking-notes-while-reading/"
+   "url": "https://fs.blog/2013/11/taking-notes-while-reading/",
+   "preview": "Reading The Top 3 Most Effective Ways to Take Notes While Reading There are three steps to effectively taking notes while reading: At the end of each chapter write a few bullet points that summarize what you’ve read and make it personal if you can — that is, apply it to something in your life. Also, note any…"
   },
   {
    "id": "shane-parrish--thinking-about-thinking",
@@ -890,7 +953,8 @@
     "focus"
    ],
    "src": "web",
-   "url": "https://www.farnamstreetblog.com/2015/01/how-to-think-2/"
+   "url": "https://www.farnamstreetblog.com/2015/01/how-to-think-2/",
+   "preview": "Thinking Daniel Kahneman: Some Thoughts on Thinking While Daniel Kahneman’s book, Thinking Fast, Thinking Slow , gets all the attention, he’s also written a few articles that might catch your interest on thinking better. Optimistic Bias : In terms of its consequences for decisions, the optimistic bias may well be the…"
   },
   {
    "id": "paul-graham--beating-the-averages",
@@ -905,7 +969,8 @@
     "technology"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/avg.html"
+   "url": "https://www.paulgraham.com/avg.html",
+   "preview": "Beating the Averages April 2001, rev. April 2003(This article is derived from a talk given at the 2001 Franz Developer Symposium.) In the summer of 1995, my friend Robert Morris and I Our plan was to write software that would let end users build online stores. What was novel about this software, at the time, was that…"
   },
   {
    "id": "paul-graham--the-age-of-the-essay",
@@ -920,7 +985,8 @@
     "communication"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/essay.html"
+   "url": "https://www.paulgraham.com/essay.html",
+   "preview": "The Age of the Essay September 2004Remember the essays you had to write in high school? Topic sentence, introductory paragraph, say, that Ahab in Moby Dick was a Christ-like figure.Oy. So I'm going to try to give the other side of the story: what an essay really is, and how you write one. Or at least, how I write…"
   },
   {
    "id": "paul-graham--what-you-cant-say",
@@ -935,7 +1001,8 @@
     "conformity"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/say.html"
+   "url": "https://www.paulgraham.com/say.html",
+   "preview": "What You Can't Say Have you ever seen an old photo of yourself and been embarrassed at the way you looked? Did we actually dress like that? We did. And we had no idea how silly we looked. It's the nature of fashion to be invisible, in the same way the movement of the earth is invisible to all of us riding on it.What…"
   },
   {
    "id": "paul-graham--lies-we-tell-kids",
@@ -950,7 +1017,8 @@
     "society"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/lies.html"
+   "url": "https://www.paulgraham.com/lies.html",
+   "preview": "Lies We Tell Kids May 2008Adults lie constantly to kids. I'm not saying we should stop, but I think we should at least examine which lies we tell and why.There may also be a benefit to us. We were all lied to as kids, and some of the lies we were told still affect us. So by studying the ways adults lie to kids, we may…"
   },
   {
    "id": "paul-graham--makers-schedule-managers-schedule",
@@ -965,7 +1033,8 @@
     "managers"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/makerschedule.html"
+   "url": "https://www.paulgraham.com/makerschedule.html",
+   "preview": "Maker's Schedule, Manager's Schedule July 2009 As I've written about startups, a common problem I've seen is that the engineers and the business people don't understand each other's schedule. The engineers are on a \"maker's schedule\" while the managers are on a \"manager's schedule.\" The maker's schedule is long blocks…"
   },
   {
    "id": "paul-graham--keep-your-identity-small",
@@ -980,7 +1049,8 @@
     "politics"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/identity.html"
+   "url": "https://www.paulgraham.com/identity.html",
+   "preview": "Keep Your Identity Small February 2009I finally realized today why politics and religion yield such uniquely useless discussions.As a rule, any mention of religion on an online forum degenerates into a religious argument. Why? Why does this happen with religion and not with Javascript or baking or other topics people…"
   },
   {
    "id": "paul-graham--what-ive-learned-from-hacker-news",
@@ -995,7 +1065,8 @@
     "internet"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/hackernews.html"
+   "url": "https://www.paulgraham.com/hackernews.html",
+   "preview": "What I've Learned from Hacker News February 2009Hacker News was two years application to sharpen Arc on, and a place for current and future Y Combinator founders to exchange news. It's grown bigger and taken learned so much from working on it.GrowthWhen we launched in February 2007, weekday traffic was around 1600…"
   },
   {
    "id": "paul-graham--the-top-idea-in-your-mind",
@@ -1010,7 +1081,8 @@
     "productivity"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/top.html"
+   "url": "https://www.paulgraham.com/top.html",
+   "preview": "The Top Idea in Your Mind July 2010I realized recently that what one thinks about in the shower in the morning is more important than I'd thought. I knew it was a good time to have ideas. Now I'd go further: now I'd say it's hard to do a really good job on anything you don't think about in the shower.Everyone who's…"
   },
   {
    "id": "paul-graham--how-to-do-great-work",
@@ -1025,7 +1097,8 @@
     "career"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/greatwork.html"
+   "url": "https://www.paulgraham.com/greatwork.html",
+   "preview": "How to Do Great Work July 2023If you collected lists of techniques for doing great work in a lot of different fields, what would the intersection look like? I decided to find out by making it.Partly my goal was to create a guide that could be used by someone working in any field. But I was also curious about the shape…"
   },
   {
    "id": "paul-graham--the-bus-ticket-theory-of-genius",
@@ -1040,7 +1113,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/genius.html"
+   "url": "https://www.paulgraham.com/genius.html",
+   "preview": "The Bus Ticket Theory of Genius November 2019Everyone knows that to do great work you need both natural ability and determination. But there's a third ingredient that's not as of people, and I'm going to choose bus ticket collectors. There are people who collect old bus tickets. Like many collectors, they have an…"
   },
   {
    "id": "paul-graham--how-to-get-new-ideas",
@@ -1055,7 +1129,8 @@
     "discovery"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/getideas.html"
+   "url": "https://www.paulgraham.com/getideas.html",
+   "preview": "24 Jan 2023 - 05 Jul 2026 About this capture Organization: Archive Team This collection contains the output of many Archive Team projects, both ongoing and completed. Thanks to the generous providing of disk space by the Internet Archive, multi-terabyte datasets can be made available, as well as in use by the Wayback…"
   },
   {
    "id": "paul-graham--superlinear-returns",
@@ -1070,7 +1145,8 @@
     "work"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/superlinear.html"
+   "url": "https://www.paulgraham.com/superlinear.html",
+   "preview": "October 2023One of the most important things I didn't understand about the world when I was a child is the degree to which the returns for performance \"You get out,\" I heard a thousand times, \"what you put in.\" They meant well, but this is rarely true. If your product is only half as good as your competitor's, you…"
   },
   {
    "id": "paul-graham--write-like-you-talk",
@@ -1085,7 +1161,8 @@
     "style"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/talk.html"
+   "url": "https://www.paulgraham.com/talk.html",
+   "preview": "Write Like You Talk October 2015Here's a simple trick for getting more people to read what you write: write in spoken language.Something comes over most people when they start writing. They write in a different language than they'd use if they were talking to a friend. The sentence structure and even the words are…"
   },
   {
    "id": "paul-graham--how-to-think-for-yourself",
@@ -1100,7 +1177,8 @@
     "creativity"
    ],
    "src": "web",
-   "url": "https://www.paulgraham.com/think.html"
+   "url": "https://www.paulgraham.com/think.html",
+   "preview": "How to Think for Yourself November 2020There are some kinds of work that you can't do well without thinking differently from your peers. To be a successful scientist, for example, it's not enough just to be correct. Your ideas have to be both correct and novel. You can't publish papers saying things other people…"
   },
   {
    "id": "david-perell--annual-review-2021",
@@ -1114,7 +1192,8 @@
     "reflection"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/annual-review-2021/"
+   "url": "https://perell.com/essay/annual-review-2021/",
+   "preview": "2021 was the year of commitment. I committed to my writing, committed to my business, committed to my existing social circle, committed to my longtime hobbies, and committed to my new hometown of Austin, Texas. This posture of commitment stands in contrast to the first five years of my career, which were defined by…"
   },
   {
    "id": "david-perell--annual-review-2021",
@@ -1128,7 +1207,8 @@
     "reflection"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/annual-review-2021/"
+   "url": "https://perell.com/essay/annual-review-2021/",
+   "preview": "2021 was the year of commitment. I committed to my writing, committed to my business, committed to my existing social circle, committed to my longtime hobbies, and committed to my new hometown of Austin, Texas. This posture of commitment stands in contrast to the first five years of my career, which were defined by…"
   },
   {
    "id": "david-perell--annual-review-2022",
@@ -1142,7 +1222,8 @@
     "reflection"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/annual-review-2022/"
+   "url": "https://perell.com/essay/annual-review-2022/",
+   "preview": "My life completely changed this year. At the beginning of the year, Write of Passage was a middling lifestyle business. I’d planned to keep the team small and run two cohorts per year. Some conversations in the spring changed my thinking. I stopped and went all in on the company. I hired a talented executive team,…"
   },
   {
    "id": "david-perell--how-david-perell-writes-an-essay",
@@ -1157,7 +1238,8 @@
     "creativity"
    ],
    "src": "web",
-   "url": "https://every.to/superorganizers/how-david-perell-writes-an-essay-7499268b-86cd-4d58-9ff0-8ec641506c5f"
+   "url": "https://every.to/superorganizers/how-david-perell-writes-an-essay-7499268b-86cd-4d58-9ff0-8ec641506c5f",
+   "preview": "Dan Shipper is the CEO and cofounder of Every. Every week he explores the frontiers of AI in his column, Chain of Thought, and on his podcast, ‘AI & I.’ This essay is brought to you by Graft Workplace Search . Sick of spending valuable time searching for the right information? You're not alone. Employees lose nearly…"
   },
   {
    "id": "david-perell--hugging-the-x-axis",
@@ -1171,7 +1253,8 @@
     "strategy"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/hugging-the-x-axis/"
+   "url": "https://perell.com/essay/hugging-the-x-axis/",
+   "preview": "I’ve always struggled with commitment. In a world as grand as ours, shouldn’t we try to experience it all? Change it up. Visit every country. Try a bunch of careers. The menu of life is vast, and it’d be a shame to only order a single entrée. When I say I was allergic to restraint, I mean it. I was the…"
   },
   {
    "id": "david-perell--imitate-then-innovate",
@@ -1185,7 +1268,8 @@
     "learning"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/imitate-then-innovate/"
+   "url": "https://perell.com/essay/imitate-then-innovate/",
+   "preview": "Imitate, then Innovate is my motto for improving at any skill. It’s counterintuitive, but the more we imitate others, the faster we can discover our unique style. In the entertainment world, there’s a long lineage of comedians who tried to copy each other, failed, and became great themselves: Johnny Carson tried to…"
   },
   {
    "id": "david-perell--saving-the-liberal-arts",
@@ -1199,7 +1283,8 @@
     "humanities"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/saving-the-liberal-arts/"
+   "url": "https://perell.com/essay/saving-the-liberal-arts/",
+   "preview": "“If colleges don’t change their business model, they’re going to go bankrupt,” I told my professor, two days before I graduated from college. She looked at me in disbelief. “Yeah right,” she snickered. Over four years at Elon University, I had watched the institution abandon its cardinal principles, as it transitioned…"
   },
   {
    "id": "david-perell--whats-up-with-austin",
@@ -1213,7 +1298,8 @@
     "Texas"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/whats-up-with-austin/"
+   "url": "https://perell.com/essay/whats-up-with-austin/",
+   "preview": "Austin is a mediocre city, but a great place to live. Since I moved to town, a bunch of people have asked me, “What’s up with Austin?” This article is an answer to that question. It’s the answer I’d give at a bar with friends, so there’s basically no research to back up anything in here. Most of the comparisons are to…"
   },
   {
    "id": "david-perell--annual-review-2019",
@@ -1227,7 +1313,8 @@
     "growth"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/annual-review/"
+   "url": "https://perell.com/essay/annual-review/",
+   "preview": "The New Year is a time to stop and slow down. It’s a time to reflect on the previous year and plan for the upcoming one. Every holiday season, I reserve time to conduct an Annual Review. We spend most of our lives in the trenches. We’re heads-down, focused on the people we love, the commitments we’ve made, and the…"
   },
   {
    "id": "david-perell--how-learning-happens",
@@ -1241,7 +1328,8 @@
     "cognition"
    ],
    "src": "web",
-   "url": "https://perell.com/essay/how-learning-happens/"
+   "url": "https://perell.com/essay/how-learning-happens/",
+   "preview": "Inspiration is the keystone of learning. It’s the engine behind a student’s motivation and the glue that makes ideas stick. But because our school system undervalues the necessity of inspiration, students don’t learn as much as they could. Why do people learn things? Usually, because they need to. They’re frustrated…"
   },
   {
    "id": "tiago-forte--progressive-summarization-a-practical-technique-for-designin",
@@ -1256,7 +1344,8 @@
     "note-taking"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/progressive-summarization/"
+   "url": "https://fortelabs.com/blog/progressive-summarization/",
+   "preview": "Skip to content Progressive Summarization: A Practical Technique for Designing Discoverable Notes BY Tiago Forte PUBLISHED December 27, 2017 UPDATED May 16, 2023 Est. reading time: 12 min Series Navigation: Progressive Summarization Progressive Summarization II: Examples and Metaphors Modern digital tools make it easy…"
   },
   {
    "id": "tiago-forte--how-to-create-your-own-luck-5-easy-practices",
@@ -1271,7 +1360,8 @@
     "productivity"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/how-to-create-your-own-luck-5-easy-practices/"
+   "url": "https://fortelabs.com/blog/how-to-create-your-own-luck-5-easy-practices/",
+   "preview": "Skip to content How to Create Your Own Luck: 5 Easy Practices BY Nir Eyal (Guest Post) PUBLISHED March 2, 2026 UPDATED March 2, 2026 Est. reading time: 7 min You’re scrolling LinkedIn during a coffee break. A course creator you know just hit $100K in their first cohort. Another founder you know just closed a funding…"
   },
   {
    "id": "tiago-forte--the-book-ive-been-waiting-to-write-for-15-years",
@@ -1286,7 +1376,8 @@
     "creativity"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/the-book-ive-been-waiting-to-write-for-15-years/"
+   "url": "https://fortelabs.com/blog/the-book-ive-been-waiting-to-write-for-15-years/",
+   "preview": "Skip to content The Book I’ve Been Waiting to Write for 15 Years BY Tiago Forte PUBLISHED November 10, 2025 UPDATED March 10, 2026 Est. reading time: 9 min I’m incredibly proud to share news that’s been two years in the making: my next book is coming on November 3, 2026! It’s called Life in Perspective , and it…"
   },
   {
    "id": "tiago-forte--5-questions-to-help-you-navigate-uncertainty",
@@ -1301,7 +1392,8 @@
     "decision-making"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/5-questions-to-help-you-navigate-uncertainty/"
+   "url": "https://fortelabs.com/blog/5-questions-to-help-you-navigate-uncertainty/",
+   "preview": "Skip to content 5 Questions to Help You Navigate Uncertainty BY Simone Stolzhoff (Guest Post) PUBLISHED May 11, 2026 UPDATED May 11, 2026 Est. reading time: 6 min In the early 2010s, the gaming startup Tiny Speck was a darling of the tech industry. The company had raised $17 million. The launch of its first game,…"
   },
   {
    "id": "tiago-forte--introducing-the-ai-second-brain",
@@ -1316,7 +1408,8 @@
     "technology"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/introducing-the-ai-second-brain/"
+   "url": "https://fortelabs.com/blog/introducing-the-ai-second-brain/",
+   "preview": "Skip to content Introducing The AI Second Brain BY Tiago Forte PUBLISHED March 13, 2026 UPDATED April 14, 2026 Est. reading time: 7 min In early 2023, after teaching 6,000 students over six years, I abruptly decided to stop teaching our Building a Second Brain cohorts. Even at that early stage, with the release of the…"
   },
   {
    "id": "tiago-forte--groundbreakers-2-seeking-the-heart-of-fear",
@@ -1331,7 +1424,8 @@
     "innovation"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/groundbreakers-2/"
+   "url": "https://fortelabs.com/blog/groundbreakers-2/",
+   "preview": "Skip to content Groundbreakers 2: Seeking the Heart of Fear BY Tiago Forte PUBLISHED April 7, 2026 UPDATED April 7, 2026 Est. reading time: 38 min Six years ago, I attended a week-long course in Northern California called Groundbreakers. Facilitated by Joe Hudson and his wife, Tara, it was one of the most impactful…"
   },
   {
    "id": "tiago-forte--my-2025-annual-review",
@@ -1346,7 +1440,8 @@
     "personal growth"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/tiago-fortes-2025-annual-review/"
+   "url": "https://fortelabs.com/blog/tiago-fortes-2025-annual-review/",
+   "preview": "Skip to content My 2025 Annual Review BY Tiago Forte PUBLISHED January 12, 2026 UPDATED February 3, 2026 Est. reading time: 18 min At the start of 2025, I dubbed this “The Year of Profitability,” and now that it’s come to a close, I can say we successfully fulfilled that intention. We ended the year with 2.15M in…"
   },
   {
    "id": "tiago-forte--introducing-the-alumni-mentor-corps",
@@ -1361,7 +1456,8 @@
     "education"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/introducing-the-alumni-mentor-corps/"
+   "url": "https://fortelabs.com/blog/introducing-the-alumni-mentor-corps/",
+   "preview": "Skip to content Introducing the Alumni Mentor Corps BY Tiago Forte PUBLISHED July 6, 2026 UPDATED July 6, 2026 Est. reading time: 10 min I’m proud to introduce a new program as part of Cohort 2 of The AI Second Brain – the Alumni Mentor Corps. We are seeking a small group of qualified “Alumni Mentors,” successful…"
   },
   {
    "id": "tiago-forte--what-ive-learned-from-selling-500-000-books",
@@ -1376,7 +1472,8 @@
     "lessons"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/what-ive-learned-from-selling-500000-books/"
+   "url": "https://fortelabs.com/blog/what-ive-learned-from-selling-500000-books/",
+   "preview": "Skip to content What I’ve Learned From Selling 500,000 Books BY Tiago Forte PUBLISHED June 15, 2026 UPDATED June 15, 2026 Est. reading time: 19 min I recently reached an incredible milestone – 500,000 books sold across 8 titles. That includes 5 self-published Kindle ebooks, 1 co-authored book, and 2 traditionally…"
   },
   {
    "id": "tiago-forte--the-difference-between-claude-code-and-cowork",
@@ -1391,7 +1488,8 @@
     "productivity"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/the-difference-between-claude-code-and-cowork/"
+   "url": "https://fortelabs.com/blog/the-difference-between-claude-code-and-cowork/",
+   "preview": "Skip to content The Difference Between Claude Code and Cowork BY Tiago Forte PUBLISHED February 19, 2026 UPDATED February 21, 2026 Est. reading time: 2 min Anthropic now offers two tools that can BOTH control a web browser AND access your local files. But they work very differently. Here’s the simplest way to think…"
   },
   {
    "id": "tiago-forte--the-history-beneath-my-feet-two-years-in-valle-de-bravo",
@@ -1406,7 +1504,8 @@
     "place"
    ],
    "src": "web",
-   "url": "https://fortelabs.com/blog/valle-de-bravo-where-mexico-finds-itself/"
+   "url": "https://fortelabs.com/blog/valle-de-bravo-where-mexico-finds-itself/",
+   "preview": "Skip to content The History Beneath My Feet: Two Years in Valle de Bravo BY Tiago Forte PUBLISHED May 24, 2026 UPDATED May 25, 2026 Est. reading time: 21 min I’ve been living with my family in a Mexican mountain town called Valle de Bravo for almost two years now, and I’ve found it to be one of the most special,…"
   },
   {
    "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
@@ -1421,7 +1520,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/",
+   "preview": "The Financial Times ​recently reported​ an interview with Rebecca Hinds, head of the Work AI Institute. Hinds was discussing a new survey of 6,000 digital workers, which included the following arresting statistic: although respondents claimed that AI saved them 11 hours a week on average, only 13% reported any…"
   },
   {
    "id": "cal-newport--beware-of-productivity-paradoxes",
@@ -1435,7 +1535,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/beware-of-productivity-paradoxes/"
+   "url": "https://calnewport.com/beware-of-productivity-paradoxes/",
+   "preview": "Few recent technological innovations were better poised to become a productivity slam dunk than the personal computer. Spreadsheets, word processors, databases, presentation software, email – the list of programs that could vastly simplify common tasks seemed endless. As I reported in ​a 2021 op-ed for WIRED​,…"
   },
   {
    "id": "cal-newport--contact-author-and-professor-cal-newport",
@@ -1447,7 +1548,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/contact/"
+   "url": "https://calnewport.com/contact/",
+   "preview": "Contact Get In Touch Below are the relevant channels and addresses to contact Cal or the relevant members of his team. For headshots, bios, etc., please see Cal’s media kit Academic Communication Any messages relevant to Cal’s role as a computer science professor at Georgetown can be sent to him directly at…"
   },
   {
    "id": "cal-newport--dario-amodei-spent-last-year-warning-of-an-ai-white-collar-b",
@@ -1457,7 +1559,8 @@
    "words": 0,
    "tags": [],
    "src": "web",
-   "url": "https://fortune.com/2026/05/05/dario-amodei-jevons-paradox-will-ai-wipe-out-white-collar-jobs/"
+   "url": "https://fortune.com/2026/05/05/dario-amodei-jevons-paradox-will-ai-wipe-out-white-collar-jobs/",
+   "preview": ""
   },
   {
    "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
@@ -1472,7 +1575,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/",
+   "preview": "The Financial Times ​recently reported​ an interview with Rebecca Hinds, head of the Work AI Institute. Hinds was discussing a new survey of 6,000 digital workers, which included the following arresting statistic: although respondents claimed that AI saved them 11 hours a week on average, only 13% reported any…"
   },
   {
    "id": "cal-newport--dear-ai-companies-stop-the-doom-trolling",
@@ -1484,7 +1588,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/dear-ai-companies-stop-the-doom-trolling/"
+   "url": "https://calnewport.com/dear-ai-companies-stop-the-doom-trolling/",
+   "preview": "Imagine, for a moment, the following scenario. The Ford Motor Company releases a slick whitepaper making the alarming claim that they’re concerned their popular F-150 pickup trucks might soon spontaneously burst into flames. The report features a fancy animated graphic depicting a line of vehicles catching on fire,…"
   },
   {
    "id": "cal-newport--planet-money",
@@ -1496,7 +1601,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://www.npr.org/sections/planet-money/2025/02/04/g-s1-46018/ai-deepseek-economics-jevons-paradox"
+   "url": "https://www.npr.org/sections/planet-money/2025/02/04/g-s1-46018/ai-deepseek-economics-jevons-paradox",
+   "preview": "Read & Listen Home News Culture Music Podcasts & Shows Connect Newsletters Facebook Instagram Press Public Editor Corrections Transcripts Contact & Help About NPR Overview Diversity NPR Network Accessibility Ethics Finances Get Involved Support Public Radio Sponsor NPR NPR Careers NPR Shop NPR Extra Terms of Use…"
   },
   {
    "id": "cal-newport--the-pope-vs-silicon-valley",
@@ -1510,7 +1616,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/",
+   "preview": "Last fall, the Notre Dame philosopher, Meghan Sullivan, participated in a closed-door meeting at the Vatican. She was there to discuss AI ethics with a group of religious thinkers, academics, and leading members of the technology industry. As Sullivan recalls in ​a recent newsletter​, she attended an optional Catholic…"
   },
   {
    "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
@@ -1525,7 +1632,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/",
+   "preview": "The Financial Times ​recently reported​ an interview with Rebecca Hinds, head of the Work AI Institute. Hinds was discussing a new survey of 6,000 digital workers, which included the following arresting statistic: although respondents claimed that AI saved them 11 hours a week on average, only 13% reported any…"
   },
   {
    "id": "cal-newport--computer-scientist-bestselling-author",
@@ -1540,7 +1648,8 @@
     "Productivity"
    ],
    "src": "web",
-   "url": "https://calnewport.com/"
+   "url": "https://calnewport.com/",
+   "preview": "Meet Cal Newport Computer Scientist & Bestselling Author Cal is an MIT-trained computer science professor at Georgetown University who also writes about the intersections of technology, work, and the quest to find depth in an increasingly distracted world. Want to live a deeper life? Subscribe to Cal’s newsletter.…"
   },
   {
    "id": "cal-newport--on-bottlenecks-and-productivity",
@@ -1555,7 +1664,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/",
+   "preview": "David Epstein, the 1 New York Times bestselling author of ​The Sports Gene​ and ​Range​, has a new book out called ​Inside the Box​. As with all of Epstein’s books, I really enjoyed it. He’s one of the best storytellers currently working in idea writing. There was one chapter in particular, however, that captured my…"
   },
   {
    "id": "cal-newport--the-pope-vs-silicon-valley",
@@ -1569,7 +1679,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/",
+   "preview": "Last fall, the Notre Dame philosopher, Meghan Sullivan, participated in a closed-door meeting at the Vatican. She was there to discuss AI ethics with a group of religious thinkers, academics, and leading members of the technology industry. As Sullivan recalls in ​a recent newsletter​, she attended an optional Catholic…"
   },
   {
    "id": "cal-newport--getting-things-done-for-college-students-the-full-system",
@@ -1582,7 +1693,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/blog/page/140/"
+   "url": "https://calnewport.com/blog/page/140/",
+   "preview": "Getting Things Done for College Students: The Full System January 26, 2023July 20, 2007 Welcome new readers! If this is your first time here, Study Hacks is a blog that focuses on hacks to help you do better at … Read more 69 Comments Three ways GTD and college don’t mix January 26, 2023July 20, 2007 [Originally sent…"
   },
   {
    "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
@@ -1594,7 +1706,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/",
+   "preview": "Last week, millions of New York Times readers were subjected to ​an alarming column​ by Thomas Friedman. “Normally right now I would be writing about the geopolitical implications of the war with Iran,” Friedman begins, before soon continuing, “but I want to interrupt that thought to highlight a stunning advance in…"
   },
   {
    "id": "cal-newport--scholarship",
@@ -1609,7 +1722,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/scholarship/"
+   "url": "https://calnewport.com/scholarship/",
+   "preview": "Scholarship Computer Science Professor Cal is currently a Full Professor of Computer Science at Georgetown University. Before arriving at Georgetown in 2011, he studied at MIT, where he received his PhD working with Nancy Lynch in the Theory of Distributed Systems group, and spent two years as a postdoctoral associate…"
   },
   {
    "id": "cal-newport--the-dark-side-of-the-jevons-paradox",
@@ -1622,7 +1736,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/"
+   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/",
+   "preview": "If you’ve been following technology news recently, you’ve probably noticed a sudden increase in references to a 19th-century economics theory called the ​Jevons Paradox​, which is named for the neoclassical economist William Stanley Jevons, and captures the observation that increasing the efficiency of a resource can…"
   },
   {
    "id": "cal-newport--why-isnt-ai-taking-our-jobs",
@@ -1634,7 +1749,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/why-isnt-ai-taking-our-jobs/"
+   "url": "https://calnewport.com/why-isnt-ai-taking-our-jobs/",
+   "preview": "The leaders of AI companies often compare their technology to industrial automation: just as machines eliminated jobs that depended on human brawn, AI will eliminate jobs that rely on brains. Anthropic CEO Dario Amodei has suggested on multiple occasions that his AI-based tools will ​automate half​ of entry-level…"
   },
   {
    "id": "cal-newport--avoiding-digital-productivity-traps",
@@ -1649,7 +1765,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/avoiding-digital-productivity-traps/"
+   "url": "https://calnewport.com/avoiding-digital-productivity-traps/",
+   "preview": "Last week​ in this newsletter, I summarized some interesting results from ​a study​ that analyzed the behavior of 164,000 knowledge workers. It found that introducing AI tools increased administrative tasks by more than 90% while reducing deep work effort by almost 10%. The problem, I concluded, was that digital…"
   },
   {
    "id": "cal-newport--contact-info",
@@ -1664,7 +1781,8 @@
     "Productivity"
    ],
    "src": "web",
-   "url": "https://calnewport.com/writing/"
+   "url": "https://calnewport.com/writing/",
+   "preview": "Writing Bestselling Author Cal signed his first book deal with Random House soon after his 21st birthday, while still an undergraduate at Dartmouth College. He went on to publish eight books (and counting), which include multiple New York Times bestsellers, and have been translated into over 40 languages and…"
   },
   {
    "id": "cal-newport--on-bottlenecks-and-productivity",
@@ -1678,7 +1796,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/",
+   "preview": "David Epstein, the 1 New York Times bestselling author of ​The Sports Gene​ and ​Range​, has a new book out called ​Inside the Box​. As with all of Epstein’s books, I really enjoyed it. He’s one of the best storytellers currently working in idea writing. There was one chapter in particular, however, that captured my…"
   },
   {
    "id": "cal-newport--the-pope-vs-silicon-valley",
@@ -1692,7 +1811,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/",
+   "preview": "Last fall, the Notre Dame philosopher, Meghan Sullivan, participated in a closed-door meeting at the Vatican. She was there to discuss AI ethics with a group of religious thinkers, academics, and leading members of the technology industry. As Sullivan recalls in ​a recent newsletter​, she attended an optional Catholic…"
   },
   {
    "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
@@ -1704,7 +1824,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/",
+   "preview": "Last week, millions of New York Times readers were subjected to ​an alarming column​ by Thomas Friedman. “Normally right now I would be writing about the geopolitical implications of the war with Iran,” Friedman begins, before soon continuing, “but I want to interrupt that thought to highlight a stunning advance in…"
   },
   {
    "id": "cal-newport--mel-robbins-podcast",
@@ -1719,7 +1840,8 @@
     "Productivity"
    ],
    "src": "web",
-   "url": "https://calnewport.com/press/"
+   "url": "https://calnewport.com/press/",
+   "preview": "September, 2025 Mel Robbins Podcast Mel talks to Cal about how to gain back control of your free time, improve productivity, and get motivated. August 2025 Plain English with Derek Thompson Derek talks to Cal about how college students are using AI and the future of ‘deep thinking.’ August, 2025 All Things Considered…"
   },
   {
    "id": "cal-newport--on-god-and-llms",
@@ -1729,7 +1851,8 @@
    "words": 503,
    "tags": [],
    "src": "web",
-   "url": "https://calnewport.com/on-god-and-llms/"
+   "url": "https://calnewport.com/on-god-and-llms/",
+   "preview": "The second chapter of Genesis poetically describes the beginning of the human story. “The Lord formed Adam from the dust of the earth,” it reads. “He blew into his nostrils the breath of life and man became a living being.” There are different ways to translate the Hebrew term rendered here as “living being.” Onkelos,…"
   },
   {
    "id": "cal-newport--why-hasnt-ai-made-work-easier",
@@ -1744,7 +1867,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/"
+   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/",
+   "preview": "I’ve been studying the intersection of digital technology and office work for quite some time. (I find it hard to believe that my book, ​Deep Work​, just passed its ten-year anniversary!?) Here’s a pattern I’ve observed again and again: This happened with the front-office IT revolution, and email, and mobile…"
   },
   {
    "id": "cal-newport--in-defense-of-thinking",
@@ -1758,7 +1882,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/in-defense-of-thinking-2/"
+   "url": "https://calnewport.com/in-defense-of-thinking-2/",
+   "preview": "Ten years ago, I published ​Deep Work​. It was my second mainstream hardcover idea book. The previous title, ​So Good They Can’t Ignore You​, hadn’t sold as well as we hoped, so the expectations were lower for this follow-up. This turned out to be freeing, as it allowed me to write Deep Work largely for myself –…"
   },
   {
    "id": "cal-newport--knowledge-workers-are-bad-at-working-and-heres-what-to-do-ab",
@@ -1772,7 +1897,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/blog/2012/11/21/knowledge-workers-are-bad-at-working-and-heres-what-to-do-about-it/"
+   "url": "https://calnewport.com/blog/2012/11/21/knowledge-workers-are-bad-at-working-and-heres-what-to-do-about-it/",
+   "preview": "An Inconvenient Observation Knowledge workers are bad at working. I say this because unlike every other skilled labor class in the history of skilled labor, we lack a culture of systematic improvement. If you’re a professional chess player, you’ll spend thousands of hours dissecting the games of better players. If…"
   },
   {
    "id": "cal-newport--the-dark-side-of-the-jevons-paradox",
@@ -1785,7 +1911,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/"
+   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/",
+   "preview": "If you’ve been following technology news recently, you’ve probably noticed a sudden increase in references to a 19th-century economics theory called the ​Jevons Paradox​, which is named for the neoclassical economist William Stanley Jevons, and captures the observation that increasing the efficiency of a resource can…"
   },
   {
    "id": "cal-newport--the-original-attention-crisis",
@@ -1800,7 +1927,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-original-attention-crisis/"
+   "url": "https://calnewport.com/the-original-attention-crisis/",
+   "preview": "I recently heard from a historian of science at All Souls College, Oxford. He forwarded me ​an essay​ he wrote about Nicolaus Steno, a seventeenth-century anatomist and geologist who was later ordained as a Catholic Bishop. Steno’s training as a scholar unfolded in a period challenged by a novel problem: information…"
   },
   {
    "id": "cal-newport--avoiding-digital-productivity-traps",
@@ -1815,7 +1943,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/avoiding-digital-productivity-traps/"
+   "url": "https://calnewport.com/avoiding-digital-productivity-traps/",
+   "preview": "Last week​ in this newsletter, I summarized some interesting results from ​a study​ that analyzed the behavior of 164,000 knowledge workers. It found that introducing AI tools increased administrative tasks by more than 90% while reducing deep work effort by almost 10%. The problem, I concluded, was that digital…"
   },
   {
    "id": "cal-newport--easy-is-overrated",
@@ -1827,7 +1956,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/easy-is-overrated/"
+   "url": "https://calnewport.com/easy-is-overrated/",
+   "preview": "“Something is up in academic research,” ​write​ the members of an AI Task Force convened by the journal Organization Science. As they go on to elaborate: “If you are an editor or reviewer at a journal these days, you probably already know this. The manuscripts are arriving in greater volume, with a particular feel…"
   },
   {
    "id": "cal-newport--what-do-social-media-companies-fear-time-management",
@@ -1840,7 +1970,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/"
+   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/",
+   "preview": "I recently came across an interesting academic article in the journal Frontiers in Psychology. It was titled, ​“The relationships between social media use, time management, and decision-making styles.”​ The paper’s author surveyed 612 university students and young adults, asking them, among other things, about their…"
   },
   {
    "id": "cal-newport--woody-allen-and-the-art-of-value-productivity",
@@ -1854,7 +1985,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/woody-allen-and-the-art-of-value-productivity/"
+   "url": "https://calnewport.com/woody-allen-and-the-art-of-value-productivity/",
+   "preview": "A Tale of Two Productivities As a graduate student I was known for being organized. I was reminded of this a couple weeks ago when I attended a computer science conference along with many of my old lab mates. What I also remember is that I always felt indifferent about this reputation. To be organized is a nice thing.…"
   },
   {
    "id": "cal-newport--deep-work-and-the-good-life",
@@ -1866,7 +1998,8 @@
     "Deep Work"
    ],
    "src": "web",
-   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42420"
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42420",
+   "preview": "Pictured above is the cabin where journalist Michael Pollan used to write his nature-themed books before he moved to California. He built it himself. This is a shot of the library where Neil Gaiman dreams up his confoundedly original brand of fantasy literature. This bat-fenced Gothic mansion is the Bangor, Maine home…"
   },
   {
    "id": "cal-newport--film-students-can-no-longer-sit-through-films",
@@ -1879,7 +2012,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/"
+   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/",
+   "preview": "Last month, The Atlantic published an article with an alarming headline: ​“The Film Students Who Can No Longer Sit Through Films.”​ The author of the piece, Rose Horowitch, spoke with professors around the country who have begun to complain about this trend. What she learned was disheartening: “I used to think, if…"
   },
   {
    "id": "cal-newport--on-bottlenecks-and-productivity",
@@ -1893,7 +2027,8 @@
     "Email"
    ],
    "src": "web",
-   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/",
+   "preview": "David Epstein, the 1 New York Times bestselling author of ​The Sports Gene​ and ​Range​, has a new book out called ​Inside the Box​. As with all of Epstein’s books, I really enjoyed it. He’s one of the best storytellers currently working in idea writing. There was one chapter in particular, however, that captured my…"
   },
   {
    "id": "cal-newport--why-hasnt-ai-made-work-easier",
@@ -1908,7 +2043,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/"
+   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/",
+   "preview": "I’ve been studying the intersection of digital technology and office work for quite some time. (I find it hard to believe that my book, ​Deep Work​, just passed its ten-year anniversary!?) Here’s a pattern I’ve observed again and again: A new technology promises to speed up some annoying aspects of our jobs. Everyone…"
   },
   {
    "id": "cal-newport--deep-work-and-the-good-life",
@@ -1920,7 +2056,8 @@
     "Deep Work"
    ],
    "src": "web",
-   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42421"
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42421",
+   "preview": "Pictured above is the cabin where journalist Michael Pollan used to write his nature-themed books before he moved to California. He built it himself. This is a shot of the library where Neil Gaiman dreams up his confoundedly original brand of fantasy literature. This bat-fenced Gothic mansion is the Bangor, Maine home…"
   },
   {
    "id": "cal-newport--the-original-attention-crisis",
@@ -1935,7 +2072,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-original-attention-crisis/"
+   "url": "https://calnewport.com/the-original-attention-crisis/",
+   "preview": "I recently heard from a historian of science at All Souls College, Oxford. He forwarded me ​an essay​ he wrote about Nicolaus Steno, a seventeenth-century anatomist and geologist who was later ordained as a Catholic Bishop. Steno’s training as a scholar unfolded in a period challenged by a novel problem: information…"
   },
   {
    "id": "cal-newport--what-i-learned-from-masterclass",
@@ -1950,7 +2088,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/what-i-learned-from-masterclass/"
+   "url": "https://calnewport.com/what-i-learned-from-masterclass/",
+   "preview": "Last fall, I filmed a course for MasterClass. It’s mainly based on my book Slow Productivity, but there’s some Deep Work in there too. It’s called: ​“Rebuild Your Focus & Reclaim Your Time.”​ The course launched last week, so you should definitely ​check it out​. It gets to the core of a lot of the topics we tackle in…"
   },
   {
    "id": "cal-newport--who-asked-for-this",
@@ -1962,7 +2101,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/who-asked-for-this/"
+   "url": "https://calnewport.com/who-asked-for-this/",
+   "preview": "Last week, Elizabeth Lopatto published an insightful article in The Verge. It boasted an intriguing title: ​“Silicon Valley has forgotten what normal people want.”​ “Within recent memory, people who made software and hardware understood their job was to serve their customers. It was to identify a need, and then fill…"
   },
   {
    "id": "cal-newport--brandon-sanderson-vs-ai-art",
@@ -1972,7 +2112,8 @@
    "words": 956,
    "tags": [],
    "src": "web",
-   "url": "https://calnewport.com/brandon-sanderson-vs-ai-art/"
+   "url": "https://calnewport.com/brandon-sanderson-vs-ai-art/",
+   "preview": "Late last year, the fantasy novelist Brandon Sanderson gave a talk at Dragonsteel Nexus, an annual conference organized by his media company. It was titled, ​“The Hidden Cost of AI Art.”​ As Sanderson explains, early in his address: “The surge of large language models and generative AI raises questions that are…"
   },
   {
    "id": "cal-newport--deep-work-and-the-good-life",
@@ -1984,7 +2125,8 @@
     "Deep Work"
    ],
    "src": "web",
-   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42422"
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42422",
+   "preview": "Pictured above is the cabin where journalist Michael Pollan used to write his nature-themed books before he moved to California. He built it himself. This is a shot of the library where Neil Gaiman dreams up his confoundedly original brand of fantasy literature. This bat-fenced Gothic mansion is the Bangor, Maine home…"
   },
   {
    "id": "cal-newport--the-dangers-of-vibe-reporting-about-ai",
@@ -1997,7 +2139,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/the-dangers-of-vibe-reporting-about-ai/"
+   "url": "https://calnewport.com/the-dangers-of-vibe-reporting-about-ai/",
+   "preview": "Last week, news broke that Amazon would be laying off 16,000 workers. Here was the headline ​from an article​ about this news published in Quartz: The implication of this framing is clear: AI is taking jobs. Nothing in the body of this article contradicts this idea. It describes the number of people laid off and the…"
   },
   {
    "id": "cal-newport--what-do-social-media-companies-fear-time-management",
@@ -2010,7 +2153,8 @@
     "Career/Academic"
    ],
    "src": "web",
-   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/"
+   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/",
+   "preview": "I recently came across an interesting academic article in the journal Frontiers in Psychology. It was titled, ​“The relationships between social media use, time management, and decision-making styles.”​ The paper’s author surveyed 612 university students and young adults, asking them, among other things, about their…"
   },
   {
    "id": "cal-newport--deep-work-and-the-good-life",
@@ -2022,7 +2166,8 @@
     "Deep Work"
    ],
    "src": "web",
-   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42423"
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42423",
+   "preview": "Pictured above is the cabin where journalist Michael Pollan used to write his nature-themed books before he moved to California. He built it himself. This is a shot of the library where Neil Gaiman dreams up his confoundedly original brand of fantasy literature. This bat-fenced Gothic mansion is the Bangor, Maine home…"
   },
   {
    "id": "cal-newport--film-students-can-no-longer-sit-through-films",
@@ -2035,7 +2180,8 @@
     "Technology"
    ],
    "src": "web",
-   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/"
+   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/",
+   "preview": "Last month, The Atlantic published an article with an alarming headline: ​“The Film Students Who Can No Longer Sit Through Films.”​ The author of the piece, Rose Horowitch, spoke with professors around the country who have begun to complain about this trend. What she learned was disheartening: “I used to think, if…"
   },
   {
    "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
@@ -2047,7 +2193,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/",
+   "preview": "Last week, millions of New York Times readers were subjected to ​an alarming column​ by Thomas Friedman. “Normally right now I would be writing about the geopolitical implications of the war with Iran,” Friedman begins, before soon continuing, “but I want to interrupt that thought to highlight a stunning advance in…"
   },
   {
    "id": "cal-newport--is-the-internet-hijacking-our-ambition",
@@ -2059,7 +2206,8 @@
     "Attention"
    ],
    "src": "web",
-   "url": "https://calnewport.com/is-the-internet-hijacking-our-ambition/"
+   "url": "https://calnewport.com/is-the-internet-hijacking-our-ambition/",
+   "preview": "A reader recently sent me a viral video. It features a heavily muscled and perpetually shirtless fitness influencer named Ashton Hall demonstrating what he calls “the morning routine that changed my life.” It starts at 3:52 a.m. with Hall flexing in the mirror as he pulls off a piece of tape covering his mouth…"
   },
   {
    "id": "morgan-housel--a-few-little-ideas-and-short-stories",
@@ -2074,7 +2222,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-few-little-ideas/"
+   "url": "https://collabfund.com/blog/a-few-little-ideas/",
+   "preview": "A Few Little Ideas And Short Stories Aug 6, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link I once asked a successful author how to market a book. He waved me off and said, “If the book is good you don’t need to market it. If the book is bad, no amount of marketing will help.” He was exaggerating: I think his…"
   },
   {
    "id": "morgan-housel--a-few-questions",
@@ -2088,7 +2237,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-few-questions-1/"
+   "url": "https://collabfund.com/blog/a-few-questions-1/",
+   "preview": "A Few Questions May 8, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link Which of my strongest beliefs are formed on second-hand information vs. first-hand experience? If I could not compare myself to anyone else, how would I define a good life? Whose views do I criticize that I would actually agree with if I…"
   },
   {
    "id": "morgan-housel--a-few-short-stories",
@@ -2103,7 +2253,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-few-short-stories/"
+   "url": "https://collabfund.com/blog/a-few-short-stories/",
+   "preview": "A Few Short Stories Apr 24, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link Thirty-seven thousand Americans died in car accidents in 1955, six times today’s rate adjusted for miles driven. Ford began offering seat belts in every model that year. It was a $27 upgrade, equivalent to about $190 today. Research…"
   },
   {
    "id": "morgan-housel--a-few-things-im-pretty-sure-about",
@@ -2118,7 +2269,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-few-things-im-pretty-sure-about-2026/"
+   "url": "https://collabfund.com/blog/a-few-things-im-pretty-sure-about-2026/",
+   "preview": "A Few Things I’m Pretty Sure About Jan 6, 2026 SHARE ↓ by Morgan Housel @morganhousel Copy Link Things I’ve been thinking about lately … I broke my back skiing when I was a teenager . It’s still screwed up and I occasionally tweak it, leaving me in agony for a few days. When I’m in pain I’ve noticed: I’m irritable,…"
   },
   {
    "id": "morgan-housel--a-few-thoughts-on-spending-money",
@@ -2133,7 +2285,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-few-thoughts-on-spending-money/"
+   "url": "https://collabfund.com/blog/a-few-thoughts-on-spending-money/",
+   "preview": "A Few Thoughts on Spending Money Jan 31, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link There are two ways to use money . One is as a tool to live a better life. The other is as a yardstick of status to measure yourself against others. Many people aspire for the former but get caught up chasing the latter.…"
   },
   {
    "id": "morgan-housel--a-message-from-the-past-thoughts-on-nostalgia",
@@ -2148,7 +2301,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/a-message-from-the-past-thoughts-on-nostalgia/"
+   "url": "https://collabfund.com/blog/a-message-from-the-past-thoughts-on-nostalgia/",
+   "preview": "A Message From the Past (Thoughts on Nostalgia) Oct 14, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link After college, my wife (who was then my girlfriend) and I got an apartment in the Seattle suburbs. It was amazing – a perfect location, a beautiful apartment, even had a view of the lake. The economy was such…"
   },
   {
    "id": "morgan-housel--a-number-from-today-and-a-story-about-tomorrow",
@@ -2163,7 +2317,8 @@
     "narrative"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/numbersandstories/"
+   "url": "https://collabfund.com/blog/numbersandstories/",
+   "preview": "A Number From Today and A Story About Tomorrow Aug 20, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link Every forecast takes a number from today and multiplies it by a story about tomorrow. Investment valuations, economic outlooks, political forecasts – they all follow that formula. Something we know multiplied…"
   },
   {
    "id": "morgan-housel--beautiful-vs-practical-advice",
@@ -2178,7 +2333,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/beautiful-vs-practical-advice/"
+   "url": "https://collabfund.com/blog/beautiful-vs-practical-advice/",
+   "preview": "Beautiful vs. Practical Advice Mar 18, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link I heard a phrase recently: “Magazine architect.” It’s a derisive term architects use for their colleagues who design buildings that look beautiful, grace magazine covers, and win awards, but lack functionality for the tenants.…"
   },
   {
    "id": "morgan-housel--cumulative-vs-cyclical-knowledge",
@@ -2193,7 +2349,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/cumulative-vs-cyclical-knowledge/"
+   "url": "https://collabfund.com/blog/cumulative-vs-cyclical-knowledge/",
+   "preview": "Cumulative vs. Cyclical Knowledge Aug 29, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link President James Garfield died because the best doctors in the country didn’t believe in germs, probing Garfield’s bullet wound after an assassination attempt with ungloved, unwashed fingers that almost certainly contributed…"
   },
   {
    "id": "morgan-housel--different-kinds-of-smart",
@@ -2208,7 +2365,8 @@
     "patience"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/different-kinds-of-smart/"
+   "url": "https://collabfund.com/blog/different-kinds-of-smart/",
+   "preview": "Different Kinds of Smart Jun 11, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link “The older I get the more I realize how many kinds of smart there are. There are a lot of kinds of smart. There are a lot of kinds of stupid, too.” – Jeff Bezos The smartest investors of all time went bankrupt 20 years ago this…"
   },
   {
    "id": "morgan-housel--do-it-your-way",
@@ -2222,7 +2380,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/your-way-is-the-only-way/"
+   "url": "https://collabfund.com/blog/your-way-is-the-only-way/",
+   "preview": "Do It Your Way Sep 23, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link The ultimate success metric is whether you get what you want out of life. But that’s harder than it sounds because it’s easy to try to copy someone who wants something you don’t. I’ve seen this play out twice: An incredibly talented young…"
   },
   {
    "id": "morgan-housel--how-i-think-about-debt",
@@ -2237,7 +2396,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/how-i-think-about-debt/"
+   "url": "https://collabfund.com/blog/how-i-think-about-debt/",
+   "preview": "How I Think About Debt Apr 30, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link Japan has 140 businesses that are at least 500 years old. A few claim to have been operating continuously for more than 1,000 years. It’s astounding to think what these businesses have endured – dozens of wars, emperors, catastrophic…"
   },
   {
    "id": "morgan-housel--i-have-a-few-questions",
@@ -2251,7 +2411,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/i-have-a-few-questions/"
+   "url": "https://collabfund.com/blog/i-have-a-few-questions/",
+   "preview": "I Have A Few Questions Dec 16, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link They’re relevant to everyone, and apply to lots of things: Who has the right answers but I ignore because they’re not articulate? What haven’t I experienced firsthand that leaves me naive to how something works? As Jeff Immelt said,…"
   },
   {
    "id": "morgan-housel--lazy-work-good-work",
@@ -2266,7 +2427,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/lazy-work-good-work/"
+   "url": "https://collabfund.com/blog/lazy-work-good-work/",
+   "preview": "Lazy Work, Good Work May 27, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link John D. Rockefeller was the most successful businessman of all time. He was also a recluse, spending most of his time by himself. He rarely spoke, deliberately making himself inaccessible and staying quiet when you caught his attention.…"
   },
   {
    "id": "morgan-housel--little-rules-about-big-things",
@@ -2281,7 +2443,8 @@
     "wealth"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/little-rules-about-big-things/"
+   "url": "https://collabfund.com/blog/little-rules-about-big-things/",
+   "preview": "Little Rules About Big Things Aug 13, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link A few things I’ve come to terms with: There is rarely more or less economic uncertainty; just changes in how ignorant people are to potential risks. You should obsess over risks that do permanent damage and care little about…"
   },
   {
    "id": "morgan-housel--long-term-money",
@@ -2296,7 +2459,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/long-term-money/"
+   "url": "https://collabfund.com/blog/long-term-money/",
+   "preview": "Long-Term Money Apr 2, 2026 SHARE ↓ by Morgan Housel @morganhousel Copy Link Adam Smith, the 18th century economist, wrote that it’s not uncommon to meet a mother in the Scottish highlands “who has born twenty children not to have two alive.” That was life. And it hardly mattered whether you were rich or poor. Queen…"
   },
   {
    "id": "morgan-housel--lucky-vs-repeatable",
@@ -2311,7 +2475,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/lucky-vs-repeatable/"
+   "url": "https://collabfund.com/blog/lucky-vs-repeatable/",
+   "preview": "Lucky vs. Repeatable Apr 7, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link Luck plays such a big role in the world. But it’s hard to talk about. If I say you got lucky, I look jealous. If I tell myself that I got lucky, I feel diminished. Maybe a better way to frame luck is by asking: what isn’t repeatable?…"
   },
   {
    "id": "morgan-housel--makes-you-think",
@@ -2325,7 +2490,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/makes-you-think/"
+   "url": "https://collabfund.com/blog/makes-you-think/",
+   "preview": "Makes You Think Jul 18, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link A few lines I came across recently that got me thinking: “It is far easier to figure out if something is fragile than to predict the occurrence of an event that may harm it.” – Nassim Taleb “Survival is the ultimate performance measure.” –…"
   },
   {
    "id": "morgan-housel--minimum-levels-of-stress",
@@ -2340,7 +2506,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/minimum-levels-of-stress/"
+   "url": "https://collabfund.com/blog/minimum-levels-of-stress/",
+   "preview": "Minimum Levels of Stress Jan 13, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link A day after the September 11th terrorist attacks, every member of Congress stood on the steps of the U.S. Capitol and sang God Bless America. Could you imagine that happening today? It’s easy to say no, given how nasty politics has…"
   },
   {
    "id": "morgan-housel--my-new-book-the-art-of-spending-money",
@@ -2355,7 +2522,8 @@
     "money"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/my-new-book-the-art-of-spending-money/"
+   "url": "https://collabfund.com/blog/my-new-book-the-art-of-spending-money/",
+   "preview": "My New Book: The Art of Spending Money Sep 3, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link My new book, The Art of Spending Money , comes out Oct 7th. You can buy it here . Investor Chris Davis – who serves on the board of Berkshire Hathaway and Coca-Cola – says, it’s “not so much a sequel as the masterful,…"
   },
   {
    "id": "morgan-housel--my-thoughts-on-tariffs-economic-history-and-the-market-decli",
@@ -2370,7 +2538,8 @@
     "wealth"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/my-thoughts-on-tariffs-economic-history-and-the-market-decline/"
+   "url": "https://collabfund.com/blog/my-thoughts-on-tariffs-economic-history-and-the-market-decline/",
+   "preview": "My Thoughts on Tariffs, Economic History, and the Market Decline Apr 9, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link Below is a transcript from a recent podcast I did on the tariff news. My business that I use for my books and my speaking and whatnot is called Long Term Words, LLC. Now, the name of that is…"
   },
   {
    "id": "morgan-housel--podcast-with-howard-marks",
@@ -2384,7 +2553,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/podcast-with-howard-marks/"
+   "url": "https://collabfund.com/blog/podcast-with-howard-marks/",
+   "preview": "Podcast With Howard Marks Sep 2, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link I recently sat down with legendary investor Howard Marks, co-founder of Oaktree Capital Management. We talked about investing, debt, endurance, and what really makes a difference in lifetime investment results. You can check it out…"
   },
   {
    "id": "morgan-housel--pure-independence",
@@ -2399,7 +2569,8 @@
     "money"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/pure-independence/"
+   "url": "https://collabfund.com/blog/pure-independence/",
+   "preview": "Pure Independence Feb 27, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link A simple formula for a pretty nice life is independence plus purpose. Purpose is different for everyone. Sometimes it’s family, sometimes it’s community, religion, work, whatever. But independence is more universal. Our desire to be…"
   },
   {
    "id": "morgan-housel--smart-words-from-smart-people",
@@ -2414,7 +2585,8 @@
     "finance"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/smart-words-from-smart-people/"
+   "url": "https://collabfund.com/blog/smart-words-from-smart-people/",
+   "preview": "Smart Words From Smart People Mar 24, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link A few smart things I’ve read recently: “People in their 30s know where the world is going because they’re going to do it. I’m in my 80s so I have no idea.” - Daniel Kahneman “Every group of people who think for a living is…"
   },
   {
    "id": "morgan-housel--the-dumber-side-of-smart-people",
@@ -2429,7 +2601,8 @@
     "money"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/the-dumber-side-of-smart-people/"
+   "url": "https://collabfund.com/blog/the-dumber-side-of-smart-people/",
+   "preview": "The Dumber Side of Smart People Mar 3, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link Most people will die after three days without water. But drinking too much can be equally dangerous – water intoxication is deadly , and during rigorous training about a dozen soldiers per year are hospitalized for drinking…"
   },
   {
    "id": "morgan-housel--useful-and-overlooked-skills",
@@ -2444,7 +2617,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/useful-and-overlooked-skills/"
+   "url": "https://collabfund.com/blog/useful-and-overlooked-skills/",
+   "preview": "Useful and Overlooked Skills Jun 14, 2024 SHARE ↓ by Morgan Housel @morganhousel Copy Link On his way to be sworn in as the most powerful man in the world, Franklin Delano Roosevelt had to be lifted out of his car and carried up the stairs. Frances Perkins, who campaigned with Roosevelt and later became Secretary of…"
   },
   {
    "id": "morgan-housel--very-bad-advice",
@@ -2459,7 +2633,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/very-bad-advice/"
+   "url": "https://collabfund.com/blog/very-bad-advice/",
+   "preview": "Very Bad Advice Jun 12, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link A boy once asked Charlie Munger, “What advice do you have for someone like me to succeed in life?” Munger replied: “Don’t do cocaine. Don’t race trains to the track. And avoid all AIDS situations.” It’s often hard to know what will bring joy…"
   },
   {
    "id": "morgan-housel--what-a-world-a-few-stories",
@@ -2474,7 +2649,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://collabfund.com/blog/what-a-world/"
+   "url": "https://collabfund.com/blog/what-a-world/",
+   "preview": "What A World (A few Stories) Aug 4, 2025 SHARE ↓ by Morgan Housel @morganhousel Copy Link A few short stories: The CEO of Bronco Wine – which sells the Charles Shaw “Two Buck Chuck” wine at Trader Joe’s – was once asked how he’s able to sell wine for less than the cost of bottled water. He replied: “They’re…"
   },
   {
    "id": "derek-sivers--about-this-book",
@@ -2490,6 +2666,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/hy1",
+   "preview": "About this book 2018-06-01 In my first book, Anything You Want , I told the story of how I started, grew, and sold my company. As part of selling the company, I signed a non-compete agreement that said I couldn’t do the one thing I’d been doing since I was twenty-seven years old. So I had to make a real change in my…",
    "path": "library/texts/derek-sivers/about-this-book.txt"
   },
   {
@@ -2506,6 +2683,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/ayw",
+   "preview": "Anything You Want (my first book) 2011-06-29 For years, when people asked if I’d write a book, I said no. But when my hero Seth Godin asked if I’d write a book for his new publishing company, I said HELL YEAH!! So, my first book is released today. It’s called “ Anything You Want — 40 Lessons for a New Kind of…",
    "path": "library/texts/derek-sivers/anything-you-want-my-first-book.txt"
   },
   {
@@ -2522,6 +2700,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/quantity",
+   "preview": "Assume the basic sale, and go for quantity 2000-08-20 My first job ever was telemarketing: renewing people’s subscriptions to Time magazine. We worked on commission. I would call subscribers and timidly say, “Hi. Your subscription is coming up for renewal. I’m wondering if, maybe, you might want to renew it again this…",
    "path": "library/texts/derek-sivers/assume-the-basic-sale-and-go-for-quantity.txt"
   },
   {
@@ -2537,6 +2716,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/ladders",
+   "preview": "Climbing ladders 2009-09-06 Do you know the story of how John Lennon met Yoko Ono? He went to a friend’s art gallery and saw an empty room with a tall ladder going up to the ceiling. He climbed to the top of the ladder, and there was just a magnifying glass which, if held up to the ceiling, revealed a little tiny word…",
    "path": "library/texts/derek-sivers/climbing-ladders.txt"
   },
   {
@@ -2553,6 +2733,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/donkey",
+   "preview": "Don’t be a donkey 2011-06-08 Are you trying to pursue many different directions at once? Are you frustrated that the world wants you to pick one thing, because you want to do them all? The problem is thinking short term — assuming that if you don’t do all the things now, they won’t happen. The solution is to think…",
    "path": "library/texts/derek-sivers/dont-be-a-donkey.txt"
   },
   {
@@ -2569,6 +2750,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/exled",
+   "preview": "Explorers are bad leaders 2023-02-09 Explorers poke through the unknown, experimenting, trying many little dead-ends. Explorers meander, constantly changing directions based on hunch, mood, and curiosity. Explorers are hard to follow. It’s better to let them wander alone, then hear their tales. Explorers occasionally…",
    "path": "library/texts/derek-sivers/explorers-are-bad-leaders.txt"
   },
   {
@@ -2584,6 +2766,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/4d",
+   "preview": "Geography is four-dimensional 2026-05-05 Forty years ago, a family moved from India to Canada, and raised their children with “Indian values”. When those children visited India last year, the locals laughed at their outdated beliefs. What their family had said were facts were just a perspective from 1980 . Twenty…",
    "path": "library/texts/derek-sivers/geography-is-four-dimensional.txt"
   },
   {
@@ -2600,6 +2783,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/career",
+   "preview": "How to change or build your career 2014-10-06 I get emails from many people wanting to change or build their career. I always recommend the best book on the subject: “ So Good They Can’t Ignore You ” by Cal Newport. Here are a few of its best points: Forget passion and purpose Forget “follow your passion” or “find…",
    "path": "library/texts/derek-sivers/how-to-change-or-build-your-career.txt"
   },
   {
@@ -2616,6 +2800,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/hyn",
+   "preview": "If you’re not feeling “hell yeah!” then say no 2018-06-03 Most of us have lives filled with mediocrity. We said yes to things that we felt half-hearted about. So we’re too busy to react when opportunities come our way. We miss out on the great because we’re busy with the mediocre. The solution is to say yes to less.…",
    "path": "library/texts/derek-sivers/if-youre-not-feeling-hell-yeah-then-say-no.txt"
   },
   {
@@ -2632,6 +2817,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/4s4b",
+   "preview": "My life was changed by four sentences in four books 2026-05-12 Last week someone asked why I prefer books. My immediate answer was that I love their quiet, non-commercial nature. No ads. No hype. Just quiet wisdom with deep rewards for a focused mind. But today I realized something more profound: Each of my biggest…",
    "path": "library/texts/derek-sivers/my-life-was-changed-by-four-sentences-in-four-books.txt"
   },
   {
@@ -2648,6 +2834,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/hellyeah",
+   "preview": "No “yes.” Either “HELL YEAH!” or “no.” 2009-08-26 Use this rule if you’re often over-committed or too scattered. If you’re not saying “HELL YEAH!” about something, say no. When deciding whether to do something, if you feel anything less than “Wow! That would be amazing! Absolutely! Hell yeah!” — then say no. When you…",
    "path": "library/texts/derek-sivers/no-yes-either-hell-yeah-or-no.txt"
   },
   {
@@ -2664,6 +2851,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/n0",
+   "preview": "Prepare your “no” and keep it handy 2026-05-14 Someone asks you to do something, and you feel that pressure to answer immediately. You don’t really want to do it, but don’t know how to say so on the spot. You avoid confrontation, and say OK. You regret it, and later think of how your ideal eloquent self should have…",
    "path": "library/texts/derek-sivers/prepare-your-no-and-keep-it-handy.txt"
   },
   {
@@ -2680,6 +2868,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/fanwork",
+   "preview": "Put your fans to work 2000-08-04 You know that guy who comes to all your shows? You know that woman who tells you how much she loves your music? You know that fan who said, “If you ever need anything, just ask!”? Put them to work! People who reach out like that are looking for a better mission — a connection to your…",
    "path": "library/texts/derek-sivers/put-your-fans-to-work.txt"
   },
   {
@@ -2696,6 +2885,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/quality",
+   "preview": "Same word. Different places? Different meanings. 2014-01-16 I had just moved to Singapore when I met the brilliant Benjamin Joffe . He’s a startup consultant and investor from France, who has spent the last 13 years living around Asia — a few years each in Korea , China , and Japan . I asked him if he could tell me…",
    "path": "library/texts/derek-sivers/same-word-different-places-different-meanings.txt"
   },
   {
@@ -2712,6 +2902,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/no2",
+   "preview": "Saying no to everything else 2015-09-23 Steven Pressfield called himself an author for years, but he’d never actually finished a book. Eventually, the psychological pain of not finishing kept building until he couldn’t stand it anymore. He decided to finally beat the devil he calls “The Resistance”. He created a…",
    "path": "library/texts/derek-sivers/saying-no-to-everything-else.txt"
   },
   {
@@ -2728,6 +2919,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/startnow",
+   "preview": "Start now. No funding needed. 2011-07-10 Watch out when anyone (including you) says they want to do something big, but can’t until they raise money. It usually means they’re more in love with the idea of being big big big than with actually doing something useful. For an idea to get big big big, it has to be useful.…",
    "path": "library/texts/derek-sivers/start-now-no-funding-needed.txt"
   },
   {
@@ -2744,6 +2936,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/morepay",
+   "preview": "The higher the price, the more they value it 2018-02-16 Psychology experiments have shown that the more people pay for something, the more they value it. People given a placebo pill were twice as likely to have their pain disappear when they were told that the pill was expensive. People who paid more for tickets were…",
    "path": "library/texts/derek-sivers/the-higher-the-price-the-more-they-value-it.txt"
   },
   {
@@ -2760,6 +2953,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/odds",
+   "preview": "What are the odds of that? 2017-07-03 Three true stories: In 1992, in Tokyo, I dated a girl named Masako. After our month together, she moved to London. We lost touch. In 2008, I was in London for a few days. I wondered if Masako still lived there, sixteen years later. A minute later, she walked by. “Masako!”…",
    "path": "library/texts/derek-sivers/what-are-the-odds-of-that.txt"
   },
   {
@@ -2776,6 +2970,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/exan",
+   "preview": "Why experts are annoying 2019-10-27 When someone becomes an expert at something, you know what else they become? Annoying. At a restaurant, your designer friend complains about the font on the menu, your musician friend complains about the background music, and your manager friend complains about the service. Why? The…",
    "path": "library/texts/derek-sivers/why-experts-are-annoying.txt"
   },
   {
@@ -2792,6 +2987,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/nod",
+   "preview": "Writing daily, but posting when ready 2019-11-01 I just finished an experiment. Last month, I published a new article to my blog every day. I’m glad I tried it, but ultimately I didn’t like it. Here’s why: It made my writing worse, not better. I was trying to force a conclusion quicker. I was skipping steps 2-5 of my…",
    "path": "library/texts/derek-sivers/writing-daily-but-posting-when-ready.txt"
   },
   {
@@ -2808,6 +3004,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/enough",
+   "preview": "You have enough. 2009-06-05 I love my computer and Kindle, but you won’t hear me rave about them. I don’t want you to want them. Companies spend a fortune begging you to want their stuff. I won’t add to that noise. I’d like to train parrots to say “ It won’t make you happy! .” I’d let them loose in shopping malls, big…",
    "path": "library/texts/derek-sivers/you-have-enough.txt"
   },
   {
@@ -2824,6 +3021,7 @@
    ],
    "src": "bundled",
    "url": "https://sivers.org/htl00",
+   "preview": "the best book ever written 2024-04-12 I’ve asked my favorite musicians if, when they’re done writing a new song, they feel it’s the best song ever. All of them said yes. I’ve asked my favorite authors if, when they’re done writing a new book, they feel it was the best book ever. All of them said no. I don’t know why…",
    "path": "library/texts/derek-sivers/the-best-book-ever-written.txt"
   },
   {
@@ -2839,7 +3037,8 @@
     "packy-mccormick"
    ],
    "src": "link",
-   "url": "https://www.notboring.co/p/americas-next-250"
+   "url": "https://www.notboring.co/p/americas-next-250",
+   "preview": "America's Next 250 An Essay with Scott Nolan, General Matter CEO and Founders Fund Partner Jul 02, 2026 161 1 10 Share Welcome to the 2,306 newly Not Boring people who have joined us since our last essay ! Join 271,591 smart, curious folks by subscribing here: Subscribe Hi friends 👋, Happy Thursday, Happy 4th of…"
   },
   {
    "id": "packy-mccormick--not-boring-by-packy-mccormick",
@@ -2854,7 +3053,8 @@
     "packy-mccormick"
    ],
    "src": "link",
-   "url": "https://www.notboring.co/p/excel-never-dies"
+   "url": "https://www.notboring.co/p/excel-never-dies",
+   "preview": "Excel Never Dies The Spreadsheet That Launched A Million Companies Mar 08, 2021 189 61 7 Share Welcome to the 1,370 newly Not Boring people who have joined us since last Monday! 🤯 If you aren’t subscribed, join 37,892 smart, curious folks by subscribing here: Subscribe 🎧 To get this essay straight in your ears:…"
   },
   {
    "id": "packy-mccormick--not-boring-by-packy-mccormick",
@@ -2869,7 +3069,8 @@
     "packy-mccormick"
    ],
    "src": "link",
-   "url": "https://www.notboring.co/p/expanding-the-radius-of-daily-life"
+   "url": "https://www.notboring.co/p/expanding-the-radius-of-daily-life",
+   "preview": "Expanding the Radius of Daily Life How to Make Flying Cars an Everyday Reality Jun 08, 2026 137 3 8 Share Welcome to the 575 newly Not Boring people who have joined us since our last essay ! Join 269,093 smart, curious folks by subscribing here: Subscribe Hi friends 👋, Happy Monday! J. Storrs Hall first asked “Where…"
   },
   {
    "id": "packy-mccormick--not-boring-by-packy-mccormick",
@@ -2884,7 +3085,8 @@
     "packy-mccormick"
    ],
    "src": "link",
-   "url": "https://www.notboring.co/p/westmag"
+   "url": "https://www.notboring.co/p/westmag",
+   "preview": "America Spins on Westmag Building the Electric Stack by making motors and actuators next to drones and robots Jun 02, 2026 144 2 3 Share Welcome to the 730 newly Not Boring people who have joined us since our last essay ! Join 268,518 smart, curious folks by subscribing here: Subscribe Hi friends 👋, Happy Tuesday!…"
   },
   {
    "id": "charlie-munger--the-psychology-of-human-misjudgment",
@@ -2899,7 +3101,8 @@
     "human behavior"
    ],
    "src": "link",
-   "url": "https://fs.blog/great-talks/psychology-human-misjudgment/"
+   "url": "https://fs.blog/great-talks/psychology-human-misjudgment/",
+   "preview": "The Psychology of Human Misjudgment, by Charlie Munger The Psychology of Human Misjudgment is the magnum opus on why we behave as we do. Below is the fully revised talk. Background In the run-up to publishing Poor Charlie’s Almanack , Charlie Munger remarked that “The Psychology of Human Misjudgment” could use “a…"
   },
   {
    "id": "charlie-munger--charlie-munger-adding-mental-tools-to-your-toolbox",
@@ -2914,7 +3117,8 @@
     "thinking"
    ],
    "src": "link",
-   "url": "https://fs.blog/charlie-munger-mental-toolbox/"
+   "url": "https://fs.blog/charlie-munger-mental-toolbox/",
+   "preview": "Mental Models Reading Time: 4 minutes Charlie Munger: Adding Mental Tools to Your Toolbox In The Art of War , Sun Tzu said: “The general who wins a battle makes many calculations in his temple before the battle is fought.” Those ‘calculations’ are the tools we have available to think better. One of the best questions…"
   },
   {
    "id": "charlie-munger--a-lesson-on-elementary-worldly-wisdom-usc-1994",
@@ -2929,7 +3133,8 @@
     "investing"
    ],
    "src": "link",
-   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994"
+   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994",
+   "preview": "1994, USC Business School, California, USA I'm going to play a minor trick on you today because the subject of my talk is the art of stock picking as a subdivision of the art of worldly wisdom. That enables me to start talking about worldly wisdom—a much broader topic that interests me because I think all too little…"
   },
   {
    "id": "charlie-munger--mental-models-the-best-way-to-make-intelligent-decisions",
@@ -2944,7 +3149,8 @@
     "learning"
    ],
    "src": "link",
-   "url": "https://fs.blog/mental-models/"
+   "url": "https://fs.blog/mental-models/",
+   "preview": "Mental Models: The Best Way to Make Intelligent Decisions (~100 Models Explained) What Are Mental Models? A mental model is a simplified explanation of how something works. Any idea, belief, or concept can be boiled down to its essence. Like a map, mental models highlight key information while ignoring irrelevant…"
   },
   {
    "id": "charlie-munger--charlie-munger-on-circle-of-competence",
@@ -2959,7 +3165,8 @@
     "expertise"
    ],
    "src": "link",
-   "url": "https://fs.blog/circle-of-competence/"
+   "url": "https://fs.blog/circle-of-competence/",
+   "preview": "Mental Models Reading Time: 5 minutes Mastering Success: Navigating Within Your Circle of Competence Understanding where you have an edge and where you don’t can help you prevent problems, spot opportunities others miss, and rapidly learn. We all have a circle of competence – an area in which we have a lot of earned…"
   },
   {
    "id": "charlie-munger--charlie-munger-on-inversion",
@@ -2974,7 +3181,8 @@
     "problem-solving"
    ],
    "src": "link",
-   "url": "https://fs.blog/inversion/"
+   "url": "https://fs.blog/inversion/",
+   "preview": "Mental Models Reading Time: 2 minutes Inversion and The Power of Avoiding Stupidity Charlie Munger , the business partner of Warren Buffett and Vice Chairman of Berkshire Hathaway, is famous for his quote “All I want to know is where I’m going to die, so I’ll never go there.” That thinking was inspired by the German…"
   },
   {
    "id": "charlie-munger--charlie-munger-on-lollapalooza-effects",
@@ -2989,14 +3197,16 @@
     "Charlie Munger"
    ],
    "src": "link",
-   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994"
+   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994",
+   "preview": "Charlie Munger on Lollapalooza Effects What is a Lollapalooza Effect? You get lollapalooza effects when two, three or four forces are all operating in the same direction. And, frequently, you don't get simple addition. It's often like a critical mass in physics where you get a nuclear explosion if you get to a certain…"
   },
   {
    "id": "naval--understand-how-wealth-is-created",
    "authorId": "naval-ravikant",
    "title": "Understand How Wealth Is Created",
    "date": "2020",
-   "words": null,
+   "words": 2241,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3009,7 +3219,8 @@
    "authorId": "naval-ravikant",
    "title": "Find and Build Specific Knowledge",
    "date": "2020",
-   "words": null,
+   "words": 1811,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3022,7 +3233,8 @@
    "authorId": "naval-ravikant",
    "title": "Play Long-Term Games with Long-Term People",
    "date": "2020",
-   "words": null,
+   "words": 1116,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3035,7 +3247,8 @@
    "authorId": "naval-ravikant",
    "title": "Take on Accountability",
    "date": "2020",
-   "words": null,
+   "words": 826,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3048,7 +3261,8 @@
    "authorId": "naval-ravikant",
    "title": "Build or Buy Equity in a Business",
    "date": "2020",
-   "words": null,
+   "words": 797,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3061,7 +3275,8 @@
    "authorId": "naval-ravikant",
    "title": "Find a Position of Leverage",
    "date": "2020",
-   "words": null,
+   "words": 3363,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3074,7 +3289,8 @@
    "authorId": "naval-ravikant",
    "title": "Get Paid for Your Judgment",
    "date": "2020",
-   "words": null,
+   "words": 689,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3087,7 +3303,8 @@
    "authorId": "naval-ravikant",
    "title": "Prioritize and Focus",
    "date": "2020",
-   "words": null,
+   "words": 2124,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3100,7 +3317,8 @@
    "authorId": "naval-ravikant",
    "title": "Find Work That Feels Like Play",
    "date": "2020",
-   "words": null,
+   "words": 1908,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3113,7 +3331,8 @@
    "authorId": "naval-ravikant",
    "title": "How to Get Lucky",
    "date": "2020",
-   "words": null,
+   "words": 1455,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3126,7 +3345,8 @@
    "authorId": "naval-ravikant",
    "title": "Be Patient",
    "date": "2020",
-   "words": null,
+   "words": 1169,
+   "desc": "From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.",
    "tags": [
     "Wealth"
    ],
@@ -3139,7 +3359,8 @@
    "authorId": "naval-ravikant",
    "title": "Judgment",
    "date": "2020",
-   "words": null,
+   "words": 548,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3152,7 +3373,8 @@
    "authorId": "naval-ravikant",
    "title": "How to Think Clearly",
    "date": "2020",
-   "words": null,
+   "words": 1264,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3165,7 +3387,8 @@
    "authorId": "naval-ravikant",
    "title": "Shed Your Identity to See Reality",
    "date": "2020",
-   "words": null,
+   "words": 813,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3178,7 +3401,8 @@
    "authorId": "naval-ravikant",
    "title": "Learn the Skills of Decision-Making",
    "date": "2020",
-   "words": null,
+   "words": 863,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3191,7 +3415,8 @@
    "authorId": "naval-ravikant",
    "title": "Collect Mental Models",
    "date": "2020",
-   "words": null,
+   "words": 2049,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3204,7 +3429,8 @@
    "authorId": "naval-ravikant",
    "title": "Learn to Love to Read",
    "date": "2020",
-   "words": null,
+   "words": 2579,
+   "desc": "From the Almanack — Naval on clear thinking, mental models and making better decisions.",
    "tags": [
     "Judgment"
    ],
@@ -3217,7 +3443,8 @@
    "authorId": "naval-ravikant",
    "title": "Happiness Is Learned",
    "date": "2020",
-   "words": null,
+   "words": 1785,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3230,7 +3457,8 @@
    "authorId": "naval-ravikant",
    "title": "Happiness Is a Choice",
    "date": "2020",
-   "words": null,
+   "words": 420,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3243,7 +3471,8 @@
    "authorId": "naval-ravikant",
    "title": "Happiness Requires Presence",
    "date": "2020",
-   "words": null,
+   "words": 532,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3256,7 +3485,8 @@
    "authorId": "naval-ravikant",
    "title": "Happiness Requires Peace",
    "date": "2020",
-   "words": null,
+   "words": 714,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3269,7 +3499,8 @@
    "authorId": "naval-ravikant",
    "title": "Every Desire Is a Chosen Unhappiness",
    "date": "2020",
-   "words": null,
+   "words": 881,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3282,7 +3513,8 @@
    "authorId": "naval-ravikant",
    "title": "Success Does Not Earn Happiness",
    "date": "2020",
-   "words": null,
+   "words": 1204,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3295,7 +3527,8 @@
    "authorId": "naval-ravikant",
    "title": "Envy Is the Enemy of Happiness",
    "date": "2020",
-   "words": null,
+   "words": 839,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3308,7 +3541,8 @@
    "authorId": "naval-ravikant",
    "title": "Happiness Is Built by Habits",
    "date": "2020",
-   "words": null,
+   "words": 1872,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3321,7 +3555,8 @@
    "authorId": "naval-ravikant",
    "title": "Find Happiness in Acceptance",
    "date": "2020",
-   "words": null,
+   "words": 1327,
+   "desc": "From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.",
    "tags": [
     "Happiness"
    ],
@@ -3334,7 +3569,8 @@
    "authorId": "naval-ravikant",
    "title": "Choosing to Be Yourself",
    "date": "2020",
-   "words": null,
+   "words": 704,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3347,7 +3583,8 @@
    "authorId": "naval-ravikant",
    "title": "Choosing to Care for Yourself",
    "date": "2020",
-   "words": null,
+   "words": 1853,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3360,7 +3597,8 @@
    "authorId": "naval-ravikant",
    "title": "Meditation + Mental Strength",
    "date": "2020",
-   "words": null,
+   "words": 3219,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3373,7 +3611,8 @@
    "authorId": "naval-ravikant",
    "title": "Choosing to Build Yourself",
    "date": "2020",
-   "words": null,
+   "words": 1462,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3386,7 +3625,8 @@
    "authorId": "naval-ravikant",
    "title": "Choosing to Grow Yourself",
    "date": "2020",
-   "words": null,
+   "words": 1409,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3399,7 +3639,8 @@
    "authorId": "naval-ravikant",
    "title": "Choosing to Free Yourself",
    "date": "2020",
-   "words": null,
+   "words": 1338,
+   "desc": "From the Almanack — Naval on caring for, building, growing and freeing yourself.",
    "tags": [
     "Self"
    ],
@@ -3412,7 +3653,8 @@
    "authorId": "naval-ravikant",
    "title": "The Meanings of Life",
    "date": "2020",
-   "words": null,
+   "words": 1024,
+   "desc": "From the Almanack — Naval’s reflections on meaning, values, presence and living well.",
    "tags": [
     "Philosophy"
    ],
@@ -3425,7 +3667,8 @@
    "authorId": "naval-ravikant",
    "title": "Live by Your Values",
    "date": "2020",
-   "words": null,
+   "words": 913,
+   "desc": "From the Almanack — Naval’s reflections on meaning, values, presence and living well.",
    "tags": [
     "Philosophy"
    ],
@@ -3438,7 +3681,8 @@
    "authorId": "naval-ravikant",
    "title": "Rational Buddhism",
    "date": "2020",
-   "words": null,
+   "words": 789,
+   "desc": "From the Almanack — Naval’s reflections on meaning, values, presence and living well.",
    "tags": [
     "Philosophy"
    ],
@@ -3451,7 +3695,8 @@
    "authorId": "naval-ravikant",
    "title": "The Present Is All We Have",
    "date": "2020",
-   "words": null,
+   "words": 516,
+   "desc": "From the Almanack — Naval’s reflections on meaning, values, presence and living well.",
    "tags": [
     "Philosophy"
    ],
@@ -3483,6 +3728,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "The private journal of a Roman emperor — Stoic reflections on duty, mortality and mastering your own mind.",
+   "preview": "MEDITATIONS By Marcus Aurelius CONTENTS NOTES INTRODUCTION FIRST BOOK SECOND BOOK THIRD BOOK FOURTH BOOK FIFTH BOOK SIXTH BOOK SEVENTH BOOK EIGHTH BOOK NINTH BOOK TENTH BOOK ELEVENTH BOOK TWELFTH BOOK APPENDIX GLOSSARY INTRODUCTION MARCUS AURELIUS ANTONINUS was born on April 26, A.D. 121. His real name was M. Annius…",
    "path": "library/texts/classics/meditations.txt"
   },
   {
@@ -3496,6 +3743,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "A short handbook of Stoic practice: concern yourself only with what’s in your control, and calmly accept the rest.",
+   "preview": "The Library of Liberal Arts OSKAR PIEST, General Editor [NUMBER EIGHT] EPICTETUS The Enchiridion The Enchiridion By EPICTETUS Translated by THOMAS W. HIGGINSON With an Introduction by ALBERT SALOMON Professor of Sociology New School for Social Research THE LIBERAL ARTS PRESS NEW YORK COPYRIGHT, 1948 THE LIBERAL ARTS…",
    "path": "library/texts/classics/the-enchiridion.txt"
   },
   {
@@ -3508,6 +3757,8 @@
     "stoicism"
    ],
    "src": "bundled",
+   "desc": "A curated collection of the Stoic teacher’s sharpest sayings on freedom and self-command.",
+   "preview": "THE GOLDEN SAYINGS OF EPICTETUS Translated and Arranged by Hastings Crossley CONTENTS I II III IV V VI VII VIII IX X XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII XXIII XXIV XXV XXVI XXVII XXVIII XXIX XXX XXXI XXXII XXXIII XXXIV XXXV XXXVI XXXVII XXXVIII XXXIX XL XLI XLII XLIII XLIV XLV XLVI XLVII XLVIII XLIX L LI…",
    "path": "library/texts/classics/the-golden-sayings-of-epictetus.txt"
   },
   {
@@ -3521,6 +3772,8 @@
     "happiness"
    ],
    "src": "bundled",
+   "desc": "Seneca’s letters and essays on living well — happiness, gratitude, anger and clemency.",
+   "preview": "Note: Images of the original pages are available through Internet Archive. See Transcriber's note: Text enclosed by underscores is in italics (italics). SENECA’S MORALS OF A HAPPY LIFE, BENEFITS, ANGER AND CLEMENCY. Translated by SIR ROGER L’ESTRANGE. New Edition. Chicago: Belford, Clarke & Co., 1882. Belford . Clarke…",
    "path": "library/texts/classics/senecas-morals-of-a-happy-life.txt"
   },
   {
@@ -3534,6 +3787,8 @@
     "time"
    ],
    "src": "bundled",
+   "desc": "Seneca’s essays, including the famous “On the Shortness of Life” — why we squander time and how to reclaim it.",
+   "preview": "L. ANNAEUS SENECA MINOR DIALOGUES TOGETHER WITH THE DIALOGUE ON CLEMENCY TRANSLATED BY AUBREY STEWART, M.A. LATE FELLOW OF TRINITY COLLEGE, CAMBRIDGE LONDON — GEORGE BELL AND SONS, YORK STREET COVENT GARDEN 1889 CHISWICK PRESS :—C. WHITTINGHAM AND CO., TOOKS COURT, CHANCERY LANE PREFACE. I can say little by way of…",
    "path": "library/texts/classics/minor-dialogues-incl-on-the-shortness-of-life.txt"
   },
   {
@@ -3546,6 +3801,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "Socrates’ defense at his trial — the origin of “the unexamined life is not worth living.”",
+   "preview": "Apology by Plato Translated by Benjamin Jowett Contents INTRODUCTION APOLOGY INTRODUCTION. In what relation the “Apology” of Plato stands to the real defence of Socrates, there are no means of determining. It certainly agrees in tone and character with the description of Xenophon, who says in the “Memorabilia” that…",
    "path": "library/texts/classics/apology-the-trial-of-socrates.txt"
   },
   {
@@ -3558,6 +3815,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "Awaiting execution, Socrates argues why he must obey the law rather than flee — a dialogue on justice and duty.",
+   "preview": "CRITO by Plato Translated by Benjamin Jowett INTRODUCTION. The Crito seems intended to exhibit the character of Socrates in one light only, not as the philosopher, fulfilling a divine mission and trusting in the will of heaven, but simply as the good citizen, who having been unjustly condemned is willing to give up…",
    "path": "library/texts/classics/crito.txt"
   },
   {
@@ -3571,6 +3830,8 @@
     "love"
    ],
    "src": "bundled",
+   "desc": "A dinner-party debate on the nature of love, rising to Socrates’ celebrated “ladder of love.”",
+   "preview": "SYMPOSIUM By Plato Translated by Benjamin Jowett INTRODUCTION. Of all the works of Plato the Symposium is the most perfect in form, and may be truly thought to contain more than any commentator has ever dreamed of; or, as Goethe said of one of his own writings, more than the author himself knew. For in philosophy as…",
    "path": "library/texts/classics/symposium.txt"
   },
   {
@@ -3584,6 +3845,8 @@
     "adversity"
    ],
    "src": "bundled",
+   "desc": "Written in prison awaiting death — how philosophy consoles the mind against the turning wheel of fortune.",
+   "preview": "Greek: homôs de kai en toutois dialampei to kalon, epeidan pherê tis eukolôs pollas kai megalas atychias, mê di analgêsian, alla gennadas ôn kai megalopsychos.] Aristotle's 'Ethics,' I., xi. 12. THE CONSOLATION OF PHILOSOPHY OF BOETHIUS. Translated into English Prose and Verse by H.R. JAMES, M.A., CH. CH. OXFORD.…",
    "path": "library/texts/classics/the-consolation-of-philosophy.txt"
   },
   {
@@ -3597,6 +3860,8 @@
     "reason"
    ],
    "src": "bundled",
+   "desc": "The birth of modern philosophy: “I think, therefore I am,” and a method for reasoning toward truth.",
+   "preview": "DISCOURSE ON THE METHOD OF RIGHTLY CONDUCTING THE REASON, AND SEEKING TRUTH IN THE SCIENCES by René Descartes Contents PREFATORY NOTE PART I PART II PART III PART IV PART V PART VI PREFATORY NOTE BY THE AUTHOR If this Discourse appear too long to be read at once, it may be divided into six Parts: and, in the first,…",
    "path": "library/texts/classics/discourse-on-the-method.txt"
   },
   {
@@ -3610,6 +3875,8 @@
     "faith"
    ],
    "src": "bundled",
+   "desc": "Pascal’s piercing fragments on faith, reason and the human condition — including his famous wager.",
+   "preview": "PASCAL'S PENSÉES INTRODUCTION BY T. S. ELIOT A Dutton Paperback New York E. P. DUTTON & CO., INC. This paperback edition of \"Pascal's Pensées\" Published 1958 by E. P. Dutton & Co., Inc. All rights reserved. Printed in the U.S.A. SBN 0-525-47018-2 INTRODUCTION It might seem that about Blaise Pascal, and about the two…",
    "path": "library/texts/classics/pens-es.txt"
   },
   {
@@ -3622,6 +3889,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "Russell’s lucid, humane introduction to philosophy’s biggest question: what can we actually know?",
+   "preview": "THE PROBLEMS OF PHILOSOPHY By Bertrand Russell PREFACE In the following pages I have confined myself in the main to those problems of philosophy in regard to which I thought it possible to say something positive and constructive, since merely negative criticism seemed out of place. For this reason, theory of knowledge…",
    "path": "library/texts/classics/the-problems-of-philosophy.txt"
   },
   {
@@ -3635,6 +3904,8 @@
     "happiness"
    ],
    "src": "bundled",
+   "desc": "Practical philosophy on what truly makes a life happy — who you are matters more than what you have.",
+   "preview": "THE ESSAYS OF ARTHUR SCHOPENHAUER TRANSLATED BY T. BAILEY SAUNDERS, M.A. THE WISDOM OF LIFE. CONTENTS. CHAPTER INTRODUCTION I. DIVISION OF THE SUBJECT II. PERSONALITY, OR WHAT A MAN IS III. PROPERTY, OR WHAT A MAN HAS IV. POSITION, OR A MAN'S PLACE IN THE ESTIMATION OF OTHERS-- Sect. 1. Reputation \" 2. Pride \" 3. Rank…",
    "path": "library/texts/classics/the-wisdom-of-life.txt"
   },
   {
@@ -3648,6 +3919,8 @@
     "wisdom"
    ],
    "src": "bundled",
+   "desc": "Blunt, worldly counsel for moving through life with clear eyes and steady expectations.",
+   "preview": "THE ESSAYS OF ARTHUR SCHOPENHAUER TRANSLATED BY T. BAILEY SAUNDERS, M.A. COUNSELS AND MAXIMS. Le bonheur n'est pas chose aisée: il est très difficile de le trouver en nous, et impossible de le trouver ailleurs. CHAMFORT. CONTENTS. CHAPTER INTRODUCTION I. GENERAL RULES II. OUR RELATION TO OURSELVES III. OUR RELATION TO…",
    "path": "library/texts/classics/counsels-and-maxims.txt"
   },
   {
@@ -3660,6 +3933,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "Nietzsche’s poetic masterwork — the Übermensch, eternal recurrence, and the call to create your own values.",
+   "preview": "THUS SPAKE ZARATHUSTRA A BOOK FOR ALL AND NONE By Friedrich Nietzsche Translated By Thomas Common CONTENTS. INTRODUCTION BY MRS FORSTER-NIETZSCHE. THUS SPAKE ZARATHUSTRA. FIRST PART. Zarathustra’s Prologue. Zarathustra’s Discourses. I. The Three Metamorphoses. II. The Academic Chairs of Virtue. III. Backworldsmen. IV.…",
    "path": "library/texts/classics/thus-spake-zarathustra.txt"
   },
   {
@@ -3672,6 +3947,8 @@
     "philosophy"
    ],
    "src": "bundled",
+   "desc": "A bold assault on inherited morality and a summons to think beyond good and evil.",
+   "preview": "BEYOND GOOD AND EVIL By Friedrich Nietzsche Translated by Helen Zimmern TRANSCRIBER'S NOTE ABOUT THIS E-TEXT EDITION: The following is a reprint of the Helen Zimmern translation from German into English of \"Beyond Good and Evil,\" as published in The Complete Works of Friedrich Nietzsche (1909-1913). Some adaptations…",
    "path": "library/texts/classics/beyond-good-and-evil.txt"
   },
   {
@@ -3685,6 +3962,8 @@
     "self-reliance"
    ],
    "src": "bundled",
+   "desc": "Emerson’s foundational essays, including “Self-Reliance” — trust yourself and think for yourself.",
+   "preview": "ESSAYS BY RALPH WALDO EMERSON Merrill's English Texts SELECTED AND EDITED, WITH INTRODUCTION AND NOTES, BY EDNA H.L. TURPIN, AUTHOR OF \"STORIES FROM AMERICAN HISTORY,\" \"CLASSIC FABLES,\" \"FAMOUS PAINTERS,\" ETC. NEW YORK CHARLES E. MERRILL CO. 1907 CONTENTS INTRODUCTION LIFE OF EMERSON CRITICAL OPINIONS CHRONOLOGICAL…",
    "path": "library/texts/classics/essays-first-series.txt"
   },
   {
@@ -3697,6 +3976,8 @@
     "essays"
    ],
    "src": "bundled",
+   "desc": "More of Emerson’s transcendentalist essays on nature, character, experience and the poet.",
+   "preview": "ESSAYS, SECOND SERIES By Ralph Waldo Emerson THE POET. A moody child and wildly wise Pursued the game with joyful eyes, Which chose, like meteors, their way, And rived the dark with private ray: They overleapt the horizon's edge, Searched with Apollo's privilege; Through man, and woman, and sea, and star Saw the dance…",
    "path": "library/texts/classics/essays-second-series.txt"
   },
   {
@@ -3710,6 +3991,8 @@
     "wisdom"
    ],
    "src": "bundled",
+   "desc": "Francis Bacon’s terse, endlessly quotable essays on studies, adversity, ambition and more.",
+   "preview": "THE ESSAYS OR COUNSELS, CIVIL AND MORAL, OF FRANCIS Ld. VERULAM VISCOUNT ST. ALBANS By Francis Bacon THE ESSAYS Of Truth Of Death Of Unity in Religion Of Revenge Of Adversity Of Simulation and Dissimulation Of Parents and Children Of Marriage and Single Life Of Envy Of Love Of Great Place Of Boldness Of Goodness and…",
    "path": "library/texts/classics/essays-civil-and-moral.txt"
   },
   {
@@ -3723,6 +4006,8 @@
     "faith"
    ],
    "src": "bundled",
+   "desc": "Chesterton’s witty defense of wonder and faith — a spiritual autobiography of ideas.",
+   "preview": "ORTHODOXY by G.K. CHESTERTON JOHN LANE THE BODLEY HEAD LTD First published in.......................... 1908 printed..................................... 1908 Reprinted................................... 1909 Reprinted................................... 1911 Reprinted................................... 1915…",
    "path": "library/texts/classics/orthodoxy.txt"
   },
   {
@@ -3735,6 +4020,8 @@
     "biography"
    ],
    "src": "bundled",
+   "desc": "Franklin’s own account of his rise, his thirteen virtues, and a lifetime of deliberate self-improvement.",
+   "preview": "AUTOBIOGRAPHY OF BENJAMIN FRANKLIN WITH ILLUSTRATIONS by E. BOYD SMITH EDITED by FRANK WOODWORTH PINE New York HENRY HOLT AND COMPANY 1916 Copyright, 1916, BY HENRY HOLT AND COMPANY June, 1922 THE QUINN & BODEN CO. PRESS RAHWAY, N. J. CONTENTS PAGE Introduction vii The Autobiography I. Ancestry and Early Life in…",
    "path": "library/texts/classics/autobiography-of-benjamin-franklin.txt"
   },
   {
@@ -3747,6 +4034,8 @@
     "self-improvement"
    ],
    "src": "bundled",
+   "desc": "The Victorian bestseller that coined “self-help” — perseverance and character as the roots of achievement.",
+   "preview": "SELF HELP WITH ILLUSTRATIONS OF CONDUCT AND PERSEVERANCE. BY SAMUEL SMILES, LL.D., AUTHOR OF “LIVES OF THE ENGINEERS,” ETC. “This above all,—To thine own self be true; And it must follow, as the night the day, Then canst not then be false to any man.” SHAKESPEARE. “Might I give counsel to any young man, I would say to…",
    "path": "library/texts/classics/self-help.txt"
   },
   {
@@ -3759,6 +4048,8 @@
     "mindset"
    ],
    "src": "bundled",
+   "desc": "A tiny, potent classic: your thoughts shape your circumstances and forge your character.",
+   "preview": "AS A MAN THINKETH BY JAMES ALLEN Author of \"From Passion to Peace\" Mind is the Master power that moulds and makes, And Man is Mind, and evermore he takes The tool of Thought, and, shaping what he wills, Brings forth a thousand joys, a thousand ills:-- He thinks in secret, and it comes to pass: Environment is but his…",
    "path": "library/texts/classics/as-a-man-thinketh.txt"
   },
   {
@@ -3771,6 +4062,8 @@
     "wealth"
    ],
    "src": "bundled",
+   "desc": "The 1910 manual on creating wealth through purposeful thought and action that seeded modern success writing.",
+   "preview": "Text enclosed by underscores is in italics (italics). Additional Transcriber’s Notes are at the end. THE SCIENCE OF GETTING RICH BY W. D. WATTLES Author of “New Science of Living and Healing.” PRICE, $1.00 PUBLISHED BY ELIZABETH TOWNE HOLYOKE, MASS. 1910 COPYRIGHT, APRIL 1, 1910 BY WALLACE D. WATTLES CONTENTS PAGE I.…",
    "path": "library/texts/classics/the-science-of-getting-rich.txt"
   },
   {
@@ -3783,6 +4076,8 @@
     "opportunity"
    ],
    "src": "bundled",
+   "desc": "The famous lecture arguing that real opportunity lies right where you already stand.",
+   "preview": "ACRES OF DIAMONDS By Russell H. Conwell Founder Of Temple University Philadelphia His Life And Achievement By Robert Shackleton With an Autobiographical Note ACRES OF DIAMONDS CONTENTS ACRES OF DIAMONDS HIS LIFE AND ACHIEVEMENTS I. THE STORY OF THE SWORD II. THE BEGINNING AT OLD LEXINGTON III. STORY OF THE FIFTY-SEVEN…",
    "path": "library/texts/classics/acres-of-diamonds.txt"
   },
   {
@@ -3796,6 +4091,8 @@
     "habits"
    ],
    "src": "bundled",
+   "desc": "William James on habit, attention and interest — including the enduring chapter on “The Laws of Habit.”",
+   "preview": "TALKS TO TEACHERS ON PSYCHOLOGY: AND TO STUDENTS ON SOME OF LIFE'S IDEALS, By WILLIAM JAMES NEW YORK HENRY HOLT AND COMPANY 1925 COPYRIGHT, 1899, 1900 BY WILLIAM JAMES PRESS OF GEO. H. ELLIS CO. (INC.) BOSTON PREFACE. In 1892 I was asked by the Harvard Corporation to give a few public lectures on psychology to the…",
    "path": "library/texts/classics/talks-to-teachers-on-psychology-incl-habit.txt"
   },
   {
@@ -3809,6 +4106,8 @@
     "wisdom"
    ],
    "src": "bundled",
+   "desc": "The founding text of Taoism — effortless action, humility, and living in harmony with the Way.",
+   "preview": "THE TAO TEH KING, OR THE TAO AND ITS CHARACTERISTICS by Lao-Tse Translated by James Legge PART 1. Ch. 1. 1. The Tao that can be trodden is not the enduring and unchanging Tao. The name that can be named is not the enduring and unchanging name. 2. (Conceived of as) having no name, it is the Originator of heaven and…",
    "path": "library/texts/classics/the-tao-teh-king.txt"
   },
   {
@@ -3821,6 +4120,8 @@
     "strategy"
    ],
    "src": "bundled",
+   "desc": "The oldest treatise on strategy — winning without fighting, and knowing both yourself and your opponent.",
+   "preview": "Sun Tzŭ on The Art of War THE OLDEST MILITARY TREATISE IN THE WORLD Translated from the Chinese with Introduction and Critical Notes BY LIONEL GILES, M.A. Assistant in the Department of Oriental Printed Books and MSS. in the British Museum 1910 To my brother Captain Valentine Giles, R.G. in the hope that a work 2400…",
    "path": "library/texts/classics/the-art-of-war.txt"
   },
   {
@@ -3833,6 +4134,8 @@
     "wisdom"
    ],
    "src": "bundled",
+   "desc": "The collected sayings of Confucius on virtue, learning, and how to live and lead well.",
+   "preview": "The original Chinese of the CONFUCIAN ANALECTS and Legge's notes are presented along with this English translation in other files. THE CHINESE CLASSICS with a translation, critical and exegetical notes, prolegomena, and copious indexes by James Legge IN FIVE VOLUMES CONFUCIAN ANALECTS THE GREAT LEARNING THE DOCTRINE…",
    "path": "library/texts/classics/the-analects.txt"
   },
   {
@@ -3846,6 +4149,8 @@
     "spirituality"
    ],
    "src": "bundled",
+   "desc": "Edwin Arnold’s verse rendering of the Gita — Krishna’s counsel on duty, action and the self.",
+   "preview": "The Song Celestial. or Bhagavad-Gita (From the Mahabharata) Being a Discourse Between Arjuna, Prince of India, and the Supreme Being Under the Form of Krishna Translated from the Sanskrit Text by Sir Edwin Arnold, M.A., K.C.I.E., C.S.I. New York Truslove, Hanson & Comba, Ltd. 67 Fifth Avenue 1900 Dedication TO INDIA…",
    "path": "library/texts/classics/the-song-celestial-bhagavad-gita.txt"
   },
   {
@@ -3859,6 +4164,8 @@
     "wisdom"
    ],
    "src": "bundled",
+   "desc": "Gibran’s beloved prose-poems on love, work, freedom and the great passages of life.",
+   "preview": "THE PROPHET By Kahlil Gibran New York: Alfred A. Knopf 1923 The Twelve Illustrations In This Volume Are Reproduced From Original Drawings By The Author “His power came from some great reservoir of spiritual life else it could not have been so universal and so potent, but the majesty and beauty of the language with…",
    "path": "library/texts/classics/the-prophet.txt"
   },
   {
@@ -3872,6 +4179,8 @@
     "power"
    ],
    "src": "bundled",
+   "desc": "The unflinching handbook on gaining and holding power — realism over idealism.",
+   "preview": "The Prince by Nicolo Machiavelli Translated by W. K. Marriott Contents INTRODUCTION YOUTH Æt. 1-25—1469-94 OFFICE Æt. 25-43—1494-1512 LITERATURE AND DEATH Æt. 43-58—1512-27 THE MAN AND HIS WORKS DEDICATION THE PRINCE CHAPTER I. HOW MANY KINDS OF PRINCIPALITIES THERE ARE, AND BY WHAT MEANS THEY ARE ACQUIRED CHAPTER II.…",
    "path": "library/texts/classics/the-prince.txt"
   },
   {
@@ -3885,6 +4194,8 @@
     "simplicity"
    ],
    "src": "bundled",
+   "desc": "Two years alone at Walden Pond — a manifesto for simple, deliberate, self-reliant living.",
+   "preview": "WALDEN and ON THE DUTY OF CIVIL DISOBEDIENCE by Henry David Thoreau Contents WALDEN Economy Where I Lived, and What I Lived For Reading Sounds Solitude Visitors The Bean-Field The Village The Ponds Baker Farm Higher Laws Brute Neighbors House-Warming Former Inhabitants and Winter Visitors Winter Animals The Pond in…",
    "path": "library/texts/classics/walden.txt"
   },
   {
@@ -3897,6 +4208,8 @@
     "essays"
    ],
    "src": "bundled",
+   "desc": "Thoreau’s argument that conscience outranks the law — the essay that inspired Gandhi and King.",
+   "preview": "On the Duty of Civil Disobedience by Henry David Thoreau 1849, original title: Resistance to Civil Government I heartily accept the motto,—“That government is best which governs least;” and I should like to see it acted up to more rapidly and systematically. Carried out, it finally amounts to this, which also I…",
    "path": "library/texts/classics/on-the-duty-of-civil-disobedience.txt"
   }
  ],

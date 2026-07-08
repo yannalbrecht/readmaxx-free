@@ -29,8 +29,39 @@ const ESSAYS = arg('--essays');
 const FETCH_CLASSICS = args.includes('--fetch-classics');
 const BUNDLE_ALL = args.includes('--bundle-all');
 
+const FETCH_NAVAL = args.includes('--fetch-naval');
+const FETCH_IMAGES = args.includes('--fetch-images');
+
 const words = (t) => (t.match(/\S+/g) || []).length;
 const slug = (s) => s.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+
+// short preview snippet (search-result style — a preview, not redistribution)
+function excerpt(text, n = 320) {
+  let s = (text || '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')          // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')         // links (including empty [ ]( ) )
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/https?:\/\/\S+/g, ' ')                 // bare URLs
+    .replace(/[*_`>#|=]/g, '')
+    .replace(/\s+/g, ' ').trim()
+    .replace(/^[^A-Za-z0-9"'“]+/, '');               // trim leading junk/punctuation
+  if (s.length <= n) return s;
+  s = s.slice(0, n);
+  return s.slice(0, s.lastIndexOf(' ')).trim() + '…';
+}
+// Wikipedia thumbnail for an author name (app falls back to initials if absent).
+// Wikipedia REQUIRES a descriptive User-Agent and throttles rapid anonymous calls.
+const WIKI_UA = { 'User-Agent': 'ReadMaxxCatalogBuilder/1.0 (https://readmaxx-free.vercel.app; catalog build script)' };
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+async function wikiImage(name) {
+  try {
+    const u = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=240&redirects=1&titles=${encodeURIComponent(name)}`;
+    const r = await fetch(u, { headers: WIKI_UA }); if (!r.ok) return null;
+    const pages = (await r.json())?.query?.pages || {};
+    for (const p of Object.values(pages)) if (p.thumbnail?.source) return p.thumbnail.source;
+  } catch {}
+  return null;
+}
 
 /* per-author distribution mode (see docs/discover-library-plan.md §3) */
 const AUTHOR_MODE = {
@@ -49,6 +80,14 @@ const PHASES = {
 const PHASE_NAMES = { 1:'Foundation', 2:'Organization & Leverage', 3:'Deeper Perspectives', 4:'Creative Expression', 5:'Big Picture', 6:'Timeless Classics', 7:'Free Books' };
 
 const catalog = { version: 1, updated: new Date().toISOString().slice(0, 10), authors: [], texts: [], collections: [] };
+
+// reuse previously-fetched Naval counts + author images so re-runs don't re-fetch
+let prevText = {}, prevAuthor = {};
+try {
+  const prev = JSON.parse(readFileSync(join(OUT, 'catalog.json'), 'utf8'));
+  for (const t of prev.texts) prevText[t.id] = t;
+  for (const a of prev.authors) prevAuthor[a.id] = a;
+} catch {}
 
 /* ---------- 1. Essay Library ---------- */
 if (ESSAYS && existsSync(ESSAYS)) {
@@ -85,7 +124,7 @@ if (ESSAYS && existsSync(ESSAYS)) {
         id: `${id}--${slug(title)}`, authorId: id, title,
         date: get('DATE') || null, words: words(body),
         tags: get('TAGS') ? get('TAGS').split(',').map(t => t.trim()).slice(0, 4) : [],
-        src: mode, url: url || null,
+        src: mode, url: url || null, preview: excerpt(body),
       };
       if (mode === 'bundled') {
         const tdir = join(OUT, 'texts', id); mkdirSync(tdir, { recursive: true });
@@ -146,10 +185,34 @@ const NAVAL = [
 catalog.authors.push({ id: 'naval-ravikant', name: 'Naval Ravikant', phase: 7, order: 90, texts: NAVAL.length,
   tagline: 'The Almanack — a free guide to wealth and happiness, curated by Eric Jorgenson.',
   bio: 'Angel investor and philosopher. The Almanack of Naval Ravikant collects his wisdom on wealth, judgment and happiness. The entire book is free to read online — the project is a public service by Eric Jorgenson.' });
-NAVAL.forEach(([title, path, part], i) => catalog.texts.push({
-  id: `naval--${slug(title)}`, authorId: 'naval-ravikant', title, date: '2020',
-  words: null, tags: [part], src: 'web', url: NAVAL_BASE + path, seq: i,
-}));
+NAVAL.forEach(([title, path, part], i) => {
+  const id = `naval--${slug(title)}`, p = prevText[id];
+  // curated per-part summary (the jina-fetched previews were page chrome, not content)
+  const desc = {
+    Wealth: 'From Part I (Wealth) of the Almanack — Naval on building lasting wealth through specific knowledge, leverage, equity and judgment.',
+    Judgment: 'From the Almanack — Naval on clear thinking, mental models and making better decisions.',
+    Happiness: 'From Part II (Happiness) — Naval on happiness as a skill you can learn, choose and build by habit.',
+    Self: 'From the Almanack — Naval on caring for, building, growing and freeing yourself.',
+    Philosophy: 'From the Almanack — Naval’s reflections on meaning, values, presence and living well.',
+  }[part];
+  catalog.texts.push({ id, authorId: 'naval-ravikant', title, date: '2020',
+    words: p?.words ?? null, desc, tags: [part], src: 'web', url: NAVAL_BASE + path, seq: i });
+});
+// --fetch-naval: pull each chapter once (via r.jina.ai) to record word count + a
+// preview snippet, so the catalog can show length & "what it's about" for web texts.
+if (FETCH_NAVAL) {
+  for (const t of catalog.texts.filter(x => x.authorId === 'naval-ravikant' && !x.words)) {
+    process.stdout.write(`naval: ${t.title}... `);
+    try {
+      const r = await fetch('https://r.jina.ai/' + t.url, { headers: { 'X-Return-Format': 'markdown' } });
+      let txt = (await r.text()).replace(/^[\s\S]*?Markdown Content:\s*/, '').replace(/^Title:.*$/m, '');
+      // trim nav/boilerplate: keep from the chapter heading onward
+      const w = words(txt);
+      if (w > 40) { t.words = w; t.preview = excerpt(txt); console.log(`${w} words`); }
+      else { console.log('thin, skipped'); }
+    } catch (e) { console.log('failed'); }
+  }
+}
 
 /* Dan Koe's book: no legal free full text (official site sells it) — include the
    author's own free summary letter instead. */
@@ -240,17 +303,74 @@ if (FETCH_CLASSICS) {
     }
   }
 }
+// curated one-line "what it's about" summaries, keyed by PG id
+const DESC = {
+  2680:'The private journal of a Roman emperor — Stoic reflections on duty, mortality and mastering your own mind.',
+  45109:'A short handbook of Stoic practice: concern yourself only with what’s in your control, and calmly accept the rest.',
+  871:'A curated collection of the Stoic teacher’s sharpest sayings on freedom and self-command.',
+  56075:'Seneca’s letters and essays on living well — happiness, gratitude, anger and clemency.',
+  64576:'Seneca’s essays, including the famous “On the Shortness of Life” — why we squander time and how to reclaim it.',
+  1656:'Socrates’ defense at his trial — the origin of “the unexamined life is not worth living.”',
+  1657:'Awaiting execution, Socrates argues why he must obey the law rather than flee — a dialogue on justice and duty.',
+  1600:'A dinner-party debate on the nature of love, rising to Socrates’ celebrated “ladder of love.”',
+  14328:'Written in prison awaiting death — how philosophy consoles the mind against the turning wheel of fortune.',
+  59:'The birth of modern philosophy: “I think, therefore I am,” and a method for reasoning toward truth.',
+  18269:'Pascal’s piercing fragments on faith, reason and the human condition — including his famous wager.',
+  5827:'Russell’s lucid, humane introduction to philosophy’s biggest question: what can we actually know?',
+  10741:'Practical philosophy on what truly makes a life happy — who you are matters more than what you have.',
+  10715:'Blunt, worldly counsel for moving through life with clear eyes and steady expectations.',
+  1998:'Nietzsche’s poetic masterwork — the Übermensch, eternal recurrence, and the call to create your own values.',
+  4363:'A bold assault on inherited morality and a summons to think beyond good and evil.',
+  16643:'Emerson’s foundational essays, including “Self-Reliance” — trust yourself and think for yourself.',
+  2945:'More of Emerson’s transcendentalist essays on nature, character, experience and the poet.',
+  575:'Francis Bacon’s terse, endlessly quotable essays on studies, adversity, ambition and more.',
+  16769:'Chesterton’s witty defense of wonder and faith — a spiritual autobiography of ideas.',
+  20203:'Franklin’s own account of his rise, his thirteen virtues, and a lifetime of deliberate self-improvement.',
+  935:'The Victorian bestseller that coined “self-help” — perseverance and character as the roots of achievement.',
+  4507:'A tiny, potent classic: your thoughts shape your circumstances and forge your character.',
+  59844:'The 1910 manual on creating wealth through purposeful thought and action that seeded modern success writing.',
+  368:'The famous lecture arguing that real opportunity lies right where you already stand.',
+  16287:'William James on habit, attention and interest — including the enduring chapter on “The Laws of Habit.”',
+  216:'The founding text of Taoism — effortless action, humility, and living in harmony with the Way.',
+  132:'The oldest treatise on strategy — winning without fighting, and knowing both yourself and your opponent.',
+  3330:'The collected sayings of Confucius on virtue, learning, and how to live and lead well.',
+  2388:'Edwin Arnold’s verse rendering of the Gita — Krishna’s counsel on duty, action and the self.',
+  58585:'Gibran’s beloved prose-poems on love, work, freedom and the great passages of life.',
+  1232:'The unflinching handbook on gaining and holding power — realism over idealism.',
+  205:'Two years alone at Walden Pond — a manifesto for simple, deliberate, self-reliant living.',
+  71:'Thoreau’s argument that conscience outranks the law — the essay that inspired Gandhi and King.',
+};
 for (const c of CLASSICS) {
   const file = join(OUT, 'texts', 'classics', `${slug(c.title)}.txt`);
   if (!existsSync(file)) continue;
   const body = readFileSync(file, 'utf8');
   const aid = slug(c.author);
   if (!catalog.authors.find(a => a.id === aid))
-    catalog.authors.push({ id: aid, name: c.author, phase: 6, order: 100 + CLASSICS.indexOf(c), texts: 0, tagline: '', bio: '' });
+    catalog.authors.push({ id: aid, name: c.author, phase: 6, order: 100 + CLASSICS.indexOf(c), texts: 0, tagline: DESC[c.pg] || '', bio: '' });
   catalog.authors.find(a => a.id === aid).texts++;
   catalog.texts.push({ id: `${aid}--${slug(c.title)}`, authorId: aid, title: c.title,
     date: c.year, words: words(body), tags: c.tags, src: 'bundled',
+    desc: DESC[c.pg] || null, preview: excerpt(body),
     path: `library/texts/classics/${slug(c.title)}.txt` });
+}
+
+/* ---------- author images (Wikipedia thumbnails; --fetch-images) ---------- */
+// Wikipedia page titles where they differ from our display name.
+const WIKI_NAME = {
+  'seneca': 'Seneca the Younger', 'laozi': 'Laozi', 'sun-tzu': 'Sun Tzu',
+  'vyasa': 'Vyasa', 'confucius': 'Confucius', 'g-k-chesterton': 'G. K. Chesterton',
+  'wallace-wattles': 'Wallace Wattles', 'russell-conwell': 'Russell Conwell',
+  'shane-parrish': 'Shane Parrish', 'packy-mccormick': 'Packy McCormick',
+};
+for (const a of catalog.authors) if (prevAuthor[a.id]?.img) a.img = prevAuthor[a.id].img; // reuse cached
+if (FETCH_IMAGES) {
+  for (const a of catalog.authors) {
+    if (a.img) continue;
+    const img = await wikiImage(WIKI_NAME[a.id] || a.name);
+    if (img) { a.img = img; process.stdout.write(`📷 ${a.name}\n`); } else process.stdout.write(`·  ${a.name}\n`);
+    await sleep(350); // stay under Wikipedia's anonymous rate limit
+  }
+  console.log('images: ' + catalog.authors.filter(a => a.img).length + '/' + catalog.authors.length);
 }
 
 /* ---------- 4. collections (reading paths) ---------- */

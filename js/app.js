@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.14.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.14.1'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1274,7 +1274,22 @@ async function libraryDocIndex() {
   for (const d of await allDocs()) if (d.libraryId) idx[d.libraryId] = d.id;
   return idx;
 }
-const authorInitials = (name) => name.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const authorInitials = (name) => (name || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const readMins = (w) => Math.max(1, Math.round((w || 0) / Math.max(150, state.settings.wpm)));
+// author avatar: Wikipedia photo when we have one, initials otherwise (photo errors
+// gracefully fall back to initials).
+function authorAvatar(a, cls = 'auth-tile') {
+  if (a?.img) {
+    const img = el('img', { class: `${cls} ava-img`, src: a.img, alt: a.name || '', loading: 'lazy' });
+    img.addEventListener('error', () => img.replaceWith(el('span', { class: cls }, authorInitials(a.name))));
+    return img;
+  }
+  return el('span', { class: cls }, authorInitials(a?.name));
+}
+function refreshDiscover() {
+  if (!D.discover || D.discover.classList.contains('hidden')) return;
+  if (discoverAuthorId) renderAuthorPage(discoverAuthorId); else renderDiscover();
+}
 
 async function renderDiscover() {
   const v = D.discover; clear(v);
@@ -1338,7 +1353,7 @@ function renderDiscoverBody(box, cat, owned) {
     for (const id of c.authorIds) {
       const a = cat.authors.find(x => x.id === id); if (!a) continue;
       const row = el('button', { class:'auth-row' });
-      row.append(el('span', { class:'auth-tile' }, authorInitials(a.name)));
+      row.append(authorAvatar(a, 'auth-tile'));
       row.append(el('div', { class:'auth-mid' },
         el('div', { class:'auth-name' }, a.name),
         el('div', { class:'auth-tag' }, a.tagline || `${a.texts} texts`)));
@@ -1357,12 +1372,17 @@ async function renderAuthorPage(authorId) {
   const a = cat.authors.find(x => x.id === authorId); if (!a) return;
   const owned = await libraryDocIndex();
   const v = D.discover; clear(v);
-  const head = el('div', { class:'home-head' });
+  window.scrollTo(0, 0); // the author page is shorter — don't keep the shelf's scroll (nav-shift bug)
+  const head = el('div', { class:'home-head', style:'align-items:center' });
   head.append(el('button', { class:'icon-btn', html: ICON.back, 'aria-label':'Back',
-    onclick:() => { discoverAuthorId = null; renderDiscover(); } }));
-  head.append(el('div', { class:'home-name', style:'font-size:22px' }, a.name));
+    onclick:() => { discoverAuthorId = null; window.scrollTo(0, 0); renderDiscover(); } }));
+  head.append(el('div', { class:'home-name', style:'font-size:22px;flex:1' }, a.name));
   v.append(head);
-  if (a.bio) v.append(el('div', { class:'auth-bio' }, a.bio));
+  // author hero: photo + bio
+  const hero = el('div', { class:'auth-hero' });
+  hero.append(authorAvatar(a, 'auth-hero-ava'));
+  if (a.bio) hero.append(el('div', { class:'auth-bio' }, a.bio));
+  v.append(hero);
 
   const texts = cat.texts.filter(t => t.authorId === authorId);
   const dl = texts.filter(t => t.src !== 'link');
@@ -1389,22 +1409,71 @@ async function renderAuthorPage(authorId) {
 function discoverTextRow(t, cat, owned, authorOverride) {
   const a = authorOverride || cat.authors.find(x => x.id === t.authorId);
   const row = el('div', { class:'lib-row' });
-  const mid = el('div', { class:'lr-mid' });
+  // tapping the row body opens the info sheet ("what's this about?")
+  const mid = el('button', { class:'lr-mid' });
   mid.append(el('div', { class:'lr-t' }, t.title));
   const bits = [];
   if (!authorOverride && a) bits.push(a.name);
   if (t.date) bits.push(String(t.date).slice(0, 4));
-  if (t.words) bits.push(`${fmt(t.words)} words`);
+  if (t.words) bits.push(`${fmt(t.words)} words · ${readMins(t.words)} min`);
+  else if (t.src === 'web') bits.push('tap for details');
   if (t.tags?.length) bits.push(t.tags[0]);
   mid.append(el('div', { class:'lr-m' }, bits.join(' · ')));
+  mid.append(el('span', { class:'lr-info', html: ICON.next }));
+  mid.onclick = () => textInfoSheet(t, a);
   row.append(mid);
   const btn = el('button', { class:'lr-btn' });
   const ownedId = owned[t.id];
-  if (ownedId) { btn.classList.add('owned'); btn.innerHTML = ICON.check; btn.onclick = () => openDoc(ownedId); }
-  else if (t.src === 'link') { btn.innerHTML = ICON.link; btn.title = 'Opens the original site'; btn.onclick = () => { haptic(6); window.open(t.url, '_blank'); }; }
-  else { btn.innerHTML = '<span class="lr-get">GET</span>'; btn.onclick = () => downloadLibText(t, a, btn); }
+  if (ownedId) { btn.classList.add('owned'); btn.innerHTML = ICON.check; btn.title = 'In your library — tap to open'; btn.onclick = () => openDoc(ownedId); }
+  else { btn.innerHTML = '<span class="lr-get">GET</span>'; btn.onclick = () => downloadLibText(t, a, btn); } // link texts are downloadable too
   row.append(btn);
   return row;
+}
+
+// "What's this about?" — metadata, summary, and download/copy/open actions.
+async function textInfoSheet(t, a) {
+  haptic(6);
+  const owned = await libraryDocIndex();
+  const ownedId = owned[t.id];
+  const body = el('div', { class:'stack' });
+  const hd = el('div', { class:'ti-head' });
+  hd.append(authorAvatar(a, 'ti-ava'));
+  hd.append(el('div', { class:'grow' }, el('div', { class:'ti-title' }, t.title),
+    el('div', { class:'ti-author' }, a?.name || '')));
+  body.append(hd);
+  const meta = [];
+  if (t.date) meta.push(String(t.date).slice(0, 4));
+  if (t.words) meta.push(`${fmt(t.words)} words · ${readMins(t.words)} min read`);
+  if (meta.length) body.append(el('div', { class:'ti-meta' }, meta.join('   ·   ')));
+  const summary = t.desc || t.preview;
+  body.append(el('div', { class:'ti-summary' + (summary ? '' : ' faint') },
+    summary || 'Add it to your library to download and read the full text.'));
+  if (t.tags?.length) { const tg = el('div', { class:'ti-tags' }); t.tags.forEach(x => tg.append(el('span', { class:'topic-tag' }, x))); body.append(tg); }
+  const srcNote = { bundled:'Included with the app — instant and offline.',
+    web:'Downloads from the original source to your device.',
+    link:'Hosted on the author’s own site — best read there, but you can still add it.' }[t.src];
+  if (srcNote) body.append(el('div', { class:'ti-src' }, srcNote));
+
+  const acts = el('div', { class:'stack', style:'margin-top:8px' });
+  if (ownedId) acts.append(el('button', { class:'btn', onclick:() => { closeSheet(); openDoc(ownedId); } }, 'Open'));
+  else acts.append(el('button', { class:'btn', onclick:() => { closeSheet(); downloadLibText(t, a, null, false).then(refreshDiscover).catch(() => {}); } }, 'Add to library'));
+  const row2 = el('div', { class:'row', style:'gap:10px' });
+  row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => copyLibText(t) }, 'Copy text'));
+  if (t.url) row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => window.open(t.url, '_blank') }, 'Open original'));
+  acts.append(row2);
+  body.append(acts);
+  sheet({ title:'', body });
+}
+
+// Copy the full text to the clipboard (fetches web/link texts on demand).
+async function copyLibText(entry) {
+  toast('Preparing text…');
+  try {
+    const text = entry.src === 'bundled' ? await (await fetch(entry.path)).text() : await fetchArticle(entry.url);
+    if (!text || text.length < 40) throw new Error('empty');
+    await navigator.clipboard.writeText(text);
+    toast('Copied to clipboard');
+  } catch { toast(entry.url ? 'Couldn’t copy — try “Open original”' : 'Couldn’t copy that text', { err:true }); }
 }
 
 async function downloadLibText(entry, author, btn, quiet) {
@@ -1427,7 +1496,8 @@ async function downloadLibText(entry, author, btn, quiet) {
     return saved;
   } catch (e) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<span class="lr-get">GET</span>'; }
-    if (!quiet) toast(navigator.onLine ? 'Couldn’t fetch that text' : 'You’re offline — try again later', { err:true });
+    if (!quiet) toast(!navigator.onLine ? 'You’re offline — try again later'
+      : entry.url ? 'Couldn’t fetch — try “Open original” from the details' : 'Couldn’t fetch that text', { err:true });
     throw e;
   }
 }
