@@ -115,16 +115,79 @@
    "name": "Epictetus",
    "phase": 6,
    "order": 101,
+   "texts": 2,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "seneca",
+   "name": "Seneca",
+   "phase": 6,
+   "order": 103,
+   "texts": 2,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "plato",
+   "name": "Plato",
+   "phase": 6,
+   "order": 105,
+   "texts": 3,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "boethius",
+   "name": "Boethius",
+   "phase": 6,
+   "order": 108,
    "texts": 1,
    "tagline": "",
    "bio": ""
   },
   {
-   "id": "henry-david-thoreau",
-   "name": "Henry David Thoreau",
+   "id": "ren-descartes",
+   "name": "René Descartes",
    "phase": 6,
-   "order": 102,
+   "order": 109,
    "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "blaise-pascal",
+   "name": "Blaise Pascal",
+   "phase": 6,
+   "order": 110,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "bertrand-russell",
+   "name": "Bertrand Russell",
+   "phase": 6,
+   "order": 111,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "arthur-schopenhauer",
+   "name": "Arthur Schopenhauer",
+   "phase": 6,
+   "order": 112,
+   "texts": 2,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "friedrich-nietzsche",
+   "name": "Friedrich Nietzsche",
+   "phase": 6,
+   "order": 114,
+   "texts": 2,
    "tagline": "",
    "bio": ""
   },
@@ -132,34 +195,25 @@
    "id": "ralph-waldo-emerson",
    "name": "Ralph Waldo Emerson",
    "phase": 6,
-   "order": 103,
+   "order": 116,
+   "texts": 2,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "francis-bacon",
+   "name": "Francis Bacon",
+   "phase": 6,
+   "order": 118,
    "texts": 1,
    "tagline": "",
    "bio": ""
   },
   {
-   "id": "sun-tzu",
-   "name": "Sun Tzu",
+   "id": "g-k-chesterton",
+   "name": "G.K. Chesterton",
    "phase": 6,
-   "order": 104,
-   "texts": 1,
-   "tagline": "",
-   "bio": ""
-  },
-  {
-   "id": "james-allen",
-   "name": "James Allen",
-   "phase": 6,
-   "order": 105,
-   "texts": 1,
-   "tagline": "",
-   "bio": ""
-  },
-  {
-   "id": "kahlil-gibran",
-   "name": "Kahlil Gibran",
-   "phase": 6,
-   "order": 106,
+   "order": 119,
    "texts": 1,
    "tagline": "",
    "bio": ""
@@ -168,17 +222,116 @@
    "id": "benjamin-franklin",
    "name": "Benjamin Franklin",
    "phase": 6,
-   "order": 107,
+   "order": 120,
    "texts": 1,
    "tagline": "",
    "bio": ""
   },
   {
-   "id": "plato",
-   "name": "Plato",
+   "id": "samuel-smiles",
+   "name": "Samuel Smiles",
    "phase": 6,
-   "order": 108,
+   "order": 121,
    "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "james-allen",
+   "name": "James Allen",
+   "phase": 6,
+   "order": 122,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "wallace-wattles",
+   "name": "Wallace Wattles",
+   "phase": 6,
+   "order": 123,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "russell-conwell",
+   "name": "Russell Conwell",
+   "phase": 6,
+   "order": 124,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "william-james",
+   "name": "William James",
+   "phase": 6,
+   "order": 125,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "laozi",
+   "name": "Laozi",
+   "phase": 6,
+   "order": 126,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "sun-tzu",
+   "name": "Sun Tzu",
+   "phase": 6,
+   "order": 127,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "confucius",
+   "name": "Confucius",
+   "phase": 6,
+   "order": 128,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "vyasa",
+   "name": "Vyasa",
+   "phase": 6,
+   "order": 129,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "kahlil-gibran",
+   "name": "Kahlil Gibran",
+   "phase": 6,
+   "order": 130,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "niccol-machiavelli",
+   "name": "Niccolò Machiavelli",
+   "phase": 6,
+   "order": 131,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "henry-david-thoreau",
+   "name": "Henry David Thoreau",
+   "phase": 6,
+   "order": 132,
+   "texts": 2,
    "tagline": "",
    "bio": ""
   }
@@ -3346,17 +3499,180 @@
    "path": "library/texts/classics/the-enchiridion.txt"
   },
   {
-   "id": "henry-david-thoreau--walden",
-   "authorId": "henry-david-thoreau",
-   "title": "Walden",
-   "date": "1854",
-   "words": 115813,
+   "id": "epictetus--the-golden-sayings-of-epictetus",
+   "authorId": "epictetus",
+   "title": "The Golden Sayings of Epictetus",
+   "date": "108",
+   "words": 23741,
    "tags": [
-    "nature",
-    "simplicity"
+    "stoicism"
    ],
    "src": "bundled",
-   "path": "library/texts/classics/walden.txt"
+   "path": "library/texts/classics/the-golden-sayings-of-epictetus.txt"
+  },
+  {
+   "id": "seneca--senecas-morals-of-a-happy-life",
+   "authorId": "seneca",
+   "title": "Seneca’s Morals of a Happy Life",
+   "date": "60",
+   "words": 112763,
+   "tags": [
+    "stoicism",
+    "happiness"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/senecas-morals-of-a-happy-life.txt"
+  },
+  {
+   "id": "seneca--minor-dialogues-incl-on-the-shortness-of-life",
+   "authorId": "seneca",
+   "title": "Minor Dialogues (incl. On the Shortness of Life)",
+   "date": "49",
+   "words": 150542,
+   "tags": [
+    "stoicism",
+    "time"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/minor-dialogues-incl-on-the-shortness-of-life.txt"
+  },
+  {
+   "id": "plato--apology-the-trial-of-socrates",
+   "authorId": "plato",
+   "title": "Apology (The Trial of Socrates)",
+   "date": "-399",
+   "words": 16087,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/apology-the-trial-of-socrates.txt"
+  },
+  {
+   "id": "plato--crito",
+   "authorId": "plato",
+   "title": "Crito",
+   "date": "-399",
+   "words": 6576,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/crito.txt"
+  },
+  {
+   "id": "plato--symposium",
+   "authorId": "plato",
+   "title": "Symposium",
+   "date": "-385",
+   "words": 32589,
+   "tags": [
+    "philosophy",
+    "love"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/symposium.txt"
+  },
+  {
+   "id": "boethius--the-consolation-of-philosophy",
+   "authorId": "boethius",
+   "title": "The Consolation of Philosophy",
+   "date": "524",
+   "words": 42667,
+   "tags": [
+    "philosophy",
+    "adversity"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-consolation-of-philosophy.txt"
+  },
+  {
+   "id": "ren-descartes--discourse-on-the-method",
+   "authorId": "ren-descartes",
+   "title": "Discourse on the Method",
+   "date": "1637",
+   "words": 23039,
+   "tags": [
+    "philosophy",
+    "reason"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/discourse-on-the-method.txt"
+  },
+  {
+   "id": "blaise-pascal--pens-es",
+   "authorId": "blaise-pascal",
+   "title": "Pensées",
+   "date": "1670",
+   "words": 110942,
+   "tags": [
+    "philosophy",
+    "faith"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/pens-es.txt"
+  },
+  {
+   "id": "bertrand-russell--the-problems-of-philosophy",
+   "authorId": "bertrand-russell",
+   "title": "The Problems of Philosophy",
+   "date": "1912",
+   "words": 42756,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-problems-of-philosophy.txt"
+  },
+  {
+   "id": "arthur-schopenhauer--the-wisdom-of-life",
+   "authorId": "arthur-schopenhauer",
+   "title": "The Wisdom of Life",
+   "date": "1851",
+   "words": 38151,
+   "tags": [
+    "philosophy",
+    "happiness"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-wisdom-of-life.txt"
+  },
+  {
+   "id": "arthur-schopenhauer--counsels-and-maxims",
+   "authorId": "arthur-schopenhauer",
+   "title": "Counsels and Maxims",
+   "date": "1851",
+   "words": 45510,
+   "tags": [
+    "philosophy",
+    "wisdom"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/counsels-and-maxims.txt"
+  },
+  {
+   "id": "friedrich-nietzsche--thus-spake-zarathustra",
+   "authorId": "friedrich-nietzsche",
+   "title": "Thus Spake Zarathustra",
+   "date": "1885",
+   "words": 110900,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/thus-spake-zarathustra.txt"
+  },
+  {
+   "id": "friedrich-nietzsche--beyond-good-and-evil",
+   "authorId": "friedrich-nietzsche",
+   "title": "Beyond Good and Evil",
+   "date": "1886",
+   "words": 62665,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/beyond-good-and-evil.txt"
   },
   {
    "id": "ralph-waldo-emerson--essays-first-series",
@@ -3372,16 +3688,66 @@
    "path": "library/texts/classics/essays-first-series.txt"
   },
   {
-   "id": "sun-tzu--the-art-of-war",
-   "authorId": "sun-tzu",
-   "title": "The Art of War",
-   "date": "-500",
-   "words": 55117,
+   "id": "ralph-waldo-emerson--essays-second-series",
+   "authorId": "ralph-waldo-emerson",
+   "title": "Essays — Second Series",
+   "date": "1844",
+   "words": 58513,
    "tags": [
-    "strategy"
+    "essays"
    ],
    "src": "bundled",
-   "path": "library/texts/classics/the-art-of-war.txt"
+   "path": "library/texts/classics/essays-second-series.txt"
+  },
+  {
+   "id": "francis-bacon--essays-civil-and-moral",
+   "authorId": "francis-bacon",
+   "title": "Essays, Civil and Moral",
+   "date": "1625",
+   "words": 53008,
+   "tags": [
+    "essays",
+    "wisdom"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/essays-civil-and-moral.txt"
+  },
+  {
+   "id": "g-k-chesterton--orthodoxy",
+   "authorId": "g-k-chesterton",
+   "title": "Orthodoxy",
+   "date": "1908",
+   "words": 63653,
+   "tags": [
+    "essays",
+    "faith"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/orthodoxy.txt"
+  },
+  {
+   "id": "benjamin-franklin--autobiography-of-benjamin-franklin",
+   "authorId": "benjamin-franklin",
+   "title": "Autobiography of Benjamin Franklin",
+   "date": "1791",
+   "words": 75526,
+   "tags": [
+    "biography"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/autobiography-of-benjamin-franklin.txt"
+  },
+  {
+   "id": "samuel-smiles--self-help",
+   "authorId": "samuel-smiles",
+   "title": "Self-Help",
+   "date": "1859",
+   "words": 139670,
+   "tags": [
+    "self-improvement"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/self-help.txt"
   },
   {
    "id": "james-allen--as-a-man-thinketh",
@@ -3394,6 +3760,93 @@
    ],
    "src": "bundled",
    "path": "library/texts/classics/as-a-man-thinketh.txt"
+  },
+  {
+   "id": "wallace-wattles--the-science-of-getting-rich",
+   "authorId": "wallace-wattles",
+   "title": "The Science of Getting Rich",
+   "date": "1910",
+   "words": 23257,
+   "tags": [
+    "wealth"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-science-of-getting-rich.txt"
+  },
+  {
+   "id": "russell-conwell--acres-of-diamonds",
+   "authorId": "russell-conwell",
+   "title": "Acres of Diamonds",
+   "date": "1890",
+   "words": 43807,
+   "tags": [
+    "opportunity"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/acres-of-diamonds.txt"
+  },
+  {
+   "id": "william-james--talks-to-teachers-on-psychology-incl-habit",
+   "authorId": "william-james",
+   "title": "Talks to Teachers on Psychology (incl. Habit)",
+   "date": "1899",
+   "words": 62162,
+   "tags": [
+    "psychology",
+    "habits"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/talks-to-teachers-on-psychology-incl-habit.txt"
+  },
+  {
+   "id": "laozi--the-tao-teh-king",
+   "authorId": "laozi",
+   "title": "The Tao Teh King",
+   "date": "-400",
+   "words": 10657,
+   "tags": [
+    "taoism",
+    "wisdom"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-tao-teh-king.txt"
+  },
+  {
+   "id": "sun-tzu--the-art-of-war",
+   "authorId": "sun-tzu",
+   "title": "The Art of War",
+   "date": "-500",
+   "words": 55117,
+   "tags": [
+    "strategy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-art-of-war.txt"
+  },
+  {
+   "id": "confucius--the-analects",
+   "authorId": "confucius",
+   "title": "The Analects",
+   "date": "-475",
+   "words": 29259,
+   "tags": [
+    "wisdom"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-analects.txt"
+  },
+  {
+   "id": "vyasa--the-song-celestial-bhagavad-gita",
+   "authorId": "vyasa",
+   "title": "The Song Celestial (Bhagavad Gita)",
+   "date": "-200",
+   "words": 20139,
+   "tags": [
+    "wisdom",
+    "spirituality"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-song-celestial-bhagavad-gita.txt"
   },
   {
    "id": "kahlil-gibran--the-prophet",
@@ -3409,28 +3862,42 @@
    "path": "library/texts/classics/the-prophet.txt"
   },
   {
-   "id": "benjamin-franklin--autobiography-of-benjamin-franklin",
-   "authorId": "benjamin-franklin",
-   "title": "Autobiography of Benjamin Franklin",
-   "date": "1791",
-   "words": 75526,
+   "id": "niccol-machiavelli--the-prince",
+   "authorId": "niccol-machiavelli",
+   "title": "The Prince",
+   "date": "1532",
+   "words": 49943,
    "tags": [
-    "biography"
+    "strategy",
+    "power"
    ],
    "src": "bundled",
-   "path": "library/texts/classics/autobiography-of-benjamin-franklin.txt"
+   "path": "library/texts/classics/the-prince.txt"
   },
   {
-   "id": "plato--apology-the-trial-of-socrates",
-   "authorId": "plato",
-   "title": "Apology (The Trial of Socrates)",
-   "date": "-399",
-   "words": 16087,
+   "id": "henry-david-thoreau--walden",
+   "authorId": "henry-david-thoreau",
+   "title": "Walden",
+   "date": "1854",
+   "words": 115813,
    "tags": [
-    "philosophy"
+    "nature",
+    "simplicity"
    ],
    "src": "bundled",
-   "path": "library/texts/classics/apology-the-trial-of-socrates.txt"
+   "path": "library/texts/classics/walden.txt"
+  },
+  {
+   "id": "henry-david-thoreau--on-the-duty-of-civil-disobedience",
+   "authorId": "henry-david-thoreau",
+   "title": "On the Duty of Civil Disobedience",
+   "date": "1849",
+   "words": 9354,
+   "tags": [
+    "essays"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/on-the-duty-of-civil-disobedience.txt"
   }
  ],
  "collections": [
@@ -3486,13 +3953,30 @@
    "authorIds": [
     "marcus-aurelius",
     "epictetus",
-    "henry-david-thoreau",
+    "seneca",
+    "plato",
+    "boethius",
+    "ren-descartes",
+    "blaise-pascal",
+    "bertrand-russell",
+    "arthur-schopenhauer",
+    "friedrich-nietzsche",
     "ralph-waldo-emerson",
-    "sun-tzu",
-    "james-allen",
-    "kahlil-gibran",
+    "francis-bacon",
+    "g-k-chesterton",
     "benjamin-franklin",
-    "plato"
+    "samuel-smiles",
+    "james-allen",
+    "wallace-wattles",
+    "russell-conwell",
+    "william-james",
+    "laozi",
+    "sun-tzu",
+    "confucius",
+    "vyasa",
+    "kahlil-gibran",
+    "niccol-machiavelli",
+    "henry-david-thoreau"
    ]
   },
   {

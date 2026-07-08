@@ -162,16 +162,49 @@ catalog.texts.push({
 const koe = catalog.authors.find(a => a.id === 'dan-koe'); if (koe) koe.texts++;
 
 /* ---------- 3. Public-domain classics (bundled) ---------- */
+// Verified via Gutendex/PG metadata (see docs/library-sourcing-roadmap.md).
 const CLASSICS = [
+  // Stoicism
   { pg: 2680,  title: 'Meditations', author: 'Marcus Aurelius', year: '180', tags: ['stoicism', 'philosophy'] },
   { pg: 45109, title: 'The Enchiridion', author: 'Epictetus', year: '125', tags: ['stoicism', 'philosophy'] },
-  { pg: 205,   title: 'Walden', author: 'Henry David Thoreau', year: '1854', tags: ['nature', 'simplicity'] },
-  { pg: 16643, title: 'Essays — First Series', author: 'Ralph Waldo Emerson', year: '1841', tags: ['essays', 'self-reliance'] },
-  { pg: 132,   title: 'The Art of War', author: 'Sun Tzu', year: '-500', tags: ['strategy'] },
-  { pg: 4507,  title: 'As a Man Thinketh', author: 'James Allen', year: '1903', tags: ['mindset'] },
-  { pg: 58585, title: 'The Prophet', author: 'Kahlil Gibran', year: '1923', tags: ['poetry', 'wisdom'] },
-  { pg: 20203, title: 'Autobiography of Benjamin Franklin', author: 'Benjamin Franklin', year: '1791', tags: ['biography'] },
+  { pg: 871,   title: 'The Golden Sayings of Epictetus', author: 'Epictetus', year: '108', tags: ['stoicism'] },
+  { pg: 56075, title: 'Seneca’s Morals of a Happy Life', author: 'Seneca', year: '60', tags: ['stoicism', 'happiness'] },
+  { pg: 64576, title: 'Minor Dialogues (incl. On the Shortness of Life)', author: 'Seneca', year: '49', tags: ['stoicism', 'time'] },
+  // Philosophy classics
   { pg: 1656,  title: 'Apology (The Trial of Socrates)', author: 'Plato', year: '-399', tags: ['philosophy'] },
+  { pg: 1657,  title: 'Crito', author: 'Plato', year: '-399', tags: ['philosophy'] },
+  { pg: 1600,  title: 'Symposium', author: 'Plato', year: '-385', tags: ['philosophy', 'love'] },
+  { pg: 14328, title: 'The Consolation of Philosophy', author: 'Boethius', year: '524', tags: ['philosophy', 'adversity'] },
+  { pg: 59,    title: 'Discourse on the Method', author: 'René Descartes', year: '1637', tags: ['philosophy', 'reason'] },
+  { pg: 18269, title: 'Pensées', author: 'Blaise Pascal', year: '1670', tags: ['philosophy', 'faith'] },
+  { pg: 5827,  title: 'The Problems of Philosophy', author: 'Bertrand Russell', year: '1912', tags: ['philosophy'] },
+  { pg: 10741, title: 'The Wisdom of Life', author: 'Arthur Schopenhauer', year: '1851', tags: ['philosophy', 'happiness'] },
+  { pg: 10715, title: 'Counsels and Maxims', author: 'Arthur Schopenhauer', year: '1851', tags: ['philosophy', 'wisdom'] },
+  { pg: 1998,  title: 'Thus Spake Zarathustra', author: 'Friedrich Nietzsche', year: '1885', tags: ['philosophy'] },
+  { pg: 4363,  title: 'Beyond Good and Evil', author: 'Friedrich Nietzsche', year: '1886', tags: ['philosophy'] },
+  // Essays & letters
+  { pg: 16643, title: 'Essays — First Series', author: 'Ralph Waldo Emerson', year: '1841', tags: ['essays', 'self-reliance'] },
+  { pg: 2945,  title: 'Essays — Second Series', author: 'Ralph Waldo Emerson', year: '1844', tags: ['essays'] },
+  { pg: 575,   title: 'Essays, Civil and Moral', author: 'Francis Bacon', year: '1625', tags: ['essays', 'wisdom'] },
+  { pg: 16769, title: 'Orthodoxy', author: 'G.K. Chesterton', year: '1908', tags: ['essays', 'faith'] },
+  // Wisdom & self-mastery
+  { pg: 20203, title: 'Autobiography of Benjamin Franklin', author: 'Benjamin Franklin', year: '1791', tags: ['biography'] },
+  { pg: 935,   title: 'Self-Help', author: 'Samuel Smiles', year: '1859', tags: ['self-improvement'] },
+  { pg: 4507,  title: 'As a Man Thinketh', author: 'James Allen', year: '1903', tags: ['mindset'] },
+  { pg: 59844, title: 'The Science of Getting Rich', author: 'Wallace Wattles', year: '1910', tags: ['wealth'] },
+  { pg: 368,   title: 'Acres of Diamonds', author: 'Russell Conwell', year: '1890', tags: ['opportunity'] },
+  // Mind & psychology
+  { pg: 16287, title: 'Talks to Teachers on Psychology (incl. Habit)', author: 'William James', year: '1899', tags: ['psychology', 'habits'] },
+  // Eastern & ancient wisdom
+  { pg: 216,   title: 'The Tao Teh King', author: 'Laozi', year: '-400', tags: ['taoism', 'wisdom'] },
+  { pg: 132,   title: 'The Art of War', author: 'Sun Tzu', year: '-500', tags: ['strategy'] },
+  { pg: 3330,  title: 'The Analects', author: 'Confucius', year: '-475', tags: ['wisdom'] },
+  { pg: 2388,  title: 'The Song Celestial (Bhagavad Gita)', author: 'Vyasa', year: '-200', tags: ['wisdom', 'spirituality'] },
+  { pg: 58585, title: 'The Prophet', author: 'Kahlil Gibran', year: '1923', tags: ['poetry', 'wisdom'] },
+  // Strategy & nature
+  { pg: 1232,  title: 'The Prince', author: 'Niccolò Machiavelli', year: '1532', tags: ['strategy', 'power'] },
+  { pg: 205,   title: 'Walden', author: 'Henry David Thoreau', year: '1854', tags: ['nature', 'simplicity'] },
+  { pg: 71,    title: 'On the Duty of Civil Disobedience', author: 'Henry David Thoreau', year: '1849', tags: ['essays'] },
 ];
 // PG boilerplate strip — marker-prefix approach (c-w/gutenberg style)
 function stripPG(text) {
@@ -182,10 +215,10 @@ function stripPG(text) {
   for (let i = lines.length - 1; i >= Math.max(0, lines.length - 600); i--)
     if (/^\*{3} ?END OF/i.test(lines[i]) || /^End of (the |this )?Project Gutenberg/i.test(lines[i])) { end = i; break; }
   let body = lines.slice(start, end).join('\n');
-  body = body.replace(/Project Gutenberg/gi, '').replace(/\[Illustration[^\]]*\]/g, '');
+  body = body.replace(/Project Gutenberg/gi, '').replace(/\[(Illustration|Picture)[^\]]*\]/g, '');
   // older files put transcriber credits AFTER the start marker — drop those paragraphs
   const paras = body.split(/\n\s*\n/);
-  while (paras.length && (!paras[0].trim() || /^(Produced by|E-text prepared by|This etext was prepared by|HTML version by|Distributed Proofread|Transcribed from)/i.test(paras[0].trim()))) paras.shift();
+  while (paras.length && (!paras[0].trim() || /^(Produced by|E-text prepared by|This etext was prepared by|HTML version by|Distributed Proofread|Transcribed from|A note from the digitizer|This digitized version|\[?Transcriber)/i.test(paras[0].trim()))) paras.shift();
   body = paras.join('\n\n');
   // unwrap hard-wrapped paragraphs, preserving indented blocks (poetry/quotes)
   return body.split(/\n\s*\n/).map(p =>
