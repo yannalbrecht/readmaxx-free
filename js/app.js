@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.14.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.14.2'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -718,22 +718,11 @@ async function renderHome() {
     if (!list.length) {
       const empty = el('div', { class:'empty' }, el('div', { class:'big' }, docs.length ? '🔍' : '📚'),
         el('div', {}, docs.length ? 'No matches' : 'Your library is empty'),
-        el('div', { class:'faint mt8' }, docs.length ? 'Try another filter or search.' : 'Import something, or try a sample below.'));
+        el('div', { class:'faint mt8' }, docs.length ? 'Try another filter or search.' : 'Import something, or browse the free library.'));
       if (!docs.length) empty.append(el('button', { class:'btn sm', style:'margin:14px auto 0',
         onclick:() => { haptic(6); showView('discover'); } }, 'Browse the free library'));
       wrap.append(empty);
     } else for (const d of list) wrap.append(docCard(d, state.settings.view));
-  }
-
-  // samples
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, 'Try a sample')));
-  for (const s of SAMPLES) {
-    v.append(el('button', { class:'doc', onclick:() => { haptic(6); openSample(s); } },
-      el('div', { class:'cover', style:'background:#244a3a;color:#7fe0b0' }, s.emoji),
-      el('div', { class:'info' }, el('div', { class:'t' }, s.title),
-        el('div', { class:'m' }, el('span', {}, s.author), el('span', {}, '·'),
-          el('span', {}, `${countWords(s.text)} words`))),
-      el('div', { class:'go', html: ICON.play })));
   }
 }
 
