@@ -1,0 +1,3507 @@
+{
+ "version": 1,
+ "updated": "2026-07-08",
+ "authors": [
+  {
+   "id": "dan-koe",
+   "name": "Dan Koe",
+   "tagline": "Dan Koe is a writer, creator, and entrepreneur whose essays blend philosophy, psychology, productivity, and modern internet business into a dense, high-signal package.",
+   "bio": "Dan Koe is a writer, creator, and entrepreneur whose essays blend philosophy, psychology, productivity, and modern internet business into a dense, high-signal package. His work centers on the idea that anyone can build a meaningful, independent life — a \"one-person business\" — by combining deep thinking, writing, and leverage in the digital age. His writing style is direct, provocative, and deeply researched, pulling from sources as varied as Alfred Adler, Mihaly Csikszentmihalyi, cybernetics, ego development theory, and stoicism.",
+   "phase": 1,
+   "order": 0,
+   "texts": 19
+  },
+  {
+   "id": "shane-parrish",
+   "name": "Shane Parrish",
+   "tagline": "Shane Parrish is the founder of Farnam Street (fs.blog), a website dedicated to helping people master the best ideas in the world.",
+   "bio": "Shane Parrish is the founder of Farnam Street (fs.blog), a website dedicated to helping people master the best ideas in the world. A former intelligence analyst and business executive, Parrish applies mental models, first-principles thinking, and interdisciplinary knowledge to decision-making and life strategy. His work synthesizes insights from psychology, economics, physics, biology, and philosophy into practical guidance for thinking better and making smarter choices.",
+   "phase": 1,
+   "order": 1,
+   "texts": 19
+  },
+  {
+   "id": "paul-graham",
+   "name": "Paul Graham",
+   "tagline": "Paul Graham is a computer scientist, entrepreneur, and essayist best known for co-founding Viaweb (later acquired by Yahoo), creating the programming language Lisp, and launching Y Combinator—the startup accelerator that helped launch companies like Airbnb, Dropbox, and Reddit.",
+   "bio": "Paul Graham is a computer scientist, entrepreneur, and essayist best known for co-founding Viaweb (later acquired by Yahoo), creating the programming language Lisp, and launching Y Combinator—the startup accelerator that helped launch companies like Airbnb, Dropbox, and Reddit. His essays, written with clarity and intellectual honesty, have influenced generations of technologists, founders, and thinkers. Graham's work spans topics from startups and programming to creativity, identity, and the nature of truth.",
+   "phase": 1,
+   "order": 2,
+   "texts": 14
+  },
+  {
+   "id": "david-perell",
+   "name": "David Perell",
+   "tagline": "DAVID PERELL PROFILE AND WHY IMPORTANT",
+   "bio": "DAVID PERELL PROFILE AND WHY IMPORTANT",
+   "phase": 4,
+   "order": 3,
+   "texts": 10
+  },
+  {
+   "id": "tiago-forte",
+   "name": "Tiago Forte",
+   "tagline": "Tiago Forte is an author, speaker, and educator best known for developing the PARA method and Building a Second Brain (BASB) methodology.",
+   "bio": "Tiago Forte is an author, speaker, and educator best known for developing the PARA method and Building a Second Brain (BASB) methodology. He is the founder of Forte Labs, a company dedicated to helping individuals and organizations develop digital tools and practices for knowledge management and creativity.",
+   "phase": 2,
+   "order": 4,
+   "texts": 11
+  },
+  {
+   "id": "cal-newport",
+   "name": "Cal Newport",
+   "tagline": "CAL NEWPORT Profile and Why He Is Important",
+   "bio": "CAL NEWPORT Profile and Why He Is Important",
+   "phase": 2,
+   "order": 5,
+   "texts": 49
+  },
+  {
+   "id": "morgan-housel",
+   "name": "Morgan Housel",
+   "tagline": "MORGAN HOUSEL =============",
+   "bio": "MORGAN HOUSEL =============",
+   "phase": 3,
+   "order": 6,
+   "texts": 28
+  },
+  {
+   "id": "derek-sivers",
+   "name": "Derek Sivers",
+   "tagline": "Derek Sivers Profile ====================",
+   "bio": "Derek Sivers Profile ====================",
+   "phase": 4,
+   "order": 7,
+   "texts": 22
+  },
+  {
+   "id": "packy-mccormick",
+   "name": "Packy McCormick",
+   "tagline": "PACKY MCCORMICK - PROFILE AND WHY IMPORTANT ============================================",
+   "bio": "PACKY MCCORMICK - PROFILE AND WHY IMPORTANT ============================================",
+   "phase": 5,
+   "order": 8,
+   "texts": 4
+  },
+  {
+   "id": "charlie-munger",
+   "name": "Charlie Munger",
+   "tagline": "Charlie Munger (1924-2023) was the long-time vice chairman of Berkshire Hathaway and the long-time business partner of Warren Buffett.",
+   "bio": "Charlie Munger (1924-2023) was the long-time vice chairman of Berkshire Hathaway and the long-time business partner of Warren Buffett. He is widely regarded as one of the most influential thinkers of the modern era, particularly for his emphasis on mental models, multidisciplinary learning, and rational decision-making.",
+   "phase": 3,
+   "order": 9,
+   "texts": 7
+  },
+  {
+   "id": "naval-ravikant",
+   "name": "Naval Ravikant",
+   "phase": 7,
+   "order": 90,
+   "texts": 36,
+   "tagline": "The Almanack — a free guide to wealth and happiness, curated by Eric Jorgenson.",
+   "bio": "Angel investor and philosopher. The Almanack of Naval Ravikant collects his wisdom on wealth, judgment and happiness. The entire book is free to read online — the project is a public service by Eric Jorgenson."
+  },
+  {
+   "id": "marcus-aurelius",
+   "name": "Marcus Aurelius",
+   "phase": 6,
+   "order": 100,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "epictetus",
+   "name": "Epictetus",
+   "phase": 6,
+   "order": 101,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "henry-david-thoreau",
+   "name": "Henry David Thoreau",
+   "phase": 6,
+   "order": 102,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "ralph-waldo-emerson",
+   "name": "Ralph Waldo Emerson",
+   "phase": 6,
+   "order": 103,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "sun-tzu",
+   "name": "Sun Tzu",
+   "phase": 6,
+   "order": 104,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "james-allen",
+   "name": "James Allen",
+   "phase": 6,
+   "order": 105,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "kahlil-gibran",
+   "name": "Kahlil Gibran",
+   "phase": 6,
+   "order": 106,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "benjamin-franklin",
+   "name": "Benjamin Franklin",
+   "phase": 6,
+   "order": 107,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  },
+  {
+   "id": "plato",
+   "name": "Plato",
+   "phase": 6,
+   "order": 108,
+   "texts": 1,
+   "tagline": "",
+   "bio": ""
+  }
+ ],
+ "texts": [
+  {
+   "id": "dan-koe--reading-change-your-life-with-one-simple-habit",
+   "authorId": "dan-koe",
+   "title": "Reading: Change Your Life with One Simple Habit",
+   "date": "2024-03",
+   "words": 5243,
+   "tags": [
+    "reading",
+    "learning",
+    "habits",
+    "personal-growth"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/reading-change-your-life-with-one-simple-habit/"
+  },
+  {
+   "id": "dan-koe--how-to-focus-for-12-hours-a-day",
+   "authorId": "dan-koe",
+   "title": "How To Focus for 12 Hours a Day",
+   "date": "2024-05",
+   "words": 2514,
+   "tags": [
+    "focus",
+    "purpose",
+    "productivity",
+    "deep-work"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-focus-for-12-hours-a-day/"
+  },
+  {
+   "id": "dan-koe--how-to-remember-everything-you-read-with-ai",
+   "authorId": "dan-koe",
+   "title": "How To Remember Everything You Read with AI",
+   "date": "2024-07",
+   "words": 2921,
+   "tags": [
+    "memory",
+    "reading",
+    "AI",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-remember-everything-you-read-with-ai/"
+  },
+  {
+   "id": "dan-koe--how-to-unfck-your-life-evidence-based",
+   "authorId": "dan-koe",
+   "title": "How To Unfck Your Life (Evidence-Based)",
+   "date": "2024-08",
+   "words": 4123,
+   "tags": [
+    "self-improvement",
+    "psychology",
+    "habits",
+    "life-change"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-unfck-your-life-evidence-based/"
+  },
+  {
+   "id": "dan-koe--how-to-think-originally",
+   "authorId": "dan-koe",
+   "title": "How To Think Originally",
+   "date": "2024-09",
+   "words": 2805,
+   "tags": [
+    "original-thinking",
+    "creativity",
+    "ideas",
+    "independence"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-think-originally/"
+  },
+  {
+   "id": "dan-koe--the-deep-work-routine-that-changed-my-life",
+   "authorId": "dan-koe",
+   "title": "The Deep Work Routine That Changed My Life",
+   "date": "2024-10",
+   "words": 2072,
+   "tags": [
+    "deep-work",
+    "productivity",
+    "focus",
+    "routine"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/the-deep-work-routine-that-changed-my-life/"
+  },
+  {
+   "id": "dan-koe--how-to-build-a-better-personal-brand",
+   "authorId": "dan-koe",
+   "title": "How To Build a Better Personal Brand",
+   "date": "2024-11",
+   "words": 2992,
+   "tags": [
+    "personal-brand",
+    "content-creation",
+    "marketing",
+    "online-business"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-build-a-better-personal-brand-than-99-of-people/"
+  },
+  {
+   "id": "dan-koe--how-to-be-more-disagreeable",
+   "authorId": "dan-koe",
+   "title": "How To Be More Disagreeable",
+   "date": "2024-12",
+   "words": 1869,
+   "tags": [
+    "creativity",
+    "authenticity",
+    "thinking-different",
+    "persuasion"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-be-more-disagreeable-create-a-reality-distortion-field/"
+  },
+  {
+   "id": "dan-koe--how-to-think-like-a-genius-the-map-of-all-knowledge",
+   "authorId": "dan-koe",
+   "title": "How To Think Like A Genius - The Map of All Knowledge",
+   "date": "2025-01",
+   "words": 2073,
+   "tags": [
+    "thinking",
+    "learning",
+    "knowledge",
+    "genius"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/how-to-think-like-a-genius-the-map-of-all-knowledge/"
+  },
+  {
+   "id": "dan-koe--the-death-of-thoughtful-creation",
+   "authorId": "dan-koe",
+   "title": "The Death of Thoughtful Creation",
+   "date": "2025-01",
+   "words": 3089,
+   "tags": [
+    "creativity",
+    "AI",
+    "content-creation",
+    "thoughtful-work"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/the-death-of-thoughtful-creation-how-to-get-ahead-of-everyone-else/"
+  },
+  {
+   "id": "dan-koe--20-30-years-old-is-the-tutorial-phase",
+   "authorId": "dan-koe",
+   "title": "20-30 Years Old Is The Tutorial Phase",
+   "date": "2025-02",
+   "words": 2511,
+   "tags": [
+    "career",
+    "personal-growth",
+    "young-adults",
+    "life-advice"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/20-30-years-old-is-the-tutorial-phase-dont-fck-it-up/"
+  },
+  {
+   "id": "dan-koe--these-3-decisions-will-determine-if-you-get-rich",
+   "authorId": "dan-koe",
+   "title": "These 3 Decisions Will Determine If You Get Rich",
+   "date": "2025-03",
+   "words": 1900,
+   "tags": [
+    "wealth",
+    "decisions",
+    "entrepreneurship",
+    "mindset"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/these-3-decisions-will-determine-if-you-get-rich/"
+  },
+  {
+   "id": "dan-koe--you-can-learn-anything-in-2-weeks",
+   "authorId": "dan-koe",
+   "title": "You Can Learn Anything in 2 Weeks",
+   "date": "2025-04",
+   "words": 1867,
+   "tags": [
+    "learning",
+    "skill-acquisition",
+    "productivity",
+    "growth"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/you-can-learn-anything-in-2-weeks/"
+  },
+  {
+   "id": "dan-koe--you-have-about-36-months-to-make-it",
+   "authorId": "dan-koe",
+   "title": "You Have About 36 Months to Make It",
+   "date": "2025-05",
+   "words": 2304,
+   "tags": [
+    "urgency",
+    "career",
+    "entrepreneurship",
+    "future"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/you-have-about-36-months-to-make-it/"
+  },
+  {
+   "id": "dan-koe--self-discipline-is-easy-actually",
+   "authorId": "dan-koe",
+   "title": "Self-Discipline Is Easy, Actually",
+   "date": "2025-06",
+   "words": 1894,
+   "tags": [
+    "discipline",
+    "habits",
+    "productivity",
+    "mindset"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/self-discipline-is-easy-actually/"
+  },
+  {
+   "id": "dan-koe--you-dont-need-a-niche-you-need-a-point-of-view",
+   "authorId": "dan-koe",
+   "title": "You Don't Need a Niche, You Need a Point of View",
+   "date": "2025-07",
+   "words": 1791,
+   "tags": [
+    "writing",
+    "creativity",
+    "personal-brand",
+    "content-creation"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/you-dont-need-a-niche-you-need-a-point-of-view/"
+  },
+  {
+   "id": "dan-koe--human-3-0-a-map-to-reach-the-top-1",
+   "authorId": "dan-koe",
+   "title": "HUMAN 3.0 - A Map To Reach The Top 1%",
+   "date": "2026-05",
+   "words": 4263,
+   "tags": [
+    "success",
+    "human-potential",
+    "personal-growth",
+    "mindset"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/human-3-0-a-map-to-reach-the-top-1/"
+  },
+  {
+   "id": "dan-koe--a-complete-knowledge-base-of-human-3-0",
+   "authorId": "dan-koe",
+   "title": "A Complete Knowledge Base of HUMAN 3.0",
+   "date": "2026-06",
+   "words": 11925,
+   "tags": [
+    "human-potential",
+    "self-development",
+    "psychology",
+    "identity"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/a-complete-knowledge-base-of-human-3-0/"
+  },
+  {
+   "id": "shane-parrish--the-feynman-technique-the-best-way-to-learn-anything",
+   "authorId": "shane-parrish",
+   "title": "The Feynman Technique: The Best Way to Learn Anything",
+   "date": "2012-04",
+   "words": 415,
+   "tags": [
+    "learning",
+    "feynman-technique",
+    "teaching",
+    "understanding"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2012/04/feynman-technique/"
+  },
+  {
+   "id": "shane-parrish--the-buffett-formula-how-to-get-smarter",
+   "authorId": "shane-parrish",
+   "title": "The Buffett Formula: How To Get Smarter",
+   "date": "2013-05",
+   "words": 1025,
+   "tags": [
+    "learning",
+    "reading",
+    "warren-buffett",
+    "mental-models"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2013/05/the-buffett-formula/"
+  },
+  {
+   "id": "shane-parrish--your-response-to-mistakes-defines-you",
+   "authorId": "shane-parrish",
+   "title": "Your Response to Mistakes Defines You",
+   "date": "2014-09",
+   "words": 559,
+   "tags": [
+    "mistakes",
+    "growth",
+    "learning",
+    "resilience"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2014/09/mistakes/"
+  },
+  {
+   "id": "shane-parrish--mental-models-the-best-way-to-make-intelligent-decisions",
+   "authorId": "shane-parrish",
+   "title": "Mental Models: The Best Way to Make Intelligent Decisions",
+   "date": "unknown",
+   "words": 18133,
+   "tags": [
+    "mental-models",
+    "decision-making",
+    "thinking",
+    "frameworks"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/mental-models/"
+  },
+  {
+   "id": "shane-parrish--the-munger-operating-system-how-to-live-a-life-that-really-w",
+   "authorId": "shane-parrish",
+   "title": "The Munger Operating System: How to Live a Life That Really Works",
+   "date": "unknown",
+   "words": 2460,
+   "tags": [
+    "mental-models",
+    "charlie-munger",
+    "decision-making",
+    "wisdom"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2016/04/munger-operating-system/"
+  },
+  {
+   "id": "shane-parrish--second-order-thinking-what-smart-people-use-to-outperform",
+   "authorId": "shane-parrish",
+   "title": "Second-Order Thinking: What Smart People Use to Outperform",
+   "date": "2016-04",
+   "words": 670,
+   "tags": [
+    "mental-models",
+    "second-order-thinking",
+    "decision-making",
+    "problem-solving"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2016/04/second-order-thinking/"
+  },
+  {
+   "id": "shane-parrish--how-to-read-a-book",
+   "authorId": "shane-parrish",
+   "title": "How To Read A Book",
+   "date": "unknown",
+   "words": 1090,
+   "tags": [
+    "reading",
+    "learning",
+    "comprehension",
+    "knowledge"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/how-to-read-a-book/"
+  },
+  {
+   "id": "shane-parrish--the-most-respectful-interpretation",
+   "authorId": "shane-parrish",
+   "title": "The Most Respectful Interpretation",
+   "date": "unknown",
+   "words": 1902,
+   "tags": [
+    "communication",
+    "empathy",
+    "thinking",
+    "relationships"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/01/most-respectful-interpretation/"
+  },
+  {
+   "id": "shane-parrish--proximate-vs-root-causes-why-you-should-keep-digging-to-find",
+   "authorId": "shane-parrish",
+   "title": "Proximate vs. Root Causes: Why You Should Keep Digging to Find the Answer",
+   "date": "unknown",
+   "words": 2692,
+   "tags": [
+    "problem-solving",
+    "root-cause",
+    "thinking",
+    "analysis"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/05/proximate-vs-root-causes/"
+  },
+  {
+   "id": "shane-parrish--all-models-are-wrong-but-some-are-useful",
+   "authorId": "shane-parrish",
+   "title": "All Models Are Wrong ... But Some Are Useful",
+   "date": "unknown",
+   "words": 2226,
+   "tags": [
+    "mental-models",
+    "thinking",
+    "epistemology",
+    "frameworks"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/06/all-models-are-wrong/"
+  },
+  {
+   "id": "shane-parrish--habits-vs-goals-a-look-at-the-benefits-of-a-systematic-appro",
+   "authorId": "shane-parrish",
+   "title": "Habits vs. Goals: A Look at the Benefits of a Systematic Approach to Life",
+   "date": "unknown",
+   "words": 1373,
+   "tags": [
+    "habits",
+    "goals",
+    "systems",
+    "productivity"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/06/habits-vs-goals/"
+  },
+  {
+   "id": "shane-parrish--the-difference-between-amateurs-and-professionals",
+   "authorId": "shane-parrish",
+   "title": "The Difference Between Amateurs and Professionals",
+   "date": "unknown",
+   "words": 526,
+   "tags": [
+    "mastery",
+    "professionalism",
+    "habits",
+    "growth"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/08/amateurs-professionals/"
+  },
+  {
+   "id": "shane-parrish--a-two-step-process-for-making-effective-decisions",
+   "authorId": "shane-parrish",
+   "title": "A Two-Step Process For Making Effective Decisions",
+   "date": "unknown",
+   "words": 552,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "charlie-munger",
+    "thinking"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2013/04/munger-two-step/"
+  },
+  {
+   "id": "shane-parrish--adding-mental-models-to-your-minds-toolbox",
+   "authorId": "shane-parrish",
+   "title": "Adding Mental Models to Your Mind’s Toolbox",
+   "date": "unknown",
+   "words": 1126,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "reading",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2014/11/charlie-munger-mental-toolbox/"
+  },
+  {
+   "id": "shane-parrish--charlie-munger-on-getting-rich-wisdom-focus-fake-knowledge-a",
+   "authorId": "shane-parrish",
+   "title": "Charlie Munger on Getting Rich, Wisdom, Focus, Fake Knowledge and More",
+   "date": "unknown",
+   "words": 1860,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "reading",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/02/charlie-munger-wisdom/"
+  },
+  {
+   "id": "shane-parrish--how-using-a-decision-journal-can-help-you-make-better-decisi",
+   "authorId": "shane-parrish",
+   "title": "How Using a Decision Journal can Help you Make Better Decisions",
+   "date": "unknown",
+   "words": 1034,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "reading",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2014/02/decision-journal/"
+  },
+  {
+   "id": "shane-parrish--the-butterfly-effect-everything-you-need-to-know-about-this-",
+   "authorId": "shane-parrish",
+   "title": "The Butterfly Effect: Everything You Need to Know About This Powerful Mental Model",
+   "date": "unknown",
+   "words": 3506,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "reading",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2017/08/the-butterfly-effect/"
+  },
+  {
+   "id": "shane-parrish--the-top-3-most-effective-ways-to-take-notes-while-reading",
+   "authorId": "shane-parrish",
+   "title": "The Top 3 Most Effective Ways to Take Notes While Reading",
+   "date": "unknown",
+   "words": 1111,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "reading",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://fs.blog/2013/11/taking-notes-while-reading/"
+  },
+  {
+   "id": "shane-parrish--thinking-about-thinking",
+   "authorId": "shane-parrish",
+   "title": "Thinking About Thinking",
+   "date": "unknown",
+   "words": 804,
+   "tags": [
+    "decision-making",
+    "mental-models",
+    "thinking",
+    "focus"
+   ],
+   "src": "web",
+   "url": "https://www.farnamstreetblog.com/2015/01/how-to-think-2/"
+  },
+  {
+   "id": "paul-graham--beating-the-averages",
+   "authorId": "paul-graham",
+   "title": "Beating the Averages",
+   "date": "2003",
+   "words": 4006,
+   "tags": [
+    "startups",
+    "programming",
+    "Lisp",
+    "technology"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/avg.html"
+  },
+  {
+   "id": "paul-graham--the-age-of-the-essay",
+   "authorId": "paul-graham",
+   "title": "The Age of the Essay",
+   "date": "2004",
+   "words": 4229,
+   "tags": [
+    "writing",
+    "essays",
+    "thinking",
+    "communication"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/essay.html"
+  },
+  {
+   "id": "paul-graham--what-you-cant-say",
+   "authorId": "paul-graham",
+   "title": "What You Can't Say",
+   "date": "2004",
+   "words": 4940,
+   "tags": [
+    "free-speech",
+    "thinking",
+    "society",
+    "conformity"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/say.html"
+  },
+  {
+   "id": "paul-graham--lies-we-tell-kids",
+   "authorId": "paul-graham",
+   "title": "Lies We Tell Kids",
+   "date": "2008",
+   "words": 4749,
+   "tags": [
+    "education",
+    "parenting",
+    "truth",
+    "society"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/lies.html"
+  },
+  {
+   "id": "paul-graham--makers-schedule-managers-schedule",
+   "authorId": "paul-graham",
+   "title": "Maker's Schedule, Manager's Schedule",
+   "date": "2009-07",
+   "words": 477,
+   "tags": [
+    "productivity",
+    "scheduling",
+    "makers",
+    "managers"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/makerschedule.html"
+  },
+  {
+   "id": "paul-graham--keep-your-identity-small",
+   "authorId": "paul-graham",
+   "title": "Keep Your Identity Small",
+   "date": "2009",
+   "words": 825,
+   "tags": [
+    "identity",
+    "thinking",
+    "disagreement",
+    "politics"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/identity.html"
+  },
+  {
+   "id": "paul-graham--what-ive-learned-from-hacker-news",
+   "authorId": "paul-graham",
+   "title": "What I've Learned from Hacker News",
+   "date": "2009",
+   "words": 2403,
+   "tags": [
+    "community",
+    "startups",
+    "feedback",
+    "internet"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/hackernews.html"
+  },
+  {
+   "id": "paul-graham--the-top-idea-in-your-mind",
+   "authorId": "paul-graham",
+   "title": "The Top Idea in Your Mind",
+   "date": "2010",
+   "words": 1087,
+   "tags": [
+    "ideas",
+    "focus",
+    "creativity",
+    "productivity"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/top.html"
+  },
+  {
+   "id": "paul-graham--how-to-do-great-work",
+   "authorId": "paul-graham",
+   "title": "How to Do Great Work",
+   "date": "2023-07",
+   "words": 11269,
+   "tags": [
+    "great-work",
+    "ambition",
+    "creativity",
+    "career"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/greatwork.html"
+  },
+  {
+   "id": "paul-graham--the-bus-ticket-theory-of-genius",
+   "authorId": "paul-graham",
+   "title": "The Bus Ticket Theory of Genius",
+   "date": "2023-12",
+   "words": 2434,
+   "tags": [
+    "genius",
+    "creativity",
+    "talent",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/genius.html"
+  },
+  {
+   "id": "paul-graham--how-to-get-new-ideas",
+   "authorId": "paul-graham",
+   "title": "How to Get New Ideas",
+   "date": "2023",
+   "words": 260,
+   "tags": [
+    "creativity",
+    "ideas",
+    "innovation",
+    "discovery"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/getideas.html"
+  },
+  {
+   "id": "paul-graham--superlinear-returns",
+   "authorId": "paul-graham",
+   "title": "Superlinear Returns",
+   "date": "2023",
+   "words": 3696,
+   "tags": [
+    "exponential-growth",
+    "leverage",
+    "learning",
+    "work"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/superlinear.html"
+  },
+  {
+   "id": "paul-graham--write-like-you-talk",
+   "authorId": "paul-graham",
+   "title": "Write Like You Talk",
+   "date": "2023",
+   "words": 674,
+   "tags": [
+    "writing",
+    "communication",
+    "clarity",
+    "style"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/talk.html"
+  },
+  {
+   "id": "paul-graham--how-to-think-for-yourself",
+   "authorId": "paul-graham",
+   "title": "How to Think for Yourself",
+   "date": "2024-08",
+   "words": 3159,
+   "tags": [
+    "thinking",
+    "independence",
+    "originality",
+    "creativity"
+   ],
+   "src": "web",
+   "url": "https://www.paulgraham.com/think.html"
+  },
+  {
+   "id": "david-perell--annual-review-2021",
+   "authorId": "david-perell",
+   "title": "Annual Review 2021",
+   "date": "2021-01-01",
+   "words": 9280,
+   "tags": [
+    "annual-review",
+    "2021",
+    "reflection"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/annual-review-2021/"
+  },
+  {
+   "id": "david-perell--annual-review-2021",
+   "authorId": "david-perell",
+   "title": "Annual Review 2021",
+   "date": "2021-01-01",
+   "words": 9280,
+   "tags": [
+    "annual-review",
+    "2021",
+    "reflection"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/annual-review-2021/"
+  },
+  {
+   "id": "david-perell--annual-review-2022",
+   "authorId": "david-perell",
+   "title": "Annual Review 2022",
+   "date": "2022-01-01",
+   "words": 8667,
+   "tags": [
+    "annual-review",
+    "2022",
+    "reflection"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/annual-review-2022/"
+  },
+  {
+   "id": "david-perell--how-david-perell-writes-an-essay",
+   "authorId": "david-perell",
+   "title": "How David Perell Writes an Essay",
+   "date": "7499-01-01",
+   "words": 2793,
+   "tags": [
+    "writing",
+    "process",
+    "essays",
+    "creativity"
+   ],
+   "src": "web",
+   "url": "https://every.to/superorganizers/how-david-perell-writes-an-essay-7499268b-86cd-4d58-9ff0-8ec641506c5f"
+  },
+  {
+   "id": "david-perell--hugging-the-x-axis",
+   "authorId": "david-perell",
+   "title": "Hugging the X-Axis",
+   "date": "UNKNOWN",
+   "words": 3565,
+   "tags": [
+    "hugging-the-x-axis",
+    "business",
+    "strategy"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/hugging-the-x-axis/"
+  },
+  {
+   "id": "david-perell--imitate-then-innovate",
+   "authorId": "david-perell",
+   "title": "Imitate, then Innovate",
+   "date": "UNKNOWN",
+   "words": 4819,
+   "tags": [
+    "imitation",
+    "innovation",
+    "learning"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/imitate-then-innovate/"
+  },
+  {
+   "id": "david-perell--saving-the-liberal-arts",
+   "authorId": "david-perell",
+   "title": "Saving the Liberal Arts",
+   "date": "UNKNOWN",
+   "words": 9245,
+   "tags": [
+    "liberal-arts",
+    "education",
+    "humanities"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/saving-the-liberal-arts/"
+  },
+  {
+   "id": "david-perell--whats-up-with-austin",
+   "authorId": "david-perell",
+   "title": "What’s Up with Austin?",
+   "date": "UNKNOWN",
+   "words": 6897,
+   "tags": [
+    "austin",
+    "travel",
+    "Texas"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/whats-up-with-austin/"
+  },
+  {
+   "id": "david-perell--annual-review-2019",
+   "authorId": "david-perell",
+   "title": "Annual Review: 2019",
+   "date": "UNKNOWN",
+   "words": 4565,
+   "tags": [
+    "annual-review",
+    "reflection",
+    "growth"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/annual-review/"
+  },
+  {
+   "id": "david-perell--how-learning-happens",
+   "authorId": "david-perell",
+   "title": "How Learning Happens",
+   "date": "UNKNOWN",
+   "words": 2271,
+   "tags": [
+    "learning",
+    "education",
+    "cognition"
+   ],
+   "src": "web",
+   "url": "https://perell.com/essay/how-learning-happens/"
+  },
+  {
+   "id": "tiago-forte--progressive-summarization-a-practical-technique-for-designin",
+   "authorId": "tiago-forte",
+   "title": "Progressive Summarization: A Practical Technique for Designing Discoverable Notes",
+   "date": "Est. reading time:  12  min",
+   "words": 3467,
+   "tags": [
+    "progressive summarization",
+    "PARA",
+    "BASB",
+    "note-taking"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/progressive-summarization/"
+  },
+  {
+   "id": "tiago-forte--how-to-create-your-own-luck-5-easy-practices",
+   "authorId": "tiago-forte",
+   "title": "How to Create Your Own Luck: 5 Easy Practices",
+   "date": "Est. reading time:  7  min",
+   "words": 2019,
+   "tags": [
+    "luck",
+    "success",
+    "practices",
+    "productivity"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/how-to-create-your-own-luck-5-easy-practices/"
+  },
+  {
+   "id": "tiago-forte--the-book-ive-been-waiting-to-write-for-15-years",
+   "authorId": "tiago-forte",
+   "title": "The Book I’ve Been Waiting to Write for 15 Years",
+   "date": "Est. reading time:  9  min",
+   "words": 2587,
+   "tags": [
+    "writing",
+    "book",
+    "author",
+    "creativity"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/the-book-ive-been-waiting-to-write-for-15-years/"
+  },
+  {
+   "id": "tiago-forte--5-questions-to-help-you-navigate-uncertainty",
+   "authorId": "tiago-forte",
+   "title": "5 Questions to Help You Navigate Uncertainty",
+   "date": "Est. reading time:  6  min",
+   "words": 1767,
+   "tags": [
+    "uncertainty",
+    "questions",
+    "thinking",
+    "decision-making"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/5-questions-to-help-you-navigate-uncertainty/"
+  },
+  {
+   "id": "tiago-forte--introducing-the-ai-second-brain",
+   "authorId": "tiago-forte",
+   "title": "Introducing The AI Second Brain",
+   "date": "Est. reading time:  7  min",
+   "words": 2135,
+   "tags": [
+    "AI",
+    "second brain",
+    "innovation",
+    "technology"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/introducing-the-ai-second-brain/"
+  },
+  {
+   "id": "tiago-forte--groundbreakers-2-seeking-the-heart-of-fear",
+   "authorId": "tiago-forte",
+   "title": "Groundbreakers 2: Seeking the Heart of Fear",
+   "date": "Est. reading time:  38  min",
+   "words": 9865,
+   "tags": [
+    "groundbreakers",
+    "fear",
+    "creativity",
+    "innovation"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/groundbreakers-2/"
+  },
+  {
+   "id": "tiago-forte--my-2025-annual-review",
+   "authorId": "tiago-forte",
+   "title": "My 2025 Annual Review",
+   "date": "Est. reading time:  18  min",
+   "words": 4951,
+   "tags": [
+    "annual review",
+    "reflection",
+    "2025",
+    "personal growth"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/tiago-fortes-2025-annual-review/"
+  },
+  {
+   "id": "tiago-forte--introducing-the-alumni-mentor-corps",
+   "authorId": "tiago-forte",
+   "title": "Introducing the Alumni Mentor Corps",
+   "date": "Est. reading time:  10  min",
+   "words": 2764,
+   "tags": [
+    "mentorship",
+    "alumni",
+    "community",
+    "education"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/introducing-the-alumni-mentor-corps/"
+  },
+  {
+   "id": "tiago-forte--what-ive-learned-from-selling-500-000-books",
+   "authorId": "tiago-forte",
+   "title": "What I’ve Learned From Selling 500,000 Books",
+   "date": "Est. reading time:  19  min",
+   "words": 5096,
+   "tags": [
+    "books",
+    "sales",
+    "entrepreneurship",
+    "lessons"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/what-ive-learned-from-selling-500000-books/"
+  },
+  {
+   "id": "tiago-forte--the-difference-between-claude-code-and-cowork",
+   "authorId": "tiago-forte",
+   "title": "The Difference Between Claude Code and Cowork",
+   "date": "Est. reading time:  2  min",
+   "words": 738,
+   "tags": [
+    "AI",
+    "tools",
+    "comparison",
+    "productivity"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/the-difference-between-claude-code-and-cowork/"
+  },
+  {
+   "id": "tiago-forte--the-history-beneath-my-feet-two-years-in-valle-de-bravo",
+   "authorId": "tiago-forte",
+   "title": "The History Beneath My Feet: Two Years in Valle de Bravo",
+   "date": "Est. reading time:  21  min",
+   "words": 5691,
+   "tags": [
+    "travel",
+    "mexico",
+    "reflection",
+    "place"
+   ],
+   "src": "web",
+   "url": "https://fortelabs.com/blog/valle-de-bravo-where-mexico-finds-itself/"
+  },
+  {
+   "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
+   "authorId": "cal-newport",
+   "title": "AI Isn’t Breaking Work. It’s Already Broken.",
+   "date": "2026-06-15",
+   "words": 245,
+   "tags": [
+    "Slow Productivity",
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+  },
+  {
+   "id": "cal-newport--beware-of-productivity-paradoxes",
+   "authorId": "cal-newport",
+   "title": "Beware of Productivity Paradoxes",
+   "date": "2026-06-29",
+   "words": 392,
+   "tags": [
+    "Productivity",
+    "Email",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/beware-of-productivity-paradoxes/"
+  },
+  {
+   "id": "cal-newport--contact-author-and-professor-cal-newport",
+   "authorId": "cal-newport",
+   "title": "Contact Author and Professor Cal Newport",
+   "date": "Unknown",
+   "words": 226,
+   "tags": [
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/contact/"
+  },
+  {
+   "id": "cal-newport--dario-amodei-spent-last-year-warning-of-an-ai-white-collar-b",
+   "authorId": "cal-newport",
+   "title": "Dario Amodei spent last year warning of an AI white-collar bloodbath. Now he's changing the narrative | Fortune",
+   "date": "Unknown",
+   "words": 0,
+   "tags": [],
+   "src": "web",
+   "url": "https://fortune.com/2026/05/05/dario-amodei-jevons-paradox-will-ai-wipe-out-white-collar-jobs/"
+  },
+  {
+   "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
+   "authorId": "cal-newport",
+   "title": "AI Isn’t Breaking Work. It’s Already Broken.",
+   "date": "2026-06-15",
+   "words": 342,
+   "tags": [
+    "Slow Productivity",
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+  },
+  {
+   "id": "cal-newport--dear-ai-companies-stop-the-doom-trolling",
+   "authorId": "cal-newport",
+   "title": "Dear AI Companies: Stop the “Doom Trolling”",
+   "date": "2026-06-22",
+   "words": 551,
+   "tags": [
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/dear-ai-companies-stop-the-doom-trolling/"
+  },
+  {
+   "id": "cal-newport--planet-money",
+   "authorId": "cal-newport",
+   "title": "Planet Money",
+   "date": "2025-02-04",
+   "words": 53,
+   "tags": [
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://www.npr.org/sections/planet-money/2025/02/04/g-s1-46018/ai-deepseek-economics-jevons-paradox"
+  },
+  {
+   "id": "cal-newport--the-pope-vs-silicon-valley",
+   "authorId": "cal-newport",
+   "title": "The Pope vs. Silicon Valley",
+   "date": "2026-06-01",
+   "words": 730,
+   "tags": [
+    "Attention",
+    "Career/Academic",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+  },
+  {
+   "id": "cal-newport--ai-isnt-breaking-work-its-already-broken",
+   "authorId": "cal-newport",
+   "title": "AI Isn’t Breaking Work. It’s Already Broken.",
+   "date": "2026-06-15",
+   "words": 342,
+   "tags": [
+    "Slow Productivity",
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/ai-isnt-breaking-work-its-already-broken/"
+  },
+  {
+   "id": "cal-newport--computer-scientist-bestselling-author",
+   "authorId": "cal-newport",
+   "title": "Computer Scientist & Bestselling Author",
+   "date": "Unknown",
+   "words": 509,
+   "tags": [
+    "Deep Work",
+    "Digital Minimalism",
+    "Slow Productivity",
+    "Productivity"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/"
+  },
+  {
+   "id": "cal-newport--on-bottlenecks-and-productivity",
+   "authorId": "cal-newport",
+   "title": "On Bottlenecks and Productivity",
+   "date": "2026-05-04",
+   "words": 451,
+   "tags": [
+    "Slow Productivity",
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+  },
+  {
+   "id": "cal-newport--the-pope-vs-silicon-valley",
+   "authorId": "cal-newport",
+   "title": "The Pope vs. Silicon Valley",
+   "date": "2026-06-01",
+   "words": 759,
+   "tags": [
+    "Attention",
+    "Career/Academic",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+  },
+  {
+   "id": "cal-newport--getting-things-done-for-college-students-the-full-system",
+   "authorId": "cal-newport",
+   "title": "Getting Things Done for College Students: The Full System",
+   "date": "2023-01-26T14:45:51-05:00",
+   "words": 336,
+   "tags": [
+    "Attention",
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/blog/page/140/"
+  },
+  {
+   "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
+   "authorId": "cal-newport",
+   "title": "Is Claude Mythos “Terrifying” or Just Hype?",
+   "date": "2026-04-13",
+   "words": 952,
+   "tags": [
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+  },
+  {
+   "id": "cal-newport--scholarship",
+   "authorId": "cal-newport",
+   "title": "Scholarship",
+   "date": "Unknown",
+   "words": 3100,
+   "tags": [
+    "Deep Work",
+    "Digital Minimalism",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/scholarship/"
+  },
+  {
+   "id": "cal-newport--the-dark-side-of-the-jevons-paradox",
+   "authorId": "cal-newport",
+   "title": "The Dark Side of the Jevons Paradox",
+   "date": "2026-05-18",
+   "words": 489,
+   "tags": [
+    "Email",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/"
+  },
+  {
+   "id": "cal-newport--why-isnt-ai-taking-our-jobs",
+   "authorId": "cal-newport",
+   "title": "Why Isn’t AI Taking Our Jobs?",
+   "date": "2026-06-08",
+   "words": 486,
+   "tags": [
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/why-isnt-ai-taking-our-jobs/"
+  },
+  {
+   "id": "cal-newport--avoiding-digital-productivity-traps",
+   "authorId": "cal-newport",
+   "title": "Avoiding Digital Productivity Traps",
+   "date": "2026-03-23",
+   "words": 552,
+   "tags": [
+    "Deep Work",
+    "Slow Productivity",
+    "Productivity",
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/avoiding-digital-productivity-traps/"
+  },
+  {
+   "id": "cal-newport--contact-info",
+   "authorId": "cal-newport",
+   "title": "Contact Info",
+   "date": "Unknown",
+   "words": 651,
+   "tags": [
+    "Deep Work",
+    "Digital Minimalism",
+    "Slow Productivity",
+    "Productivity"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/writing/"
+  },
+  {
+   "id": "cal-newport--on-bottlenecks-and-productivity",
+   "authorId": "cal-newport",
+   "title": "On Bottlenecks and Productivity",
+   "date": "2026-05-04",
+   "words": 451,
+   "tags": [
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+  },
+  {
+   "id": "cal-newport--the-pope-vs-silicon-valley",
+   "authorId": "cal-newport",
+   "title": "The Pope vs. Silicon Valley",
+   "date": "2026-06-01",
+   "words": 759,
+   "tags": [
+    "Attention",
+    "Career/Academic",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-pope-vs-silicon-valley/"
+  },
+  {
+   "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
+   "authorId": "cal-newport",
+   "title": "Is Claude Mythos “Terrifying” or Just Hype?",
+   "date": "2026-04-13",
+   "words": 1104,
+   "tags": [
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+  },
+  {
+   "id": "cal-newport--mel-robbins-podcast",
+   "authorId": "cal-newport",
+   "title": "Mel Robbins Podcast",
+   "date": "Unknown",
+   "words": 424,
+   "tags": [
+    "Deep Work",
+    "Digital Minimalism",
+    "Slow Productivity",
+    "Productivity"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/press/"
+  },
+  {
+   "id": "cal-newport--on-god-and-llms",
+   "authorId": "cal-newport",
+   "title": "On God and LLMs",
+   "date": "2026-05-25",
+   "words": 503,
+   "tags": [],
+   "src": "web",
+   "url": "https://calnewport.com/on-god-and-llms/"
+  },
+  {
+   "id": "cal-newport--why-hasnt-ai-made-work-easier",
+   "authorId": "cal-newport",
+   "title": "Why Hasn’t AI Made Work Easier?",
+   "date": "2026-03-16",
+   "words": 817,
+   "tags": [
+    "Deep Work",
+    "Attention",
+    "Email",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/"
+  },
+  {
+   "id": "cal-newport--in-defense-of-thinking",
+   "authorId": "cal-newport",
+   "title": "In Defense of Thinking",
+   "date": "2026-03-30",
+   "words": 828,
+   "tags": [
+    "Deep Work",
+    "Attention",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/in-defense-of-thinking-2/"
+  },
+  {
+   "id": "cal-newport--knowledge-workers-are-bad-at-working-and-heres-what-to-do-ab",
+   "authorId": "cal-newport",
+   "title": "Knowledge Workers are Bad at Working (and Here’s What to Do About It…)",
+   "date": "2023-01-26",
+   "words": 1282,
+   "tags": [
+    "Deep Work",
+    "Attention",
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/blog/2012/11/21/knowledge-workers-are-bad-at-working-and-heres-what-to-do-about-it/"
+  },
+  {
+   "id": "cal-newport--the-dark-side-of-the-jevons-paradox",
+   "authorId": "cal-newport",
+   "title": "The Dark Side of the Jevons Paradox",
+   "date": "2026-05-18",
+   "words": 489,
+   "tags": [
+    "Email",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-dark-side-of-the-jevons-paradox/"
+  },
+  {
+   "id": "cal-newport--the-original-attention-crisis",
+   "authorId": "cal-newport",
+   "title": "The Original Attention Crisis",
+   "date": "2026-03-09",
+   "words": 710,
+   "tags": [
+    "Deep Work",
+    "Slow Productivity",
+    "Productivity",
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-original-attention-crisis/"
+  },
+  {
+   "id": "cal-newport--avoiding-digital-productivity-traps",
+   "authorId": "cal-newport",
+   "title": "Avoiding Digital Productivity Traps",
+   "date": "2026-03-23",
+   "words": 552,
+   "tags": [
+    "Deep Work",
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/avoiding-digital-productivity-traps/"
+  },
+  {
+   "id": "cal-newport--easy-is-overrated",
+   "authorId": "cal-newport",
+   "title": "Easy is Overrated",
+   "date": "2026-05-11",
+   "words": 457,
+   "tags": [
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/easy-is-overrated/"
+  },
+  {
+   "id": "cal-newport--what-do-social-media-companies-fear-time-management",
+   "authorId": "cal-newport",
+   "title": "What Do Social Media Companies Fear? Time Management.",
+   "date": "2026-03-02",
+   "words": 365,
+   "tags": [
+    "Attention",
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/"
+  },
+  {
+   "id": "cal-newport--woody-allen-and-the-art-of-value-productivity",
+   "authorId": "cal-newport",
+   "title": "Woody Allen and the Art of Value Productivity",
+   "date": "2023-01-26",
+   "words": 766,
+   "tags": [
+    "Productivity",
+    "Attention",
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/woody-allen-and-the-art-of-value-productivity/"
+  },
+  {
+   "id": "cal-newport--deep-work-and-the-good-life",
+   "authorId": "cal-newport",
+   "title": "Deep Work and the Good Life",
+   "date": "2023-01-26",
+   "words": 252,
+   "tags": [
+    "Deep Work"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42420"
+  },
+  {
+   "id": "cal-newport--film-students-can-no-longer-sit-through-films",
+   "authorId": "cal-newport",
+   "title": "Film Students Can No Longer Sit Through Films",
+   "date": "2026-02-27",
+   "words": 759,
+   "tags": [
+    "Attention",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/"
+  },
+  {
+   "id": "cal-newport--on-bottlenecks-and-productivity",
+   "authorId": "cal-newport",
+   "title": "On Bottlenecks and Productivity",
+   "date": "2026-05-04",
+   "words": 451,
+   "tags": [
+    "Productivity",
+    "Attention",
+    "Email"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/on-bottlenecks-and-productivity/"
+  },
+  {
+   "id": "cal-newport--why-hasnt-ai-made-work-easier",
+   "authorId": "cal-newport",
+   "title": "Why Hasn’t AI Made Work Easier?",
+   "date": "2026-03-16",
+   "words": 893,
+   "tags": [
+    "Deep Work",
+    "Attention",
+    "Email",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/why-hasnt-ai-made-work-easier/"
+  },
+  {
+   "id": "cal-newport--deep-work-and-the-good-life",
+   "authorId": "cal-newport",
+   "title": "Deep Work and the Good Life",
+   "date": "2023-01-26",
+   "words": 252,
+   "tags": [
+    "Deep Work"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42421"
+  },
+  {
+   "id": "cal-newport--the-original-attention-crisis",
+   "authorId": "cal-newport",
+   "title": "The Original Attention Crisis",
+   "date": "2026-03-09",
+   "words": 710,
+   "tags": [
+    "Deep Work",
+    "Slow Productivity",
+    "Productivity",
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-original-attention-crisis/"
+  },
+  {
+   "id": "cal-newport--what-i-learned-from-masterclass",
+   "authorId": "cal-newport",
+   "title": "What I Learned from MasterClass",
+   "date": "2026-02-09",
+   "words": 624,
+   "tags": [
+    "Deep Work",
+    "Slow Productivity",
+    "Productivity",
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/what-i-learned-from-masterclass/"
+  },
+  {
+   "id": "cal-newport--who-asked-for-this",
+   "authorId": "cal-newport",
+   "title": "Who Asked For This?",
+   "date": "2026-04-27",
+   "words": 737,
+   "tags": [
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/who-asked-for-this/"
+  },
+  {
+   "id": "cal-newport--brandon-sanderson-vs-ai-art",
+   "authorId": "cal-newport",
+   "title": "Brandon Sanderson vs. AI Art",
+   "date": "2026-04-20",
+   "words": 956,
+   "tags": [],
+   "src": "web",
+   "url": "https://calnewport.com/brandon-sanderson-vs-ai-art/"
+  },
+  {
+   "id": "cal-newport--deep-work-and-the-good-life",
+   "authorId": "cal-newport",
+   "title": "Deep Work and the Good Life",
+   "date": "2023-01-26",
+   "words": 252,
+   "tags": [
+    "Deep Work"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42422"
+  },
+  {
+   "id": "cal-newport--the-dangers-of-vibe-reporting-about-ai",
+   "authorId": "cal-newport",
+   "title": "The Dangers of “Vibe Reporting” About AI",
+   "date": "2026-02-02",
+   "words": 623,
+   "tags": [
+    "Attention",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/the-dangers-of-vibe-reporting-about-ai/"
+  },
+  {
+   "id": "cal-newport--what-do-social-media-companies-fear-time-management",
+   "authorId": "cal-newport",
+   "title": "What Do Social Media Companies Fear? Time Management.",
+   "date": "2026-03-02",
+   "words": 365,
+   "tags": [
+    "Attention",
+    "Career/Academic"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/what-do-social-media-companies-fear-time-management/"
+  },
+  {
+   "id": "cal-newport--deep-work-and-the-good-life",
+   "authorId": "cal-newport",
+   "title": "Deep Work and the Good Life",
+   "date": "2023-01-26",
+   "words": 252,
+   "tags": [
+    "Deep Work"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/deep-work-and-the-good-life/#comment-42423"
+  },
+  {
+   "id": "cal-newport--film-students-can-no-longer-sit-through-films",
+   "authorId": "cal-newport",
+   "title": "Film Students Can No Longer Sit Through Films",
+   "date": "2026-02-27",
+   "words": 1278,
+   "tags": [
+    "Attention",
+    "Technology"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/film-students-can-no-longer-sit-through-films/"
+  },
+  {
+   "id": "cal-newport--is-claude-mythos-terrifying-or-just-hype",
+   "authorId": "cal-newport",
+   "title": "Is Claude Mythos “Terrifying” or Just Hype?",
+   "date": "2026-04-13",
+   "words": 1104,
+   "tags": [
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/is-claude-mythos-terrifying-or-just-hype/"
+  },
+  {
+   "id": "cal-newport--is-the-internet-hijacking-our-ambition",
+   "authorId": "cal-newport",
+   "title": "Is the Internet Hijacking Our Ambition?",
+   "date": "2026-01-26",
+   "words": 830,
+   "tags": [
+    "Attention"
+   ],
+   "src": "web",
+   "url": "https://calnewport.com/is-the-internet-hijacking-our-ambition/"
+  },
+  {
+   "id": "morgan-housel--a-few-little-ideas-and-short-stories",
+   "authorId": "morgan-housel",
+   "title": "A Few Little Ideas And Short Stories",
+   "date": "2024-08-06",
+   "words": 1506,
+   "tags": [
+    "attention",
+    "market",
+    "wealth",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-few-little-ideas/"
+  },
+  {
+   "id": "morgan-housel--a-few-questions",
+   "authorId": "morgan-housel",
+   "title": "A Few Questions",
+   "date": "2025-05-08",
+   "words": 388,
+   "tags": [
+    "finance",
+    "money",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-few-questions-1/"
+  },
+  {
+   "id": "morgan-housel--a-few-short-stories",
+   "authorId": "morgan-housel",
+   "title": "A Few Short Stories",
+   "date": "2025-04-24",
+   "words": 1530,
+   "tags": [
+    "market",
+    "storytelling",
+    "narrative",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-few-short-stories/"
+  },
+  {
+   "id": "morgan-housel--a-few-things-im-pretty-sure-about",
+   "authorId": "morgan-housel",
+   "title": "A Few Things I’m Pretty Sure About",
+   "date": "2026-01-06",
+   "words": 1068,
+   "tags": [
+    "wealth",
+    "finance",
+    "attention",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-few-things-im-pretty-sure-about-2026/"
+  },
+  {
+   "id": "morgan-housel--a-few-thoughts-on-spending-money",
+   "authorId": "morgan-housel",
+   "title": "A Few Thoughts on Spending Money",
+   "date": "2024-01-31",
+   "words": 785,
+   "tags": [
+    "market",
+    "wealth",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-few-thoughts-on-spending-money/"
+  },
+  {
+   "id": "morgan-housel--a-message-from-the-past-thoughts-on-nostalgia",
+   "authorId": "morgan-housel",
+   "title": "A Message From the Past (Thoughts on Nostalgia)",
+   "date": "2024-10-14",
+   "words": 1448,
+   "tags": [
+    "market",
+    "margin of safety",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/a-message-from-the-past-thoughts-on-nostalgia/"
+  },
+  {
+   "id": "morgan-housel--a-number-from-today-and-a-story-about-tomorrow",
+   "authorId": "morgan-housel",
+   "title": "A Number From Today and A Story About Tomorrow",
+   "date": "2024-08-20",
+   "words": 763,
+   "tags": [
+    "attention",
+    "storytelling",
+    "margin of safety",
+    "narrative"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/numbersandstories/"
+  },
+  {
+   "id": "morgan-housel--beautiful-vs-practical-advice",
+   "authorId": "morgan-housel",
+   "title": "Beautiful vs. Practical Advice",
+   "date": "2025-03-18",
+   "words": 831,
+   "tags": [
+    "attention",
+    "market",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/beautiful-vs-practical-advice/"
+  },
+  {
+   "id": "morgan-housel--cumulative-vs-cyclical-knowledge",
+   "authorId": "morgan-housel",
+   "title": "Cumulative vs. Cyclical Knowledge",
+   "date": "2024-08-29",
+   "words": 1206,
+   "tags": [
+    "market",
+    "wealth",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/cumulative-vs-cyclical-knowledge/"
+  },
+  {
+   "id": "morgan-housel--different-kinds-of-smart",
+   "authorId": "morgan-housel",
+   "title": "Different Kinds of Smart",
+   "date": "2025-06-11",
+   "words": 1179,
+   "tags": [
+    "attention",
+    "market",
+    "margin of safety",
+    "patience"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/different-kinds-of-smart/"
+  },
+  {
+   "id": "morgan-housel--do-it-your-way",
+   "authorId": "morgan-housel",
+   "title": "Do It Your Way",
+   "date": "2024-09-23",
+   "words": 579,
+   "tags": [
+    "finance",
+    "money",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/your-way-is-the-only-way/"
+  },
+  {
+   "id": "morgan-housel--how-i-think-about-debt",
+   "authorId": "morgan-housel",
+   "title": "How I Think About Debt",
+   "date": "2024-04-30",
+   "words": 529,
+   "tags": [
+    "market",
+    "margin of safety",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/how-i-think-about-debt/"
+  },
+  {
+   "id": "morgan-housel--i-have-a-few-questions",
+   "authorId": "morgan-housel",
+   "title": "I Have A Few Questions",
+   "date": "2024-12-16",
+   "words": 323,
+   "tags": [
+    "finance",
+    "market",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/i-have-a-few-questions/"
+  },
+  {
+   "id": "morgan-housel--lazy-work-good-work",
+   "authorId": "morgan-housel",
+   "title": "Lazy Work, Good Work",
+   "date": "2024-05-27",
+   "words": 947,
+   "tags": [
+    "finance",
+    "attention",
+    "market",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/lazy-work-good-work/"
+  },
+  {
+   "id": "morgan-housel--little-rules-about-big-things",
+   "authorId": "morgan-housel",
+   "title": "Little Rules About Big Things",
+   "date": "2025-08-13",
+   "words": 2237,
+   "tags": [
+    "attention",
+    "market",
+    "patience",
+    "wealth"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/little-rules-about-big-things/"
+  },
+  {
+   "id": "morgan-housel--long-term-money",
+   "authorId": "morgan-housel",
+   "title": "Long-Term Money",
+   "date": "2026-04-02",
+   "words": 969,
+   "tags": [
+    "long-term",
+    "wealth",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/long-term-money/"
+  },
+  {
+   "id": "morgan-housel--lucky-vs-repeatable",
+   "authorId": "morgan-housel",
+   "title": "Lucky vs. Repeatable",
+   "date": "2024-04-07",
+   "words": 705,
+   "tags": [
+    "attention",
+    "market",
+    "patience",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/lucky-vs-repeatable/"
+  },
+  {
+   "id": "morgan-housel--makes-you-think",
+   "authorId": "morgan-housel",
+   "title": "Makes You Think",
+   "date": "2024-07-18",
+   "words": 832,
+   "tags": [
+    "wealth",
+    "finance",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/makes-you-think/"
+  },
+  {
+   "id": "morgan-housel--minimum-levels-of-stress",
+   "authorId": "morgan-housel",
+   "title": "Minimum Levels of Stress",
+   "date": "2025-01-13",
+   "words": 669,
+   "tags": [
+    "market",
+    "margin of safety",
+    "wealth",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/minimum-levels-of-stress/"
+  },
+  {
+   "id": "morgan-housel--my-new-book-the-art-of-spending-money",
+   "authorId": "morgan-housel",
+   "title": "My New Book: The Art of Spending Money",
+   "date": "2025-09-03",
+   "words": 691,
+   "tags": [
+    "wealth",
+    "investing",
+    "finance",
+    "money"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/my-new-book-the-art-of-spending-money/"
+  },
+  {
+   "id": "morgan-housel--my-thoughts-on-tariffs-economic-history-and-the-market-decli",
+   "authorId": "morgan-housel",
+   "title": "My Thoughts on Tariffs, Economic History, and the Market Decline",
+   "date": "2025-04-09",
+   "words": 5241,
+   "tags": [
+    "market",
+    "storytelling",
+    "narrative",
+    "wealth"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/my-thoughts-on-tariffs-economic-history-and-the-market-decline/"
+  },
+  {
+   "id": "morgan-housel--podcast-with-howard-marks",
+   "authorId": "morgan-housel",
+   "title": "Podcast With Howard Marks",
+   "date": "2024-09-02",
+   "words": 72,
+   "tags": [
+    "finance",
+    "market",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/podcast-with-howard-marks/"
+  },
+  {
+   "id": "morgan-housel--pure-independence",
+   "authorId": "morgan-housel",
+   "title": "Pure Independence",
+   "date": "2025-02-27",
+   "words": 2402,
+   "tags": [
+    "attention",
+    "investing",
+    "finance",
+    "money"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/pure-independence/"
+  },
+  {
+   "id": "morgan-housel--smart-words-from-smart-people",
+   "authorId": "morgan-housel",
+   "title": "Smart Words From Smart People",
+   "date": "2024-03-24",
+   "words": 766,
+   "tags": [
+    "attention",
+    "wealth",
+    "investing",
+    "finance"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/smart-words-from-smart-people/"
+  },
+  {
+   "id": "morgan-housel--the-dumber-side-of-smart-people",
+   "authorId": "morgan-housel",
+   "title": "The Dumber Side of Smart People",
+   "date": "2024-03-03",
+   "words": 1242,
+   "tags": [
+    "market",
+    "investing",
+    "finance",
+    "money"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/the-dumber-side-of-smart-people/"
+  },
+  {
+   "id": "morgan-housel--useful-and-overlooked-skills",
+   "authorId": "morgan-housel",
+   "title": "Useful and Overlooked Skills",
+   "date": "2024-06-14",
+   "words": 942,
+   "tags": [
+    "finance",
+    "attention",
+    "market",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/useful-and-overlooked-skills/"
+  },
+  {
+   "id": "morgan-housel--very-bad-advice",
+   "authorId": "morgan-housel",
+   "title": "Very Bad Advice",
+   "date": "2025-06-12",
+   "words": 485,
+   "tags": [
+    "margin of safety",
+    "patience",
+    "wealth",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/very-bad-advice/"
+  },
+  {
+   "id": "morgan-housel--what-a-world-a-few-stories",
+   "authorId": "morgan-housel",
+   "title": "What A World (A few Stories)",
+   "date": "2025-08-04",
+   "words": 1782,
+   "tags": [
+    "wealth",
+    "finance",
+    "market",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://collabfund.com/blog/what-a-world/"
+  },
+  {
+   "id": "derek-sivers--about-this-book",
+   "authorId": "derek-sivers",
+   "title": "About this book",
+   "date": "2018-06-01",
+   "words": 206,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/hy1",
+   "path": "library/texts/derek-sivers/about-this-book.txt"
+  },
+  {
+   "id": "derek-sivers--anything-you-want-my-first-book",
+   "authorId": "derek-sivers",
+   "title": "Anything You Want (my first book)",
+   "date": "2011-06-29",
+   "words": 166,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/ayw",
+   "path": "library/texts/derek-sivers/anything-you-want-my-first-book.txt"
+  },
+  {
+   "id": "derek-sivers--assume-the-basic-sale-and-go-for-quantity",
+   "authorId": "derek-sivers",
+   "title": "Assume the basic sale, and go for quantity",
+   "date": "2000-08-20",
+   "words": 417,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/quantity",
+   "path": "library/texts/derek-sivers/assume-the-basic-sale-and-go-for-quantity.txt"
+  },
+  {
+   "id": "derek-sivers--climbing-ladders",
+   "authorId": "derek-sivers",
+   "title": "Climbing ladders",
+   "date": "2009-09-06",
+   "words": 216,
+   "tags": [
+    "decision-making",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/ladders",
+   "path": "library/texts/derek-sivers/climbing-ladders.txt"
+  },
+  {
+   "id": "derek-sivers--dont-be-a-donkey",
+   "authorId": "derek-sivers",
+   "title": "Don’t be a donkey",
+   "date": "2011-06-08",
+   "words": 373,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/donkey",
+   "path": "library/texts/derek-sivers/dont-be-a-donkey.txt"
+  },
+  {
+   "id": "derek-sivers--explorers-are-bad-leaders",
+   "authorId": "derek-sivers",
+   "title": "Explorers are bad leaders",
+   "date": "2023-02-09",
+   "words": 138,
+   "tags": [
+    "decision-making",
+    "simplicity",
+    "saying-no",
+    "life-philosophy"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/exled",
+   "path": "library/texts/derek-sivers/explorers-are-bad-leaders.txt"
+  },
+  {
+   "id": "derek-sivers--geography-is-four-dimensional",
+   "authorId": "derek-sivers",
+   "title": "Geography is four-dimensional",
+   "date": "2026-05-05",
+   "words": 296,
+   "tags": [
+    "decision-making",
+    "saying-no",
+    "life-philosophy"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/4d",
+   "path": "library/texts/derek-sivers/geography-is-four-dimensional.txt"
+  },
+  {
+   "id": "derek-sivers--how-to-change-or-build-your-career",
+   "authorId": "derek-sivers",
+   "title": "How to change or build your career",
+   "date": "2014-10-06",
+   "words": 828,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "business"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/career",
+   "path": "library/texts/derek-sivers/how-to-change-or-build-your-career.txt"
+  },
+  {
+   "id": "derek-sivers--if-youre-not-feeling-hell-yeah-then-say-no",
+   "authorId": "derek-sivers",
+   "title": "If you’re not feeling “hell yeah!” then say no",
+   "date": "2018-06-03",
+   "words": 186,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/hyn",
+   "path": "library/texts/derek-sivers/if-youre-not-feeling-hell-yeah-then-say-no.txt"
+  },
+  {
+   "id": "derek-sivers--my-life-was-changed-by-four-sentences-in-four-books",
+   "authorId": "derek-sivers",
+   "title": "My life was changed by four sentences in four books",
+   "date": "2026-05-12",
+   "words": 590,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "business"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/4s4b",
+   "path": "library/texts/derek-sivers/my-life-was-changed-by-four-sentences-in-four-books.txt"
+  },
+  {
+   "id": "derek-sivers--no-yes-either-hell-yeah-or-no",
+   "authorId": "derek-sivers",
+   "title": "No “yes.” Either “HELL YEAH!” or “no.”",
+   "date": "2009-08-26",
+   "words": 120,
+   "tags": [
+    "decision-making",
+    "starting",
+    "saying-no",
+    "life-philosophy"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/hellyeah",
+   "path": "library/texts/derek-sivers/no-yes-either-hell-yeah-or-no.txt"
+  },
+  {
+   "id": "derek-sivers--prepare-your-no-and-keep-it-handy",
+   "authorId": "derek-sivers",
+   "title": "Prepare your “no” and keep it handy",
+   "date": "2026-05-14",
+   "words": 333,
+   "tags": [
+    "decision-making",
+    "focus",
+    "business",
+    "enough"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/n0",
+   "path": "library/texts/derek-sivers/prepare-your-no-and-keep-it-handy.txt"
+  },
+  {
+   "id": "derek-sivers--put-your-fans-to-work",
+   "authorId": "derek-sivers",
+   "title": "Put your fans to work",
+   "date": "2000-08-04",
+   "words": 234,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/fanwork",
+   "path": "library/texts/derek-sivers/put-your-fans-to-work.txt"
+  },
+  {
+   "id": "derek-sivers--same-word-different-places-different-meanings",
+   "authorId": "derek-sivers",
+   "title": "Same word. Different places? Different meanings.",
+   "date": "2014-01-16",
+   "words": 571,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/quality",
+   "path": "library/texts/derek-sivers/same-word-different-places-different-meanings.txt"
+  },
+  {
+   "id": "derek-sivers--saying-no-to-everything-else",
+   "authorId": "derek-sivers",
+   "title": "Saying no to everything else",
+   "date": "2015-09-23",
+   "words": 266,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "business"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/no2",
+   "path": "library/texts/derek-sivers/saying-no-to-everything-else.txt"
+  },
+  {
+   "id": "derek-sivers--start-now-no-funding-needed",
+   "authorId": "derek-sivers",
+   "title": "Start now. No funding needed.",
+   "date": "2011-07-10",
+   "words": 523,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/startnow",
+   "path": "library/texts/derek-sivers/start-now-no-funding-needed.txt"
+  },
+  {
+   "id": "derek-sivers--the-higher-the-price-the-more-they-value-it",
+   "authorId": "derek-sivers",
+   "title": "The higher the price, the more they value it",
+   "date": "2018-02-16",
+   "words": 247,
+   "tags": [
+    "decision-making",
+    "starting",
+    "business",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/morepay",
+   "path": "library/texts/derek-sivers/the-higher-the-price-the-more-they-value-it.txt"
+  },
+  {
+   "id": "derek-sivers--what-are-the-odds-of-that",
+   "authorId": "derek-sivers",
+   "title": "What are the odds of that?",
+   "date": "2017-07-03",
+   "words": 341,
+   "tags": [
+    "decision-making",
+    "saying-no",
+    "life-philosophy",
+    "mindset"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/odds",
+   "path": "library/texts/derek-sivers/what-are-the-odds-of-that.txt"
+  },
+  {
+   "id": "derek-sivers--why-experts-are-annoying",
+   "authorId": "derek-sivers",
+   "title": "Why experts are annoying",
+   "date": "2019-10-27",
+   "words": 228,
+   "tags": [
+    "decision-making",
+    "focus",
+    "business",
+    "enough"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/exan",
+   "path": "library/texts/derek-sivers/why-experts-are-annoying.txt"
+  },
+  {
+   "id": "derek-sivers--writing-daily-but-posting-when-ready",
+   "authorId": "derek-sivers",
+   "title": "Writing daily, but posting when ready",
+   "date": "2019-11-01",
+   "words": 453,
+   "tags": [
+    "decision-making",
+    "starting",
+    "focus",
+    "happiness"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/nod",
+   "path": "library/texts/derek-sivers/writing-daily-but-posting-when-ready.txt"
+  },
+  {
+   "id": "derek-sivers--you-have-enough",
+   "authorId": "derek-sivers",
+   "title": "You have enough.",
+   "date": "2009-06-05",
+   "words": 150,
+   "tags": [
+    "decision-making",
+    "happiness",
+    "enough",
+    "saying-no"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/enough",
+   "path": "library/texts/derek-sivers/you-have-enough.txt"
+  },
+  {
+   "id": "derek-sivers--the-best-book-ever-written",
+   "authorId": "derek-sivers",
+   "title": "the best book ever written",
+   "date": "2024-04-12",
+   "words": 223,
+   "tags": [
+    "decision-making",
+    "focus",
+    "saying-no",
+    "life-philosophy"
+   ],
+   "src": "bundled",
+   "url": "https://sivers.org/htl00",
+   "path": "library/texts/derek-sivers/the-best-book-ever-written.txt"
+  },
+  {
+   "id": "packy-mccormick--not-boring-by-packy-mccormick",
+   "authorId": "packy-mccormick",
+   "title": "Not Boring by Packy McCormick",
+   "date": "SOURCE_URL: https://www.notboring.co/p/americas-next-250",
+   "words": 3808,
+   "tags": [
+    "technology",
+    "business",
+    "not-boring",
+    "packy-mccormick"
+   ],
+   "src": "link",
+   "url": "https://www.notboring.co/p/americas-next-250"
+  },
+  {
+   "id": "packy-mccormick--not-boring-by-packy-mccormick",
+   "authorId": "packy-mccormick",
+   "title": "Not Boring by Packy McCormick",
+   "date": "SOURCE_URL: https://www.notboring.co/p/excel-never-dies",
+   "words": 6499,
+   "tags": [
+    "technology",
+    "business",
+    "not-boring",
+    "packy-mccormick"
+   ],
+   "src": "link",
+   "url": "https://www.notboring.co/p/excel-never-dies"
+  },
+  {
+   "id": "packy-mccormick--not-boring-by-packy-mccormick",
+   "authorId": "packy-mccormick",
+   "title": "Not Boring by Packy McCormick",
+   "date": "SOURCE_URL: https://www.notboring.co/p/expanding-the-radius-of-daily-life",
+   "words": 11439,
+   "tags": [
+    "technology",
+    "business",
+    "not-boring",
+    "packy-mccormick"
+   ],
+   "src": "link",
+   "url": "https://www.notboring.co/p/expanding-the-radius-of-daily-life"
+  },
+  {
+   "id": "packy-mccormick--not-boring-by-packy-mccormick",
+   "authorId": "packy-mccormick",
+   "title": "Not Boring by Packy McCormick",
+   "date": "SOURCE_URL: https://www.notboring.co/p/westmag",
+   "words": 11754,
+   "tags": [
+    "technology",
+    "business",
+    "not-boring",
+    "packy-mccormick"
+   ],
+   "src": "link",
+   "url": "https://www.notboring.co/p/westmag"
+  },
+  {
+   "id": "charlie-munger--the-psychology-of-human-misjudgment",
+   "authorId": "charlie-munger",
+   "title": "The Psychology of Human Misjudgment",
+   "date": "2005-06-01",
+   "words": 24615,
+   "tags": [
+    "psychology",
+    "cognitive biases",
+    "misjudgment",
+    "human behavior"
+   ],
+   "src": "link",
+   "url": "https://fs.blog/great-talks/psychology-human-misjudgment/"
+  },
+  {
+   "id": "charlie-munger--charlie-munger-adding-mental-tools-to-your-toolbox",
+   "authorId": "charlie-munger",
+   "title": "Charlie Munger: Adding Mental Tools to Your Toolbox",
+   "date": "2018-01-01",
+   "words": 1166,
+   "tags": [
+    "mental models",
+    "decision-making",
+    "learning",
+    "thinking"
+   ],
+   "src": "link",
+   "url": "https://fs.blog/charlie-munger-mental-toolbox/"
+  },
+  {
+   "id": "charlie-munger--a-lesson-on-elementary-worldly-wisdom-usc-1994",
+   "authorId": "charlie-munger",
+   "title": "A Lesson on Elementary, Worldly Wisdom (USC 1994)",
+   "date": "1994-02-01",
+   "words": 13397,
+   "tags": [
+    "worldly wisdom",
+    "education",
+    "multidisciplinary",
+    "investing"
+   ],
+   "src": "link",
+   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994"
+  },
+  {
+   "id": "charlie-munger--mental-models-the-best-way-to-make-intelligent-decisions",
+   "authorId": "charlie-munger",
+   "title": "Mental Models: The Best Way to Make Intelligent Decisions",
+   "date": "2023-01-01",
+   "words": 18191,
+   "tags": [
+    "mental models",
+    "decision-making",
+    "thinking",
+    "learning"
+   ],
+   "src": "link",
+   "url": "https://fs.blog/mental-models/"
+  },
+  {
+   "id": "charlie-munger--charlie-munger-on-circle-of-competence",
+   "authorId": "charlie-munger",
+   "title": "Charlie Munger on Circle of Competence",
+   "date": "2023-01-01",
+   "words": 1202,
+   "tags": [
+    "circle of competence",
+    "investing",
+    "decision-making",
+    "expertise"
+   ],
+   "src": "link",
+   "url": "https://fs.blog/circle-of-competence/"
+  },
+  {
+   "id": "charlie-munger--charlie-munger-on-inversion",
+   "authorId": "charlie-munger",
+   "title": "Charlie Munger on Inversion",
+   "date": "2023-01-01",
+   "words": 512,
+   "tags": [
+    "inversion",
+    "decision-making",
+    "Charlie Munger",
+    "problem-solving"
+   ],
+   "src": "link",
+   "url": "https://fs.blog/inversion/"
+  },
+  {
+   "id": "charlie-munger--charlie-munger-on-lollapalooza-effects",
+   "authorId": "charlie-munger",
+   "title": "Charlie Munger on Lollapalooza Effects",
+   "date": "1994-02-01",
+   "words": 733,
+   "tags": [
+    "lollapalooza",
+    "critical mass",
+    "synergies",
+    "Charlie Munger"
+   ],
+   "src": "link",
+   "url": "https://speakola.com/corp/charli-munger-widom-business-usc-1994"
+  },
+  {
+   "id": "naval--understand-how-wealth-is-created",
+   "authorId": "naval-ravikant",
+   "title": "Understand How Wealth Is Created",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/understanding-how-wealth-is-created",
+   "seq": 0
+  },
+  {
+   "id": "naval--find-and-build-specific-knowledge",
+   "authorId": "naval-ravikant",
+   "title": "Find and Build Specific Knowledge",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/find-and-build-specific-knowledge",
+   "seq": 1
+  },
+  {
+   "id": "naval--play-long-term-games-with-long-term-people",
+   "authorId": "naval-ravikant",
+   "title": "Play Long-Term Games with Long-Term People",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/play-long-term-games-with-long-term-people",
+   "seq": 2
+  },
+  {
+   "id": "naval--take-on-accountability",
+   "authorId": "naval-ravikant",
+   "title": "Take on Accountability",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/take-on-accountability",
+   "seq": 3
+  },
+  {
+   "id": "naval--build-or-buy-equity-in-a-business",
+   "authorId": "naval-ravikant",
+   "title": "Build or Buy Equity in a Business",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/build-or-buy-equity-in-a-business",
+   "seq": 4
+  },
+  {
+   "id": "naval--find-a-position-of-leverage",
+   "authorId": "naval-ravikant",
+   "title": "Find a Position of Leverage",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/find-a-position-of-leverage",
+   "seq": 5
+  },
+  {
+   "id": "naval--get-paid-for-your-judgment",
+   "authorId": "naval-ravikant",
+   "title": "Get Paid for Your Judgment",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/get-paid-for-your-judgment",
+   "seq": 6
+  },
+  {
+   "id": "naval--prioritize-and-focus",
+   "authorId": "naval-ravikant",
+   "title": "Prioritize and Focus",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/prioritize-and-focus",
+   "seq": 7
+  },
+  {
+   "id": "naval--find-work-that-feels-like-play",
+   "authorId": "naval-ravikant",
+   "title": "Find Work That Feels Like Play",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/find-work-that-feels-like-play",
+   "seq": 8
+  },
+  {
+   "id": "naval--how-to-get-lucky",
+   "authorId": "naval-ravikant",
+   "title": "How to Get Lucky",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/how-to-get-lucky",
+   "seq": 9
+  },
+  {
+   "id": "naval--be-patient",
+   "authorId": "naval-ravikant",
+   "title": "Be Patient",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Wealth"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/be-patient",
+   "seq": 10
+  },
+  {
+   "id": "naval--judgment",
+   "authorId": "naval-ravikant",
+   "title": "Judgment",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/judgment",
+   "seq": 11
+  },
+  {
+   "id": "naval--how-to-think-clearly",
+   "authorId": "naval-ravikant",
+   "title": "How to Think Clearly",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/how-to-think-clearly",
+   "seq": 12
+  },
+  {
+   "id": "naval--shed-your-identity-to-see-reality",
+   "authorId": "naval-ravikant",
+   "title": "Shed Your Identity to See Reality",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/shed-your-identity-to-see-reality",
+   "seq": 13
+  },
+  {
+   "id": "naval--learn-the-skills-of-decision-making",
+   "authorId": "naval-ravikant",
+   "title": "Learn the Skills of Decision-Making",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/learn-the-skills-of-decision-making",
+   "seq": 14
+  },
+  {
+   "id": "naval--collect-mental-models",
+   "authorId": "naval-ravikant",
+   "title": "Collect Mental Models",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/collect-mental-models",
+   "seq": 15
+  },
+  {
+   "id": "naval--learn-to-love-to-read",
+   "authorId": "naval-ravikant",
+   "title": "Learn to Love to Read",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Judgment"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/learn-to-love-to-read",
+   "seq": 16
+  },
+  {
+   "id": "naval--happiness-is-learned",
+   "authorId": "naval-ravikant",
+   "title": "Happiness Is Learned",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/happiness-is-learned",
+   "seq": 17
+  },
+  {
+   "id": "naval--happiness-is-a-choice",
+   "authorId": "naval-ravikant",
+   "title": "Happiness Is a Choice",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/happiness-is-a-choice",
+   "seq": 18
+  },
+  {
+   "id": "naval--happiness-requires-presence",
+   "authorId": "naval-ravikant",
+   "title": "Happiness Requires Presence",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/happiness-requires-presence",
+   "seq": 19
+  },
+  {
+   "id": "naval--happiness-requires-peace",
+   "authorId": "naval-ravikant",
+   "title": "Happiness Requires Peace",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/happiness-requires-peace",
+   "seq": 20
+  },
+  {
+   "id": "naval--every-desire-is-a-chosen-unhappiness",
+   "authorId": "naval-ravikant",
+   "title": "Every Desire Is a Chosen Unhappiness",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/every-desire-is-a-chosen-unhappiness",
+   "seq": 21
+  },
+  {
+   "id": "naval--success-does-not-earn-happiness",
+   "authorId": "naval-ravikant",
+   "title": "Success Does Not Earn Happiness",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/success-does-not-earn-happiness",
+   "seq": 22
+  },
+  {
+   "id": "naval--envy-is-the-enemy-of-happiness",
+   "authorId": "naval-ravikant",
+   "title": "Envy Is the Enemy of Happiness",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/envy-is-the-enemy-of-happiness",
+   "seq": 23
+  },
+  {
+   "id": "naval--happiness-is-built-by-habits",
+   "authorId": "naval-ravikant",
+   "title": "Happiness Is Built by Habits",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/happiness-is-built-by-habits",
+   "seq": 24
+  },
+  {
+   "id": "naval--find-happiness-in-acceptance",
+   "authorId": "naval-ravikant",
+   "title": "Find Happiness in Acceptance",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Happiness"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/find-happiness-in-acceptance",
+   "seq": 25
+  },
+  {
+   "id": "naval--choosing-to-be-yourself",
+   "authorId": "naval-ravikant",
+   "title": "Choosing to Be Yourself",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/choosing-to-be-yourself",
+   "seq": 26
+  },
+  {
+   "id": "naval--choosing-to-care-for-yourself",
+   "authorId": "naval-ravikant",
+   "title": "Choosing to Care for Yourself",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/choosing-to-care-for-yourself",
+   "seq": 27
+  },
+  {
+   "id": "naval--meditation-mental-strength",
+   "authorId": "naval-ravikant",
+   "title": "Meditation + Mental Strength",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/meditation-mental-strength",
+   "seq": 28
+  },
+  {
+   "id": "naval--choosing-to-build-yourself",
+   "authorId": "naval-ravikant",
+   "title": "Choosing to Build Yourself",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/choosing-to-build-yourself",
+   "seq": 29
+  },
+  {
+   "id": "naval--choosing-to-grow-yourself",
+   "authorId": "naval-ravikant",
+   "title": "Choosing to Grow Yourself",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/choosing-to-grow-yourself",
+   "seq": 30
+  },
+  {
+   "id": "naval--choosing-to-free-yourself",
+   "authorId": "naval-ravikant",
+   "title": "Choosing to Free Yourself",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Self"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/choosing-to-free-yourself",
+   "seq": 31
+  },
+  {
+   "id": "naval--the-meanings-of-life",
+   "authorId": "naval-ravikant",
+   "title": "The Meanings of Life",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Philosophy"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/the-meanings-of-life",
+   "seq": 32
+  },
+  {
+   "id": "naval--live-by-your-values",
+   "authorId": "naval-ravikant",
+   "title": "Live by Your Values",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Philosophy"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/live-by-your-values",
+   "seq": 33
+  },
+  {
+   "id": "naval--rational-buddhism",
+   "authorId": "naval-ravikant",
+   "title": "Rational Buddhism",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Philosophy"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/rational-buddhism",
+   "seq": 34
+  },
+  {
+   "id": "naval--the-present-is-all-we-have",
+   "authorId": "naval-ravikant",
+   "title": "The Present Is All We Have",
+   "date": "2020",
+   "words": null,
+   "tags": [
+    "Philosophy"
+   ],
+   "src": "web",
+   "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/the-present-is-all-we-have",
+   "seq": 35
+  },
+  {
+   "id": "dan-koe--art-of-focus-official-summary",
+   "authorId": "dan-koe",
+   "title": "The Art of Focus — Official Summary (by the author)",
+   "date": "2024",
+   "words": null,
+   "tags": [
+    "focus",
+    "book summary"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/letters/the-art-of-focus-official-book-summary-by-the-author-dan-koe/"
+  },
+  {
+   "id": "marcus-aurelius--meditations",
+   "authorId": "marcus-aurelius",
+   "title": "Meditations",
+   "date": "180",
+   "words": 71957,
+   "tags": [
+    "stoicism",
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/meditations.txt"
+  },
+  {
+   "id": "epictetus--the-enchiridion",
+   "authorId": "epictetus",
+   "title": "The Enchiridion",
+   "date": "125",
+   "words": 11064,
+   "tags": [
+    "stoicism",
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-enchiridion.txt"
+  },
+  {
+   "id": "henry-david-thoreau--walden",
+   "authorId": "henry-david-thoreau",
+   "title": "Walden",
+   "date": "1854",
+   "words": 115813,
+   "tags": [
+    "nature",
+    "simplicity"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/walden.txt"
+  },
+  {
+   "id": "ralph-waldo-emerson--essays-first-series",
+   "authorId": "ralph-waldo-emerson",
+   "title": "Essays — First Series",
+   "date": "1841",
+   "words": 92766,
+   "tags": [
+    "essays",
+    "self-reliance"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/essays-first-series.txt"
+  },
+  {
+   "id": "sun-tzu--the-art-of-war",
+   "authorId": "sun-tzu",
+   "title": "The Art of War",
+   "date": "-500",
+   "words": 55117,
+   "tags": [
+    "strategy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-art-of-war.txt"
+  },
+  {
+   "id": "james-allen--as-a-man-thinketh",
+   "authorId": "james-allen",
+   "title": "As a Man Thinketh",
+   "date": "1903",
+   "words": 7560,
+   "tags": [
+    "mindset"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/as-a-man-thinketh.txt"
+  },
+  {
+   "id": "kahlil-gibran--the-prophet",
+   "authorId": "kahlil-gibran",
+   "title": "The Prophet",
+   "date": "1923",
+   "words": 12581,
+   "tags": [
+    "poetry",
+    "wisdom"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/the-prophet.txt"
+  },
+  {
+   "id": "benjamin-franklin--autobiography-of-benjamin-franklin",
+   "authorId": "benjamin-franklin",
+   "title": "Autobiography of Benjamin Franklin",
+   "date": "1791",
+   "words": 75526,
+   "tags": [
+    "biography"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/autobiography-of-benjamin-franklin.txt"
+  },
+  {
+   "id": "plato--apology-the-trial-of-socrates",
+   "authorId": "plato",
+   "title": "Apology (The Trial of Socrates)",
+   "date": "-399",
+   "words": 16087,
+   "tags": [
+    "philosophy"
+   ],
+   "src": "bundled",
+   "path": "library/texts/classics/apology-the-trial-of-socrates.txt"
+  }
+ ],
+ "collections": [
+  {
+   "id": "phase-1",
+   "title": "Foundation",
+   "phase": 1,
+   "authorIds": [
+    "dan-koe",
+    "shane-parrish",
+    "paul-graham"
+   ]
+  },
+  {
+   "id": "phase-2",
+   "title": "Organization & Leverage",
+   "phase": 2,
+   "authorIds": [
+    "tiago-forte",
+    "cal-newport"
+   ]
+  },
+  {
+   "id": "phase-3",
+   "title": "Deeper Perspectives",
+   "phase": 3,
+   "authorIds": [
+    "morgan-housel",
+    "charlie-munger"
+   ]
+  },
+  {
+   "id": "phase-4",
+   "title": "Creative Expression",
+   "phase": 4,
+   "authorIds": [
+    "david-perell",
+    "derek-sivers"
+   ]
+  },
+  {
+   "id": "phase-5",
+   "title": "Big Picture",
+   "phase": 5,
+   "authorIds": [
+    "packy-mccormick"
+   ]
+  },
+  {
+   "id": "phase-6",
+   "title": "Timeless Classics",
+   "phase": 6,
+   "authorIds": [
+    "marcus-aurelius",
+    "epictetus",
+    "henry-david-thoreau",
+    "ralph-waldo-emerson",
+    "sun-tzu",
+    "james-allen",
+    "kahlil-gibran",
+    "benjamin-franklin",
+    "plato"
+   ]
+  },
+  {
+   "id": "phase-7",
+   "title": "Free Books",
+   "phase": 7,
+   "authorIds": [
+    "naval-ravikant"
+   ]
+  }
+ ]
+}

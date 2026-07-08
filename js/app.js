@@ -17,14 +17,14 @@ import {
 const $ = (s, r = document) => r.querySelector(s);
 const D = {
   splash: $('#splash'), onboarding: $('#onboarding'), app: $('#app'),
-  home: $('#view-home'), stats: $('#view-stats'), profile: $('#view-profile'),
+  home: $('#view-home'), discover: $('#view-discover'), stats: $('#view-stats'), profile: $('#view-profile'),
   tabbar: $('#tabbar'), reader: $('#reader'), vaultScreen: $('#vault-screen'), textview: $('#textview'),
   fileInput: $('#file-input'), mdInput: $('#md-multi-input'), dirInput: $('#dir-input'),
 };
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.13.0'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.14.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -337,11 +337,12 @@ function enterApp() {
 }
 
 function showView(name) {
-  for (const v of ['home', 'stats', 'profile']) D[v].classList.toggle('hidden', v !== name);
+  for (const v of ['home', 'discover', 'stats', 'profile']) D[v].classList.toggle('hidden', v !== name);
   for (const t of D.tabbar.querySelectorAll('.tab'))
     t.classList.toggle('active', t.dataset.view === name);
   window.scrollTo(0, 0);
   if (name === 'home') renderHome();
+  if (name === 'discover') renderDiscover();
   if (name === 'stats') renderStats();
   if (name === 'profile') renderProfile();
 }
@@ -547,7 +548,7 @@ function finishOnboarding() {
    HOME / LIBRARY
    ============================================================ */
 const greeting = () => { const h = new Date().getHours(); return h < 5 ? 'Late night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
-const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', pdf:'📕', url:'🔗', sample:'✨', vault:'📁' }[t] || '📄');
+const coverEmoji = (t) => ({ text:'📝', md:'🗒️', epub:'📚', pdf:'📕', url:'🔗', sample:'✨', vault:'📁', library:'🏛️' }[t] || '📄');
 
 // ---- library state + helpers ----
 let librarySearch = '';
@@ -562,7 +563,7 @@ function tileColors(d) {
   let h = 0; const s = d.title || ''; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return TILE_COLORS[h % TILE_COLORS.length];
 }
-const docCategory = (d) => d.type === 'vault' ? 'vault' : (d.type === 'epub' || d.type === 'pdf') ? 'book' : d.type === 'url' ? 'article' : 'note';
+const docCategory = (d) => d.type === 'vault' ? 'vault' : (d.type === 'epub' || d.type === 'pdf' || d.type === 'library') ? 'book' : d.type === 'url' ? 'article' : 'note';
 const docProgress = (d) => d.type === 'vault' ? vaultProgress(d).pct / 100 : (d.progress || 0);
 // A text counts as "read" permanently once finished — the flag survives a later re-read
 // (progress may drop while re-reading, but the ✓ badge never disappears). Old docs with
@@ -715,9 +716,12 @@ async function renderHome() {
     let list = sortDocs(docs.filter(d => matchesFilter(d, libraryFilter) && matchesSearch(d, librarySearch)), state.settings.librarySort);
     wrap.classList.toggle('grid', state.settings.view === 'grid' && list.length > 0);
     if (!list.length) {
-      wrap.append(el('div', { class:'empty' }, el('div', { class:'big' }, docs.length ? '🔍' : '📚'),
+      const empty = el('div', { class:'empty' }, el('div', { class:'big' }, docs.length ? '🔍' : '📚'),
         el('div', {}, docs.length ? 'No matches' : 'Your library is empty'),
-        el('div', { class:'faint mt8' }, docs.length ? 'Try another filter or search.' : 'Import something, or try a sample below.')));
+        el('div', { class:'faint mt8' }, docs.length ? 'Try another filter or search.' : 'Import something, or try a sample below.'));
+      if (!docs.length) empty.append(el('button', { class:'btn sm', style:'margin:14px auto 0',
+        onclick:() => { haptic(6); showView('discover'); } }, 'Browse the free library'));
+      wrap.append(empty);
     } else for (const d of list) wrap.append(docCard(d, state.settings.view));
   }
 
@@ -738,6 +742,7 @@ function importSheet() {
   const opt = (icon, t, s, fn) => el('button', { class:'imp-opt', onclick:() => { haptic(6); closeSheet(); fn(); } },
     el('span', { class:'imp-ic', html: icon }), el('div', { class:'grow' }, el('div', { class:'imp-t' }, t), el('div', { class:'imp-s' }, s)),
     el('span', { class:'imp-go', html: ICON.next }));
+  body.append(opt(ICON.flame, 'Discover library', 'Curated authors & timeless classics', () => showView('discover')));
   body.append(opt(ICON.link, 'Read a copied link', 'Copy in Safari, then tap here', pasteLinkImport));
   body.append(opt(ICON.paste, 'Paste text', 'Articles, emails, notes', pasteSheet));
   body.append(opt(ICON.search, 'Type a web link', 'Enter or paste a URL', urlSheet));
@@ -1248,6 +1253,184 @@ async function parseEpub(file) {
    READER  (RSVP playback)
    ============================================================ */
 let R = null;
+
+/* ============================================================
+   DISCOVER — curated library (catalog.json + bundled/web/link texts)
+   ============================================================ */
+let CATALOG = null, discoverAuthorId = null, discoverSearch = '';
+
+async function loadCatalog() {
+  if (CATALOG) return CATALOG;
+  try {
+    const r = await fetch('library/catalog.json', { cache: 'no-cache' });
+    if (r.ok) { CATALOG = await r.json(); try { localStorage.setItem('readmaxx.catalog', JSON.stringify(CATALOG)); } catch {} return CATALOG; }
+  } catch {}
+  try { CATALOG = JSON.parse(localStorage.getItem('readmaxx.catalog')); } catch {} // offline fallback
+  return CATALOG;
+}
+// libraryId -> docId for ✓/dedupe states
+async function libraryDocIndex() {
+  const idx = {};
+  for (const d of await allDocs()) if (d.libraryId) idx[d.libraryId] = d.id;
+  return idx;
+}
+const authorInitials = (name) => name.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+
+async function renderDiscover() {
+  const v = D.discover; clear(v);
+  v.append(el('div', { class:'home-head' }, el('div', {},
+    el('div', { class:'home-hi' }, 'Curated for you'),
+    el('div', { class:'home-name' }, 'Discover'))));
+  const cat = await loadCatalog();
+  if (!D.discover || D.discover.classList.contains('hidden')) return;
+  if (!cat) {
+    v.append(el('div', { class:'card', style:'padding:22px;text-align:center;color:var(--faint)' },
+      'Couldn’t load the catalog. Check your connection and try again.'));
+    return;
+  }
+  const owned = await libraryDocIndex();
+
+  // search
+  const search = el('div', { class:'search' });
+  search.append(el('span', { class:'ic', html: ICON.search }));
+  const si = el('input', { class:'search-in', placeholder:'Search authors, titles, topics', value: discoverSearch, inputmode:'search' });
+  si.addEventListener('input', () => { discoverSearch = si.value; renderDiscoverBody(body, cat, owned); });
+  search.append(si);
+  v.append(search);
+
+  const body = el('div', {});
+  v.append(body);
+  renderDiscoverBody(body, cat, owned);
+}
+
+function renderDiscoverBody(box, cat, owned) {
+  clear(box);
+  const q = discoverSearch.trim().toLowerCase();
+  if (q) { // flat search results across the whole catalog
+    const hits = cat.texts.filter(t =>
+      t.title.toLowerCase().includes(q) ||
+      (cat.authors.find(a => a.id === t.authorId)?.name || '').toLowerCase().includes(q) ||
+      (t.tags || []).some(tag => tag.toLowerCase().includes(q))).slice(0, 60);
+    if (!hits.length) { box.append(el('div', { class:'card', style:'padding:18px;text-align:center;color:var(--faint)' }, 'No matches')); return; }
+    const card = el('div', { class:'card', style:'padding:4px 14px' });
+    for (const t of hits) card.append(discoverTextRow(t, cat, owned));
+    box.append(card);
+    return;
+  }
+  // reading paths
+  box.append(el('div', { class:'sec-title' }, el('h3', {}, 'Reading paths')));
+  const paths = el('div', { class:'cont-row' });
+  for (const c of cat.collections) {
+    const authors = c.authorIds.map(id => cat.authors.find(a => a.id === id)).filter(Boolean);
+    const nTexts = authors.reduce((s, a) => s + a.texts, 0);
+    const pc = el('button', { class:'path-card' },
+      el('div', { class:'pc-n' }, String(c.phase)),
+      el('div', { class:'pc-t' }, c.title),
+      el('div', { class:'pc-d' }, `${authors.length} author${authors.length !== 1 ? 's' : ''} · ${nTexts} texts`));
+    pc.addEventListener('click', () => { haptic(6); document.getElementById('phase-' + c.phase)?.scrollIntoView({ behavior:'smooth', block:'start' }); });
+    paths.append(pc);
+  }
+  box.append(paths);
+  // author shelves grouped by phase
+  for (const c of cat.collections) {
+    box.append(el('div', { class:'sec-title', id:'phase-' + c.phase }, el('h3', {}, c.title)));
+    const card = el('div', { class:'card', style:'padding:2px 14px' });
+    for (const id of c.authorIds) {
+      const a = cat.authors.find(x => x.id === id); if (!a) continue;
+      const row = el('button', { class:'auth-row' });
+      row.append(el('span', { class:'auth-tile' }, authorInitials(a.name)));
+      row.append(el('div', { class:'auth-mid' },
+        el('div', { class:'auth-name' }, a.name),
+        el('div', { class:'auth-tag' }, a.tagline || `${a.texts} texts`)));
+      row.append(el('span', { class:'auth-n' }, String(a.texts)), el('span', { class:'go', html: ICON.next }));
+      row.addEventListener('click', () => { haptic(6); discoverAuthorId = a.id; renderAuthorPage(a.id); });
+      card.append(row);
+    }
+    box.append(card);
+  }
+  box.append(el('div', { class:'disc-note' },
+    'Classics are bundled with the app. Living authors’ essays download from their original sites — you fetch them yourself, like a browser.'));
+}
+
+async function renderAuthorPage(authorId) {
+  const cat = await loadCatalog(); if (!cat) return;
+  const a = cat.authors.find(x => x.id === authorId); if (!a) return;
+  const owned = await libraryDocIndex();
+  const v = D.discover; clear(v);
+  const head = el('div', { class:'home-head' });
+  head.append(el('button', { class:'icon-btn', html: ICON.back, 'aria-label':'Back',
+    onclick:() => { discoverAuthorId = null; renderDiscover(); } }));
+  head.append(el('div', { class:'home-name', style:'font-size:22px' }, a.name));
+  v.append(head);
+  if (a.bio) v.append(el('div', { class:'auth-bio' }, a.bio));
+
+  const texts = cat.texts.filter(t => t.authorId === authorId);
+  const dl = texts.filter(t => t.src !== 'link');
+  if (dl.length > 1) {
+    const allBtn = el('button', { class:'btn ghost sm', style:'margin:2px 0 10px' }, `Add all ${dl.length}`);
+    allBtn.addEventListener('click', async () => {
+      allBtn.disabled = true;
+      let n = 0;
+      for (const t of dl) {
+        if (owned[t.id]) { n++; continue; }
+        allBtn.textContent = `Adding ${n + 1}/${dl.length}…`;
+        try { await downloadLibText(t, a, null, true); n++; } catch {}
+      }
+      allBtn.textContent = 'All added ✓';
+      renderAuthorPage(authorId);
+    });
+    v.append(allBtn);
+  }
+  const card = el('div', { class:'card', style:'padding:4px 14px' });
+  for (const t of texts) card.append(discoverTextRow(t, cat, owned, a));
+  v.append(card);
+}
+
+function discoverTextRow(t, cat, owned, authorOverride) {
+  const a = authorOverride || cat.authors.find(x => x.id === t.authorId);
+  const row = el('div', { class:'lib-row' });
+  const mid = el('div', { class:'lr-mid' });
+  mid.append(el('div', { class:'lr-t' }, t.title));
+  const bits = [];
+  if (!authorOverride && a) bits.push(a.name);
+  if (t.date) bits.push(String(t.date).slice(0, 4));
+  if (t.words) bits.push(`${fmt(t.words)} words`);
+  if (t.tags?.length) bits.push(t.tags[0]);
+  mid.append(el('div', { class:'lr-m' }, bits.join(' · ')));
+  row.append(mid);
+  const btn = el('button', { class:'lr-btn' });
+  const ownedId = owned[t.id];
+  if (ownedId) { btn.classList.add('owned'); btn.innerHTML = ICON.check; btn.onclick = () => openDoc(ownedId); }
+  else if (t.src === 'link') { btn.innerHTML = ICON.link; btn.title = 'Opens the original site'; btn.onclick = () => { haptic(6); window.open(t.url, '_blank'); }; }
+  else { btn.innerHTML = '<span class="lr-get">GET</span>'; btn.onclick = () => downloadLibText(t, a, btn); }
+  row.append(btn);
+  return row;
+}
+
+async function downloadLibText(entry, author, btn, quiet) {
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="lr-spin"></span>'; }
+  try {
+    let doc;
+    if (entry.src === 'bundled') {
+      const r = await fetch(entry.path);
+      if (!r.ok) throw new Error('missing text');
+      doc = makeDoc({ title: entry.title, type:'library', text: await r.text(), author: author?.name });
+    } else { // web — user-initiated on-device fetch from the original source
+      const text = await fetchArticle(entry.url);
+      if (!text || text.length < 200) throw new Error('fetch failed');
+      doc = makeDoc({ title: entry.title, type:'library', text, author: author?.name, markdown: true });
+    }
+    doc.libraryId = entry.id;
+    const saved = await saveDoc(doc);
+    if (btn) { btn.disabled = false; btn.classList.add('owned'); btn.innerHTML = ICON.check; btn.onclick = () => openDoc(saved.id); }
+    if (!quiet) toast(`Added “${entry.title.slice(0, 34)}${entry.title.length > 34 ? '…' : ''}”`);
+    return saved;
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span class="lr-get">GET</span>'; }
+    if (!quiet) toast(navigator.onLine ? 'Couldn’t fetch that text' : 'You’re offline — try again later', { err:true });
+    throw e;
+  }
+}
 
 async function openDoc(id) {
   const doc = await getDoc(id);

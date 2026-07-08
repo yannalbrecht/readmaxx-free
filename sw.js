@@ -1,7 +1,7 @@
 // ReadMaxx Free service worker — offline-first PWA shell
 // Bump BUILD on every deploy so clients detect a waiting update and can apply it
 // from the in-app "Update" button (without reinstalling — data is untouched).
-const BUILD = '1.13.0';
+const BUILD = '1.14.0';
 const VERSION = 'readmaxx-' + BUILD;
 const CORE = [
   './',
@@ -60,7 +60,10 @@ self.addEventListener('fetch', (e) => {
   // App code (HTML / JS / CSS / manifest) → NETWORK-FIRST so new deploys show up
   // immediately when online; fall back to cache offline. Without this, cache-first
   // would pin users to a stale build until the SW version changed.
+  // The Discover catalog is also network-first (it updates between app releases);
+  // the library TEXTS fall through to cache-first below — they're immutable.
   const isCode = req.mode === 'navigate' ||
+    url.pathname.endsWith('/library/catalog.json') ||
     /\.(?:js|mjs|css|webmanifest)$/.test(url.pathname);
   if (isCode) {
     e.respondWith(
