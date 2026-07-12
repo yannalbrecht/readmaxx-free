@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.15.2'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.15.3'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -925,22 +925,28 @@ async function fetchArticle(url, timeoutMs = 15000) {
   // Abort a hung proxy so the button can't stick forever. Books/PDFs need a longer
   // budget (a 130-page PDF can take ~a minute for the reader proxy to parse).
   const timed = () => { const c = new AbortController(); setTimeout(() => c.abort(), timeoutMs); return c.signal; };
-  // Primary: r.jina.ai returns clean markdown of the page, CORS-enabled.
-  try {
-    const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' }, signal: timed() });
-    if (r.ok) {
-      let t = await r.text();
-      if (t && t.length > 80) {
-        // Strip jina's "Title: … Markdown Content:" preamble; keep the title as an H1
-        // — unless it's just a filename (e.g. a PDF), in which case the body's own
-        // first heading is the real title.
-        const m = t.match(/^Title:\s*(.+)$/m);
-        t = t.replace(/^[\s\S]*?Markdown Content:\s*/, '');
-        if (m && !/\.[a-z0-9]{2,4}$/i.test(m[1].trim())) t = `# ${m[1].trim()}\n\n${t}`;
-        return t.trim();
+  // Primary: r.jina.ai returns clean markdown of the page, CORS-enabled. Retry a few
+  // times — the anonymous tier occasionally rate-limits or hiccups, especially on
+  // mobile with a large PDF.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' }, signal: timed() });
+      if (r.ok) {
+        let t = await r.text();
+        if (t && t.length > 80) {
+          // Strip jina's "Title: … Markdown Content:" preamble; keep the title as an H1
+          // — unless it's just a filename (e.g. a PDF), in which case the body's own
+          // first heading is the real title.
+          const m = t.match(/^Title:\s*(.+)$/m);
+          t = t.replace(/^[\s\S]*?Markdown Content:\s*/, '');
+          if (m && !/\.[a-z0-9]{2,4}$/i.test(m[1].trim())) t = `# ${m[1].trim()}\n\n${t}`;
+          return t.trim();
+        }
       }
-    }
-  } catch {}
+      if (r.status === 429 || r.status >= 500) await new Promise(res => setTimeout(res, 1500 * (attempt + 1))); // back off, then retry
+      else break;
+    } catch { /* timeout/network — retry */ }
+  }
   // Fallback: allorigins raw HTML → strip to text.
   const r2 = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), { signal: timed() });
   const html = await r2.text();
