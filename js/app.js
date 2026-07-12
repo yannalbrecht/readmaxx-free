@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.15.1'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.15.2'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -921,19 +921,22 @@ function urlSheet() {
   setTimeout(() => inp.focus(), 250);
 }
 
-async function fetchArticle(url) {
-  // Abort a hung proxy after 15s so the "Fetch article" button can't stick forever.
-  const timed = (ms = 15000) => { const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal; };
+async function fetchArticle(url, timeoutMs = 15000) {
+  // Abort a hung proxy so the button can't stick forever. Books/PDFs need a longer
+  // budget (a 130-page PDF can take ~a minute for the reader proxy to parse).
+  const timed = () => { const c = new AbortController(); setTimeout(() => c.abort(), timeoutMs); return c.signal; };
   // Primary: r.jina.ai returns clean markdown of the page, CORS-enabled.
   try {
     const r = await fetch('https://r.jina.ai/' + url, { headers: { 'X-Return-Format': 'markdown' }, signal: timed() });
     if (r.ok) {
       let t = await r.text();
       if (t && t.length > 80) {
-        // Strip jina's "Title: … Markdown Content:" preamble; keep the title as an H1.
+        // Strip jina's "Title: … Markdown Content:" preamble; keep the title as an H1
+        // — unless it's just a filename (e.g. a PDF), in which case the body's own
+        // first heading is the real title.
         const m = t.match(/^Title:\s*(.+)$/m);
         t = t.replace(/^[\s\S]*?Markdown Content:\s*/, '');
-        if (m) t = `# ${m[1].trim()}\n\n${t}`;
+        if (m && !/\.[a-z0-9]{2,4}$/i.test(m[1].trim())) t = `# ${m[1].trim()}\n\n${t}`;
         return t.trim();
       }
     }
@@ -1477,7 +1480,10 @@ async function downloadLibText(entry, author, btn, quiet) {
       if (!r.ok) throw new Error('missing text');
       doc = makeDoc({ title: entry.title, type:'library', text: await r.text(), author: author?.name });
     } else { // web — user-initiated on-device fetch from the original source
-      const text = await fetchArticle(entry.url);
+      // Books/PDFs can be large and slow to parse; give a big fetch a heads-up + budget.
+      const big = !entry.words || entry.words > 6000;
+      if (!quiet && big) toast('Fetching the book… this can take a minute', { ms: 4000 });
+      const text = await fetchArticle(entry.url, big ? 120000 : 20000);
       if (!text || text.length < 200) throw new Error('fetch failed');
       doc = makeDoc({ title: entry.title, type:'library', text, author: author?.name, markdown: true });
     }

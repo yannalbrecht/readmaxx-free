@@ -214,7 +214,17 @@ if (FETCH_NAVAL) {
   }
 }
 
-/* Dan Koe's book: no legal free full text (official site sells it) — include the
+/* Dan Koe's FREE book: Purpose & Profit — he gives away the PDF himself
+   (thedankoe.com, "read free or paid"). Web-fetch on device (the PDF is all-rights-
+   reserved, so we don't redistribute — the user fetches Dan's own free copy). */
+catalog.texts.push({
+  id: 'dan-koe--purpose-and-profit', authorId: 'dan-koe',
+  title: 'Purpose & Profit — Essays Volume 1', date: '2025',
+  words: 27945, tags: ['purpose', 'business', 'essays'], src: 'web',
+  url: 'https://thedankoe.com/wp-content/uploads/2025/03/Purpose-Profit-2.pdf',
+  desc: 'Dan Koe’s free book (he gives the PDF away): essays on building your life’s work by merging purpose and profit — purpose is built, not found. ~134 pages.',
+});
+/* The Art of Focus has no legal free full text (official site sells it) — include the
    author's own free summary letter instead. */
 catalog.texts.push({
   id: 'dan-koe--art-of-focus-official-summary', authorId: 'dan-koe',
@@ -222,7 +232,7 @@ catalog.texts.push({
   words: null, tags: ['focus', 'book summary'], src: 'web',
   url: 'https://thedankoe.com/letters/the-art-of-focus-official-book-summary-by-the-author-dan-koe/',
 });
-const koe = catalog.authors.find(a => a.id === 'dan-koe'); if (koe) koe.texts++;
+const koe = catalog.authors.find(a => a.id === 'dan-koe'); if (koe) koe.texts += 2;
 
 /* ---------- 3. Public-domain classics (bundled) ---------- */
 // Verified via Gutendex/PG metadata (see docs/library-sourcing-roadmap.md).

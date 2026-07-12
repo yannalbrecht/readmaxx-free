@@ -9,7 +9,7 @@
    "bio": "Dan Koe is a writer, creator, and entrepreneur whose essays blend philosophy, psychology, productivity, and modern internet business into a dense, high-signal package. His work centers on the idea that anyone can build a meaningful, independent life — a \"one-person business\" — by combining deep thinking, writing, and leverage in the digital age. His writing style is direct, provocative, and deeply researched, pulling from sources as varied as Alfred Adler, Mihaly Csikszentmihalyi, cybernetics, ego development theory, and stoicism.",
    "phase": 1,
    "order": 0,
-   "texts": 20
+   "texts": 21
   },
   {
    "id": "shane-parrish",
@@ -3769,6 +3769,21 @@
    "src": "web",
    "url": "https://www.navalmanack.com/almanack-of-naval-ravikant/the-present-is-all-we-have",
    "seq": 35
+  },
+  {
+   "id": "dan-koe--purpose-and-profit",
+   "authorId": "dan-koe",
+   "title": "Purpose & Profit — Essays Volume 1",
+   "date": "2025",
+   "words": 27945,
+   "tags": [
+    "purpose",
+    "business",
+    "essays"
+   ],
+   "src": "web",
+   "url": "https://thedankoe.com/wp-content/uploads/2025/03/Purpose-Profit-2.pdf",
+   "desc": "Dan Koe’s free book (he gives the PDF away): essays on building your life’s work by merging purpose and profit — purpose is built, not found. ~134 pages."
   },
   {
    "id": "dan-koe--art-of-focus-official-summary",
