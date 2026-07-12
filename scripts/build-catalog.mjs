@@ -382,12 +382,9 @@ const OWNED = [
     desc:'On changing your life by breaking the cycle of repetition in the familiar and the known.' },
   { title:'The Way of the Superior Man', author:'David Deida', year:'1997', tags:['masculine', 'growth'],
     desc:'A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.' },
-  // Dan Koe's book has NO legal free full text — only a free summary (already listed
-  // under his essays). The full book is paid, so it lives here as an owned card. It
-  // attaches to the existing dan-koe author (stays in Foundation).
-  { title:'The Art of Focus', author:'Dan Koe', year:'2024', tags:['focus', 'meaning'],
-    desc:'Dan Koe’s book on finding meaning, reinventing yourself and creating your ideal future. The full book is paid; his free official summary is listed under his essays.',
-    url:'https://theartoffocusbook.com' },
+  // NOTE: Dan Koe's *The Art of Focus* (paid) is deliberately NOT here — it was
+  // confusing next to his FREE book "Purpose & Profit" (which downloads via GET).
+  // His free Art-of-Focus SUMMARY stays listed under his essays.
 ];
 for (const b of OWNED) {
   const aid = slug(b.author);
