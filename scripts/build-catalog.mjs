@@ -372,15 +372,21 @@ const OWNED = [
     desc:'On changing your life by breaking the cycle of repetition in the familiar and the known.' },
   { title:'The Way of the Superior Man', author:'David Deida', year:'1997', tags:['masculine', 'growth'],
     desc:'A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.' },
+  // Dan Koe's book has NO legal free full text — only a free summary (already listed
+  // under his essays). The full book is paid, so it lives here as an owned card. It
+  // attaches to the existing dan-koe author (stays in Foundation).
+  { title:'The Art of Focus', author:'Dan Koe', year:'2024', tags:['focus', 'meaning'],
+    desc:'Dan Koe’s book on finding meaning, reinventing yourself and creating your ideal future. The full book is paid; his free official summary is listed under his essays.',
+    url:'https://theartoffocusbook.com' },
 ];
 for (const b of OWNED) {
   const aid = slug(b.author);
   if (!catalog.authors.find(a => a.id === aid))
     catalog.authors.push({ id: aid, name: b.author, phase: 8, order: 200 + OWNED.indexOf(b), texts: 0, tagline: b.desc, bio: '' });
-  const a = catalog.authors.find(x => x.id === aid); a.texts++; if (a.phase > 8) a.phase = 8;
+  const a = catalog.authors.find(x => x.id === aid); a.texts++;
   catalog.texts.push({ id: `owned--${slug(b.title)}`, authorId: aid, title: b.title, date: b.year,
     words: null, tags: b.tags, desc: b.desc, src: 'owned',
-    url: `https://www.google.com/search?q=${encodeURIComponent(b.title + ' ' + b.author + ' ebook')}` });
+    url: b.url || `https://www.google.com/search?q=${encodeURIComponent(b.title + ' ' + b.author + ' ebook')}` });
 }
 
 /* ---------- author images (Wikipedia thumbnails; --fetch-images) ---------- */

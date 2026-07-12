@@ -9,7 +9,7 @@
    "bio": "Dan Koe is a writer, creator, and entrepreneur whose essays blend philosophy, psychology, productivity, and modern internet business into a dense, high-signal package. His work centers on the idea that anyone can build a meaningful, independent life — a \"one-person business\" — by combining deep thinking, writing, and leverage in the digital age. His writing style is direct, provocative, and deeply researched, pulling from sources as varied as Alfred Adler, Mihaly Csikszentmihalyi, cybernetics, ego development theory, and stoicism.",
    "phase": 1,
    "order": 0,
-   "texts": 19
+   "texts": 20
   },
   {
    "id": "shane-parrish",
@@ -4376,6 +4376,20 @@
    "desc": "A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.",
    "src": "owned",
    "url": "https://www.google.com/search?q=The%20Way%20of%20the%20Superior%20Man%20David%20Deida%20ebook"
+  },
+  {
+   "id": "owned--the-art-of-focus",
+   "authorId": "dan-koe",
+   "title": "The Art of Focus",
+   "date": "2024",
+   "words": null,
+   "tags": [
+    "focus",
+    "meaning"
+   ],
+   "desc": "Dan Koe’s book on finding meaning, reinventing yourself and creating your ideal future. The full book is paid; his free official summary is listed under his essays.",
+   "src": "owned",
+   "url": "https://theartoffocusbook.com"
   }
  ],
  "collections": [
