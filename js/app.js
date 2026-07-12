@@ -24,7 +24,7 @@ const D = {
 
 const haptic = (ms) => { if (state.settings.haptics) buzz(ms); };
 const baselineWPM = 200; // "average reader" used to compute time saved
-const APP_VERSION = '1.14.2'; // keep in sync with BUILD in sw.js
+const APP_VERSION = '1.15.0'; // keep in sync with BUILD in sw.js
 let updateReady = false;
 
 /* ============================================================
@@ -1374,7 +1374,7 @@ async function renderAuthorPage(authorId) {
   v.append(hero);
 
   const texts = cat.texts.filter(t => t.authorId === authorId);
-  const dl = texts.filter(t => t.src !== 'link');
+  const dl = texts.filter(t => t.src !== 'link' && t.src !== 'owned');
   if (dl.length > 1) {
     const allBtn = el('button', { class:'btn ghost sm', style:'margin:2px 0 10px' }, `Add all ${dl.length}`);
     allBtn.addEventListener('click', async () => {
@@ -1414,6 +1414,7 @@ function discoverTextRow(t, cat, owned, authorOverride) {
   const btn = el('button', { class:'lr-btn' });
   const ownedId = owned[t.id];
   if (ownedId) { btn.classList.add('owned'); btn.innerHTML = ICON.check; btn.title = 'In your library — tap to open'; btn.onclick = () => openDoc(ownedId); }
+  else if (t.src === 'owned') { btn.innerHTML = ICON.plus; btn.title = 'You own this — import your copy'; btn.onclick = () => textInfoSheet(t, a); }
   else { btn.innerHTML = '<span class="lr-get">GET</span>'; btn.onclick = () => downloadLibText(t, a, btn); } // link texts are downloadable too
   row.append(btn);
   return row;
@@ -1440,16 +1441,18 @@ async function textInfoSheet(t, a) {
   if (t.tags?.length) { const tg = el('div', { class:'ti-tags' }); t.tags.forEach(x => tg.append(el('span', { class:'topic-tag' }, x))); body.append(tg); }
   const srcNote = { bundled:'Included with the app — instant and offline.',
     web:'Downloads from the original source to your device.',
-    link:'Hosted on the author’s own site — best read there, but you can still add it.' }[t.src];
+    link:'Hosted on the author’s own site — best read there, but you can still add it.',
+    owned:'This book is in copyright — we can’t host it. Import your own copy to read it here, or find a legitimate ebook.' }[t.src];
   if (srcNote) body.append(el('div', { class:'ti-src' }, srcNote));
 
   const acts = el('div', { class:'stack', style:'margin-top:8px' });
   if (ownedId) acts.append(el('button', { class:'btn', onclick:() => { closeSheet(); openDoc(ownedId); } }, 'Open'));
+  else if (t.src === 'owned') acts.append(el('button', { class:'btn', onclick:() => { closeSheet(); importSheet(); } }, 'Import my copy'));
   else acts.append(el('button', { class:'btn', onclick:() => { closeSheet(); downloadLibText(t, a, null, false).then(refreshDiscover).catch(() => {}); } }, 'Add to library'));
   const row2 = el('div', { class:'row', style:'gap:10px' });
-  row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => copyLibText(t) }, 'Copy text'));
-  if (t.url) row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => window.open(t.url, '_blank') }, 'Open original'));
-  acts.append(row2);
+  if (t.src !== 'owned') row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => copyLibText(t) }, 'Copy text'));
+  if (t.url) row2.append(el('button', { class:'btn ghost sm', style:'flex:1', onclick:() => window.open(t.url, '_blank') }, t.src === 'owned' ? 'Find the ebook' : 'Open original'));
+  if (row2.childElementCount) acts.append(row2);
   body.append(acts);
   sheet({ title:'', body });
 }

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-07-08",
+ "updated": "2026-07-12",
  "authors": [
   {
    "id": "dan-koe",
@@ -343,10 +343,20 @@
    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Kahlil_Gibran_1913.jpg/250px-Kahlil_Gibran_1913.jpg"
   },
   {
+   "id": "three-initiates",
+   "name": "Three Initiates",
+   "phase": 6,
+   "order": 131,
+   "texts": 1,
+   "tagline": "An accessible introduction to Hermetic philosophy and its seven principles — mentalism, correspondence, vibration, polarity, rhythm, cause & effect, and gender.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Kybalion_1908.jpg/250px-Kybalion_1908.jpg"
+  },
+  {
    "id": "niccol-machiavelli",
    "name": "Niccolò Machiavelli",
    "phase": 6,
-   "order": 131,
+   "order": 132,
    "texts": 1,
    "tagline": "The unflinching handbook on gaining and holding power — realism over idealism.",
    "bio": "",
@@ -356,11 +366,67 @@
    "id": "henry-david-thoreau",
    "name": "Henry David Thoreau",
    "phase": 6,
-   "order": 132,
+   "order": 133,
    "texts": 2,
    "tagline": "Two years alone at Walden Pond — a manifesto for simple, deliberate, self-reliant living.",
    "bio": "",
    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Benjamin_D._Maxham_-_Henry_David_Thoreau_-_Restored.jpg/250px-Benjamin_D._Maxham_-_Henry_David_Thoreau_-_Restored.jpg"
+  },
+  {
+   "id": "steven-kotler",
+   "name": "Steven Kotler",
+   "phase": 8,
+   "order": 200,
+   "texts": 1,
+   "tagline": "A practical, science-backed guide to achieving the impossible — the biology of peak performance and flow.",
+   "bio": ""
+  },
+  {
+   "id": "mihaly-csikszentmihalyi",
+   "name": "Mihaly Csikszentmihalyi",
+   "phase": 8,
+   "order": 201,
+   "texts": 1,
+   "tagline": "The classic study of optimal experience — how to sustain deep enjoyment and engagement in your life.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Mihaly_Csikszentmihalyi.jpg/250px-Mihaly_Csikszentmihalyi.jpg"
+  },
+  {
+   "id": "ken-wilber",
+   "name": "Ken Wilber",
+   "phase": 8,
+   "order": 202,
+   "texts": 1,
+   "tagline": "Ken Wilber’s integral map for making sense of the world — matter, life, mind and spirit — in a holistic way.",
+   "bio": "",
+   "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Ken_Wilber_10.JPG/250px-Ken_Wilber_10.JPG"
+  },
+  {
+   "id": "anthony-de-mello",
+   "name": "Anthony de Mello",
+   "phase": 8,
+   "order": 203,
+   "texts": 1,
+   "tagline": "A refreshing, humorous series of lectures on waking up, seeing clearly, and not taking life so seriously.",
+   "bio": ""
+  },
+  {
+   "id": "joe-dispenza",
+   "name": "Joe Dispenza",
+   "phase": 8,
+   "order": 204,
+   "texts": 1,
+   "tagline": "On changing your life by breaking the cycle of repetition in the familiar and the known.",
+   "bio": ""
+  },
+  {
+   "id": "david-deida",
+   "name": "David Deida",
+   "phase": 8,
+   "order": 205,
+   "texts": 1,
+   "tagline": "A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.",
+   "bio": ""
   }
  ],
  "texts": [
@@ -4169,6 +4235,21 @@
    "path": "library/texts/classics/the-prophet.txt"
   },
   {
+   "id": "three-initiates--the-kybalion",
+   "authorId": "three-initiates",
+   "title": "The Kybalion",
+   "date": "1908",
+   "words": 33895,
+   "tags": [
+    "hermeticism",
+    "philosophy"
+   ],
+   "src": "bundled",
+   "desc": "An accessible introduction to Hermetic philosophy and its seven principles — mentalism, correspondence, vibration, polarity, rhythm, cause & effect, and gender.",
+   "preview": "THE KYBALION A Study of The Hermetic Philosophy of Ancient Egypt and Greece BY THREE INITIATES \"THE LIPS OF WISDOM ARE CLOSED, EXCEPT TO THE EARS OF UNDERSTANDING\" 1912 COPYRIGHT 1912 ORIGINALLY PUBLISHED BY THE YOGI PUBLICATION SOCIETY MASONIC TEMPLE CHICAGO, ILLINOIS ISBN 0 911662-25-1 TO HERMES TRISMEGISTUS KNOWN…",
+   "path": "library/texts/classics/the-kybalion.txt"
+  },
+  {
    "id": "niccol-machiavelli--the-prince",
    "authorId": "niccol-machiavelli",
    "title": "The Prince",
@@ -4211,6 +4292,90 @@
    "desc": "Thoreau’s argument that conscience outranks the law — the essay that inspired Gandhi and King.",
    "preview": "On the Duty of Civil Disobedience by Henry David Thoreau 1849, original title: Resistance to Civil Government I heartily accept the motto,—“That government is best which governs least;” and I should like to see it acted up to more rapidly and systematically. Carried out, it finally amounts to this, which also I…",
    "path": "library/texts/classics/on-the-duty-of-civil-disobedience.txt"
+  },
+  {
+   "id": "owned--the-art-of-impossible",
+   "authorId": "steven-kotler",
+   "title": "The Art of Impossible",
+   "date": "2021",
+   "words": null,
+   "tags": [
+    "peak performance",
+    "flow"
+   ],
+   "desc": "A practical, science-backed guide to achieving the impossible — the biology of peak performance and flow.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=The%20Art%20of%20Impossible%20Steven%20Kotler%20ebook"
+  },
+  {
+   "id": "owned--flow",
+   "authorId": "mihaly-csikszentmihalyi",
+   "title": "Flow",
+   "date": "1990",
+   "words": null,
+   "tags": [
+    "flow",
+    "psychology"
+   ],
+   "desc": "The classic study of optimal experience — how to sustain deep enjoyment and engagement in your life.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=Flow%20Mihaly%20Csikszentmihalyi%20ebook"
+  },
+  {
+   "id": "owned--a-brief-history-of-everything",
+   "authorId": "ken-wilber",
+   "title": "A Brief History of Everything",
+   "date": "1996",
+   "words": null,
+   "tags": [
+    "integral",
+    "philosophy"
+   ],
+   "desc": "Ken Wilber’s integral map for making sense of the world — matter, life, mind and spirit — in a holistic way.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=A%20Brief%20History%20of%20Everything%20Ken%20Wilber%20ebook"
+  },
+  {
+   "id": "owned--awareness",
+   "authorId": "anthony-de-mello",
+   "title": "Awareness",
+   "date": "1990",
+   "words": null,
+   "tags": [
+    "spirituality",
+    "awakening"
+   ],
+   "desc": "A refreshing, humorous series of lectures on waking up, seeing clearly, and not taking life so seriously.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=Awareness%20Anthony%20de%20Mello%20ebook"
+  },
+  {
+   "id": "owned--becoming-supernatural",
+   "authorId": "joe-dispenza",
+   "title": "Becoming Supernatural",
+   "date": "2017",
+   "words": null,
+   "tags": [
+    "mind",
+    "transformation"
+   ],
+   "desc": "On changing your life by breaking the cycle of repetition in the familiar and the known.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=Becoming%20Supernatural%20Joe%20Dispenza%20ebook"
+  },
+  {
+   "id": "owned--the-way-of-the-superior-man",
+   "authorId": "david-deida",
+   "title": "The Way of the Superior Man",
+   "date": "1997",
+   "words": null,
+   "tags": [
+    "masculine",
+    "growth"
+   ],
+   "desc": "A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.",
+   "src": "owned",
+   "url": "https://www.google.com/search?q=The%20Way%20of%20the%20Superior%20Man%20David%20Deida%20ebook"
   }
  ],
  "collections": [
@@ -4288,6 +4453,7 @@
     "confucius",
     "vyasa",
     "kahlil-gibran",
+    "three-initiates",
     "niccol-machiavelli",
     "henry-david-thoreau"
    ]
@@ -4298,6 +4464,19 @@
    "phase": 7,
    "authorIds": [
     "naval-ravikant"
+   ]
+  },
+  {
+   "id": "phase-8",
+   "title": "Your Bookshelf",
+   "phase": 8,
+   "authorIds": [
+    "steven-kotler",
+    "mihaly-csikszentmihalyi",
+    "ken-wilber",
+    "anthony-de-mello",
+    "joe-dispenza",
+    "david-deida"
    ]
   }
  ]

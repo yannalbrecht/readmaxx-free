@@ -77,7 +77,7 @@ const PHASES = {
   'david-perell': 4, 'derek-sivers': 4,
   'packy-mccormick': 5,
 };
-const PHASE_NAMES = { 1:'Foundation', 2:'Organization & Leverage', 3:'Deeper Perspectives', 4:'Creative Expression', 5:'Big Picture', 6:'Timeless Classics', 7:'Free Books' };
+const PHASE_NAMES = { 1:'Foundation', 2:'Organization & Leverage', 3:'Deeper Perspectives', 4:'Creative Expression', 5:'Big Picture', 6:'Timeless Classics', 7:'Free Books', 8:'Your Bookshelf' };
 
 const catalog = { version: 1, updated: new Date().toISOString().slice(0, 10), authors: [], texts: [], collections: [] };
 
@@ -264,6 +264,7 @@ const CLASSICS = [
   { pg: 3330,  title: 'The Analects', author: 'Confucius', year: '-475', tags: ['wisdom'] },
   { pg: 2388,  title: 'The Song Celestial (Bhagavad Gita)', author: 'Vyasa', year: '-200', tags: ['wisdom', 'spirituality'] },
   { pg: 58585, title: 'The Prophet', author: 'Kahlil Gibran', year: '1923', tags: ['poetry', 'wisdom'] },
+  { pg: 14209, title: 'The Kybalion', author: 'Three Initiates', year: '1908', tags: ['hermeticism', 'philosophy'] },
   // Strategy & nature
   { pg: 1232,  title: 'The Prince', author: 'Niccolò Machiavelli', year: '1532', tags: ['strategy', 'power'] },
   { pg: 205,   title: 'Walden', author: 'Henry David Thoreau', year: '1854', tags: ['nature', 'simplicity'] },
@@ -339,6 +340,7 @@ const DESC = {
   1232:'The unflinching handbook on gaining and holding power — realism over idealism.',
   205:'Two years alone at Walden Pond — a manifesto for simple, deliberate, self-reliant living.',
   71:'Thoreau’s argument that conscience outranks the law — the essay that inspired Gandhi and King.',
+  14209:'An accessible introduction to Hermetic philosophy and its seven principles — mentalism, correspondence, vibration, polarity, rhythm, cause & effect, and gender.',
 };
 for (const c of CLASSICS) {
   const file = join(OUT, 'texts', 'classics', `${slug(c.title)}.txt`);
@@ -352,6 +354,33 @@ for (const c of CLASSICS) {
     date: c.year, words: words(body), tags: c.tags, src: 'bundled',
     desc: DESC[c.pg] || null, preview: excerpt(body),
     path: `library/texts/classics/${slug(c.title)}.txt` });
+}
+
+/* ---------- 3b. "Your Bookshelf" — in-copyright books you own ----------
+   We can’t legally host these texts. They appear as cards so you can import your own
+   copy (personal format-shifting) or find a legitimate ebook. `src:'owned'`. */
+const OWNED = [
+  { title:'The Art of Impossible', author:'Steven Kotler', year:'2021', tags:['peak performance', 'flow'],
+    desc:'A practical, science-backed guide to achieving the impossible — the biology of peak performance and flow.' },
+  { title:'Flow', author:'Mihaly Csikszentmihalyi', year:'1990', tags:['flow', 'psychology'],
+    desc:'The classic study of optimal experience — how to sustain deep enjoyment and engagement in your life.' },
+  { title:'A Brief History of Everything', author:'Ken Wilber', year:'1996', tags:['integral', 'philosophy'],
+    desc:'Ken Wilber’s integral map for making sense of the world — matter, life, mind and spirit — in a holistic way.' },
+  { title:'Awareness', author:'Anthony de Mello', year:'1990', tags:['spirituality', 'awakening'],
+    desc:'A refreshing, humorous series of lectures on waking up, seeing clearly, and not taking life so seriously.' },
+  { title:'Becoming Supernatural', author:'Joe Dispenza', year:'2017', tags:['mind', 'transformation'],
+    desc:'On changing your life by breaking the cycle of repetition in the familiar and the known.' },
+  { title:'The Way of the Superior Man', author:'David Deida', year:'1997', tags:['masculine', 'growth'],
+    desc:'A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.' },
+];
+for (const b of OWNED) {
+  const aid = slug(b.author);
+  if (!catalog.authors.find(a => a.id === aid))
+    catalog.authors.push({ id: aid, name: b.author, phase: 8, order: 200 + OWNED.indexOf(b), texts: 0, tagline: b.desc, bio: '' });
+  const a = catalog.authors.find(x => x.id === aid); a.texts++; if (a.phase > 8) a.phase = 8;
+  catalog.texts.push({ id: `owned--${slug(b.title)}`, authorId: aid, title: b.title, date: b.year,
+    words: null, tags: b.tags, desc: b.desc, src: 'owned',
+    url: `https://www.google.com/search?q=${encodeURIComponent(b.title + ' ' + b.author + ' ebook')}` });
 }
 
 /* ---------- author images (Wikipedia thumbnails; --fetch-images) ---------- */
