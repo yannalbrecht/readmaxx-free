@@ -2253,7 +2253,7 @@ function tick() {
   renderFlash(R.idx);
   const f = R.flashes[R.idx];
   if (f.paraEnd) haptic(12);
-  R.sessionWords += f.n;
+  R.sessionWords += (f.words != null ? f.words : f.n);   // stat words: counts table cells, code, etc.
   // A tap-to-continue card halts the loop: show it, bank progress, wait for the user.
   if (f.card && f.hold === 'pause') {
     R.idx++;                       // resume continues AFTER the card

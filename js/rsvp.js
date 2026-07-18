@@ -49,6 +49,17 @@ export function orpParts(text) {
 // Block-aware: a heading block becomes ONE "card" flash (shown as a title with a
 // pause); other blocks split into word/chunk flashes. Falls back to paragraph
 // splitting for old docs that have only chapter.text.
+// Readable word count of a rich block, for reading STATS (independent of the
+// flash/word-mapping `n`). Counts everything a reader takes in: all table cells,
+// list items, quote/code text, image caption. Math formulas aren't word-counted.
+function cardWords(b) {
+  if (b.type === 'table') return countWords((b.rows || []).flat().join(' '));
+  if (b.type === 'list')  return countWords((b.items || []).join(' '));
+  if (b.type === 'image') return countWords(b.alt || '');
+  if (b.type === 'math')  return 0;
+  return countWords(b.text || '');   // quote, code
+}
+
 function buildChapter(ch, ci, chunk, flashes) {
   const start = flashes.length;
   let words = 0;
@@ -66,13 +77,15 @@ function buildChapter(ch, ci, chunk, flashes) {
       words += ws.length;
       continue;
     }
-    // Rich block → ONE tap-to-continue PAUSE card shown whole. table/image/code/math
-    // carry no words into the stream; list/quote keep their words (still counted).
+    // Rich block → ONE tap-to-continue PAUSE card shown whole. `n` is the MAPPING
+    // word count (0 for non-tappable cards so it matches their zero Text-View spans);
+    // `words` is the READING word count for stats (counts a table's cells, code, etc.)
+    // so nothing you actually read is lost from your totals.
     if (CARD_TYPES.has(b.type)) {
-      const zero = ZERO_WORD_CARDS.has(b.type);
-      const n = zero ? 0 : countWords(b.text || (b.items ? b.items.join(' ') : ''));
-      flashes.push({ text: b.text || '', n, chapter: ci, mul: 1, paraEnd: true, card: true, hold: 'pause', block: b });
-      words += n;
+      const readable = cardWords(b);
+      const n = ZERO_WORD_CARDS.has(b.type) ? 0 : readable;
+      flashes.push({ text: b.text || '', n, words: readable, chapter: ci, mul: 1, paraEnd: true, card: true, hold: 'pause', block: b });
+      words += readable;
       continue;
     }
     // Paragraph (and legacy `li`) → word/chunk flashes.
