@@ -891,3 +891,23 @@ ol.rich-list li{list-style:decimal}ul.rich-list li{list-style:disc}
 .tv-list{margin:0 0 14px;padding-left:22px}
 .tv-list li{margin:0 0 6px}
 ul.tv-list li{list-style:disc}ol.tv-list li{list-style:decimal}
+
+/* ============================================================
+   GOALS — performance chips · weekly card · goal sheet
+   ============================================================ */
+.perf-chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.perf-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;
+  background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.perf-chip.up{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+
+.week-card{padding:14px 16px;margin-top:-4px}
+.week-t{font-size:13px;font-weight:750;color:var(--muted);margin-bottom:10px;letter-spacing:.02em}
+.week-rows{display:flex;flex-direction:column;gap:10px}
+.week-row{display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:10px}
+.week-lbl{font-size:12px;color:var(--faint);font-weight:600}
+.week-bar{height:8px;border-radius:999px;background:var(--surface-3);overflow:hidden}
+.week-bar i{display:block;height:100%;border-radius:999px;background:var(--grad);transition:width .5s ease}
+.week-val{font-size:12px;font-weight:750;color:var(--text);font-variant-numeric:tabular-nums}
+
+.gs-lbl{font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin:4px 2px -2px}
+.gs-note{font-size:12px;color:var(--muted);line-height:1.5;padding:2px 2px}

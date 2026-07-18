@@ -99,6 +99,45 @@ function ensureToday() {
     g.todayKey = k;
     g.wordsToday = 0; g.secondsToday = 0; g.sessionsToday = 0; g.finishedToday = 0; g.bestWpmToday = 0;
   }
+  adaptGoal();
+}
+
+/* ---------- adaptive daily goal (Garmin-style, bounded) ----------
+   Minutes is the rewarded metric. In 'auto' mode the goal drifts toward your
+   recent 7-day average reading time, capped ±3 min/day and clamped to the
+   user's floor/ceiling — challenging but reachable. Runs once per day. */
+function adaptGoal() {
+  const p = state.profile, g = state.game, today = dayKey();
+  if (g.goalAdjustedDay === today) return;
+  g.goalAdjustedDay = today;
+  if (p.goalMode === 'auto') {
+    let sum = 0;
+    for (let i = 1; i <= 7; i++) sum += (g.secHistory?.[dayKey(new Date(Date.now() - i * 864e5))] || 0) / 60;
+    const avg = sum / 7;
+    const cur = p.dailyGoalMin || 10;
+    let next = cur + 0.2 * (avg - cur);                    // gentle move toward recent behaviour
+    next = Math.max(cur - 3, Math.min(cur + 3, next));     // ≤3 min change per day
+    next = Math.max(p.goalFloorMin || 5, Math.min(p.goalCeilMin || 30, next));
+    p.dailyGoalMin = Math.round(next);
+  }
+  syncGoalWords();
+  save();
+}
+// Keep the words-equivalent goal current (drives daily quests + word displays).
+function syncGoalWords() {
+  const p = state.profile;
+  p.dailyGoalWords = Math.max(200, Math.round((p.dailyGoalMin || 10) * Math.max(150, state.settings.wpm) / 100) * 100);
+}
+
+/* ---- goal / performance read-outs used by the home + summary ---- */
+const minsToday = () => Math.round((state.game.secondsToday || 0) / 60);
+const goalPct = () => Math.min(100, Math.round(minsToday() / Math.max(1, state.profile.dailyGoalMin || 10) * 100));
+// Performance vs your baseline speed (e.g. 300 WPM / 250 baseline = 120%).
+const perfSpeedPct = () => { const w = state.game.bestWpmToday || 0; return w ? Math.round(w / Math.max(120, state.profile.baselineWpm || 250) * 100) : 0; };
+function weekStats() {
+  const g = state.game; let mins = 0, days = 0;
+  for (let i = 0; i < 7; i++) { const s = g.secHistory?.[dayKey(new Date(Date.now() - i * 864e5))] || 0; mins += s / 60; if (s >= 60) days++; }
+  return { mins: Math.round(mins), goalMin: (state.profile.dailyGoalMin || 10) * 7, days, daysTarget: state.profile.weeklyDaysTarget || 5 };
 }
 
 /* ---------- Duolingo-style streak engine ----------
@@ -167,6 +206,8 @@ function addReading(words, seconds, wpm) {
   }
   g.longestStreak = Math.max(g.longestStreak || 0, g.streak || 0);
   g.history[g.todayKey] = (g.history[g.todayKey] || 0) + words;
+  g.secHistory = g.secHistory || {};
+  g.secHistory[g.todayKey] = (g.secHistory[g.todayKey] || 0) + seconds;
   const hr = new Date().getHours();
   g.hours = g.hours || {}; g.hours[hr] = (g.hours[hr] || 0) + words;
   g.totalWords += words;
@@ -175,9 +216,12 @@ function addReading(words, seconds, wpm) {
   g.xp += Math.round(words / 8) + Math.round(seconds / 20);
   const lvl = levelFromXp(g.xp);
   if (lvl > g.level) { g.level = lvl; achievementToast('⚡', `Level ${lvl} reached!`); }
-  if (before < state.profile.dailyGoalWords && g.wordsToday >= state.profile.dailyGoalWords) {
+  // Daily goal is MINUTES-based (the rewarded metric). Fire once when crossed.
+  const goalSec = (state.profile.dailyGoalMin || 10) * 60;
+  if ((g.secondsToday - seconds) < goalSec && g.secondsToday >= goalSec) {
     g.goalHits = (g.goalHits || 0) + 1;
-    achievementToast('🎯', 'Daily goal complete!');
+    g.minGoalHits = (g.minGoalHits || 0) + 1;
+    achievementToast('🎯', `Daily goal complete — ${state.profile.dailyGoalMin} min!`);
   }
   updateQuests();
   checkAchievements();
@@ -513,7 +557,9 @@ function obPlan() {
   ], cta: { label:'Build my plan', onClick:() => {
     state.profile.baselineWpm = ob.base;
     state.profile.goalWpm = goal;
-    state.profile.dailyGoalWords = recommendedDailyGoal(goal);
+    const recWords = recommendedDailyGoal(goal);
+    state.profile.dailyGoalMin = Math.max(5, Math.min(30, Math.round(recWords / Math.max(150, ob.base))));
+    state.profile.dailyGoalWords = recWords;
     state.settings.wpm = Math.min(goal, Math.max(ob.base, 300));
     haptic(10); obNext();
   } } };
@@ -642,17 +688,38 @@ async function renderHome() {
   if (atRisk) v.append(el('button', { class:'risk-banner', onclick:() => { haptic(6); streakSheet(); } },
     el('span', { class:'flame', html: ICON.flame }), `Read today to keep your ${ds}-day streak`));
 
-  // daily goal ring — tappable → goal sheet
-  const pct = Math.min(100, Math.round(p.dailyGoalWords ? (g.wordsToday / p.dailyGoalWords) * 100 : 0));
+  // daily goal ring (MINUTES) — tappable → goal sheet
+  const gp = goalPct();
   const goal = el('button', { class:'card goal-card', onclick:() => { haptic(6); goalSheet(); } });
-  goal.append(el('div', { class:'ring', style:`--p:${pct}` }, el('b', {}, `${pct}%`)));
+  goal.append(el('div', { class:'ring', style:`--p:${gp}` }, el('b', {}, `${gp}%`)));
   const gm = el('div', { class:'goal-meta' });
-  gm.append(el('div', { class:'t' }, pct >= 100 ? 'Daily goal complete 🎉' : 'Daily reading goal'));
-  gm.append(el('div', { class:'s' }, `${fmt(g.wordsToday)} / ${fmt(p.dailyGoalWords)} words today`));
-  if (g.wordsToday > 0) gm.append(el('div', { class:'goal-eq' }, readingEquivalent(g.wordsToday)));
-  const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${pct}%` })); gm.append(mb);
+  gm.append(el('div', { class:'t' }, gp >= 100 ? 'Daily goal complete 🎉' : 'Daily reading goal'));
+  gm.append(el('div', { class:'s' }, `${minsToday()} / ${p.dailyGoalMin} min · ${fmt(g.wordsToday)} words${p.goalMode === 'auto' ? ' · auto' : ''}`));
+  // performance chips: speed vs baseline + goal completion
+  const sp = perfSpeedPct();
+  const perfChips = el('div', { class:'perf-chips' });
+  if (sp) perfChips.append(el('span', { class:'perf-chip' + (sp >= 100 ? ' up' : '') }, `⚡ ${sp}% speed`));
+  perfChips.append(el('span', { class:'perf-chip' }, `🎯 ${gp}% goal`));
+  gm.append(perfChips);
+  const mb = el('div', { class:'mini-bar' }); mb.append(el('i', { style:`width:${gp}%` })); gm.append(mb);
   goal.append(gm);
   v.append(goal);
+
+  // weekly goal — total minutes + days read
+  const wk = weekStats();
+  const wkMinPct = Math.min(100, Math.round(wk.mins / Math.max(1, wk.goalMin) * 100));
+  const wkDayPct = Math.min(100, Math.round(wk.days / Math.max(1, wk.daysTarget) * 100));
+  const week = el('div', { class:'card week-card' });
+  week.append(el('div', { class:'week-t' }, 'This week'));
+  const wkRow = (label, val, pct) => el('div', { class:'week-row' },
+    el('div', { class:'week-lbl' }, label),
+    el('div', { class:'week-bar' }, el('i', { style:`width:${pct}%` })),
+    el('div', { class:'week-val' }, val));
+  const wkRows = el('div', { class:'week-rows' });
+  wkRows.append(wkRow('Minutes', `${wk.mins}/${wk.goalMin}`, wkMinPct));
+  wkRows.append(wkRow('Days read', `${wk.days}/${wk.daysTarget}`, wkDayPct));
+  week.append(wkRows);
+  v.append(week);
 
   // daily quests
   v.append(questCard());
@@ -2315,7 +2382,7 @@ function showSummaryFor(visit, finished) {
   const ds = displayStreak();
   const milestone = earnedNow && MILESTONES.includes(ds) && !(g.milestonesSeen || []).includes(ds) ? ds : 0;
   const xpGained = Math.max(0, g.xp - (visit.xpAtOpen ?? g.xp));
-  const goalMet = g.wordsToday >= (state.profile.dailyGoalWords || Infinity);
+  const goalMet = (g.secondsToday || 0) >= (state.profile.dailyGoalMin || Infinity) * 60;
 
   const wrap = el('div', { class:'summary' });
   const card = el('div', { class:'sum-card' });
@@ -2763,7 +2830,7 @@ function renderProfile() {
   // Daily goal
   v.append(groupTitle('Goals'));
   const g3 = el('div', { class:'set-group' });
-  g3.append(navRow('🎯', 'Daily word goal', fmt(p.dailyGoalWords), goalSheet));
+  g3.append(navRow('🎯', 'Reading goal', `${p.dailyGoalMin} min/day${p.goalMode === 'auto' ? ' · auto' : ''}`, goalSheet));
   v.append(g3);
 
   // Feedback / haptics
@@ -3003,42 +3070,51 @@ function speedSheet() {
 // via the user's own speed, plus a custom words stepper. Nothing applies until
 // "Commit to my goal" — an active choice, not a passive dial.
 function goalSheet() {
+  const p = state.profile;
   const body = el('div', { class:'stack' });
-  const wpm = Math.max(150, state.settings.wpm);
-  const tiers = [
-    { name:'Casual',  mins:5 },  { name:'Regular', mins:10 },
-    { name:'Serious', mins:15 }, { name:'Intense', mins:20 },
-  ].map(t => ({ ...t, words: Math.max(200, Math.round((t.mins * wpm) / 100) * 100) }));
-  let pick = state.profile.dailyGoalWords || 2000;
-  const rows = [];
-  const custom = el('div', { class:'goal-custom' });
-  const cVal = el('b', {}, fmt(pick));
-  const syncSel = () => {
-    rows.forEach(([b, w]) => b.classList.toggle('sel', pick === w));
-    custom.classList.toggle('sel', !tiers.some(t => t.words === pick));
-    cVal.textContent = fmt(pick);
+
+  const stepper = (label, get, set, min, max, step, unit) => {
+    const row = el('div', { class:'goal-custom' });
+    const val = el('b', {}, String(get()));
+    const bump = (d) => { set(Math.max(min, Math.min(max, get() + d))); val.textContent = String(get()); haptic(4); };
+    row.append(
+      el('button', { class:'icon-btn sm', onclick:() => bump(-step), html:'<span style="font-size:20px">−</span>' }),
+      el('div', { class:'goal-custom-v' }, `${label}: `, val, ` ${unit}`),
+      el('button', { class:'icon-btn sm', onclick:() => bump(step), html:'<span style="font-size:20px">+</span>' }));
+    return row;
   };
-  for (const t of tiers) {
-    const b = el('button', { class:'opt' },
-      el('div', {}, el('div', { class:'opt-t' }, `${t.name} — ${t.mins} min/day`),
-        el('div', { class:'opt-d' }, `${fmt(t.words)} words at your ${wpm} WPM`)),
-      el('span', { class:'tick', html: ICON.check }));
-    b.addEventListener('click', () => { pick = t.words; haptic(6); syncSel(); });
-    rows.push([b, t.words]); body.append(b);
+
+  // Auto vs Fixed mode
+  const modeSeg = el('div', { class:'seg' });
+  ['auto', 'fixed'].forEach(m => {
+    const b = el('button', { class:'chip' + (p.goalMode === m ? ' on' : ''), style: p.goalMode === m ? 'color:var(--text);border-color:var(--accent)' : '' }, m === 'auto' ? 'Auto-adjust' : 'Fixed');
+    b.addEventListener('click', () => { p.goalMode = m; save(); haptic(6); closeSheet(); goalSheet(); });
+    modeSeg.append(b);
+  });
+  body.append(el('div', { class:'gs-lbl' }, 'Goal mode'), modeSeg);
+
+  if (p.goalMode === 'fixed') {
+    body.append(el('div', { class:'gs-lbl' }, 'Daily goal'));
+    body.append(stepper('Target', () => p.dailyGoalMin, v => p.dailyGoalMin = v, 1, 120, 1, 'min'));
+  } else {
+    body.append(el('div', { class:'gs-lbl' }, 'Auto-adjust range'));
+    body.append(stepper('Floor', () => p.goalFloorMin, v => { p.goalFloorMin = Math.min(v, (p.goalCeilMin || 30) - 1); }, 1, 60, 1, 'min'));
+    body.append(stepper('Ceiling', () => p.goalCeilMin, v => { p.goalCeilMin = Math.max(v, (p.goalFloorMin || 5) + 1); }, 2, 120, 5, 'min'));
+    body.append(el('div', { class:'gs-note' }, `Now ${p.dailyGoalMin} min/day — nudges up or down within this range based on your last 7 days.`));
   }
-  const step = (d) => { pick = Math.max(200, Math.min(50000, pick + d)); haptic(4); syncSel(); };
-  custom.append(el('button', { class:'icon-btn sm', onclick:() => step(-250), html:'<span style="font-size:20px">−</span>' }),
-    el('div', { class:'goal-custom-v' }, 'Custom: ', cVal, ' words'),
-    el('button', { class:'icon-btn sm', onclick:() => step(250), html:'<span style="font-size:20px">+</span>' }));
-  body.append(custom);
+
+  body.append(el('div', { class:'gs-lbl' }, 'Weekly target'));
+  body.append(stepper('Read days', () => p.weeklyDaysTarget, v => p.weeklyDaysTarget = v, 1, 7, 1, 'days'));
+
   body.append(el('button', { class:'btn', onclick:() => {
-    state.profile.dailyGoalWords = pick; save(); haptic(10); closeSheet();
+    // keep the live goal inside the range in auto mode
+    if (p.goalMode === 'auto') p.dailyGoalMin = Math.max(p.goalFloorMin, Math.min(p.goalCeilMin, p.dailyGoalMin));
+    syncGoalWords(); save(); haptic(10); closeSheet();
     toast('Goal committed 🎯');
     if (!D.home.classList.contains('hidden')) renderHome();
     if (!D.profile.classList.contains('hidden')) renderProfile();
   } }, 'Commit to my goal'));
-  syncSel();
-  sheet({ title:'Daily reading goal', sub:'How much do you want to read each day?', body });
+  sheet({ title:'Reading goal', sub:'Minutes is the target; auto-adjust keeps it reachable.', body });
 }
 
 /* ---------- daily quest card (home) ---------- */

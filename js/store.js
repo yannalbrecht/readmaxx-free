@@ -42,7 +42,13 @@ const DEFAULT = {
     onboarded: false,
     goalWpm: 400,
     baselineWpm: 250,
-    dailyGoalWords: 2000,
+    dailyGoalWords: 2000,   // words-equivalent of the minute goal (kept in sync; used by quests)
+    // Goal engine: minutes is the primary, rewarded metric; words are tracked too.
+    dailyGoalMin: 10,       // current daily minute goal (auto-adjusts in 'auto' mode)
+    goalMode: 'auto',       // 'auto' (Garmin-style, bounded) | 'fixed'
+    goalFloorMin: 5,        // auto-adjust never drops below this
+    goalCeilMin: 30,        // …nor above this
+    weeklyDaysTarget: 5,    // read-days-per-week target
     reasons: [],
     avatar: '🚀',
   },
@@ -76,6 +82,9 @@ const DEFAULT = {
     wordsToday: 0,
     todayKey: null,
     history: {},        // 'YYYY-MM-DD' -> words read
+    secHistory: {},     // 'YYYY-MM-DD' -> seconds read (for the minute goal, adaptive tuning, weekly)
+    goalAdjustedDay: null, // last day the auto goal-adjust ran
+    minGoalHits: 0,     // days the MINUTE goal was met
     hours: {},          // hour-of-day (0-23) -> words read (for time-of-day achievements)
     topicWords: {},     // topic -> words read (running aggregate for the Interests view)
     achievements: [],   // ids unlocked
