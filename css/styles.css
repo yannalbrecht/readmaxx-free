@@ -911,3 +911,14 @@ ul.tv-list li{list-style:disc}ol.tv-list li{list-style:decimal}
 
 .gs-lbl{font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin:4px 2px -2px}
 .gs-note{font-size:12px;color:var(--muted);line-height:1.5;padding:2px 2px}
+
+/* ============================================================
+   STATS — subsection extras (metric toggle · saved note · best-time)
+   ============================================================ */
+.metric-toggle{display:flex;gap:6px;margin-left:auto}
+.chip.sm{padding:4px 12px;font-size:12px;height:auto}
+.metric-toggle .chip.on{color:var(--text);border-color:var(--accent);background:var(--grad-soft)}
+.saved-note{font-size:12px;color:var(--muted);text-align:center;padding:8px 2px 2px}
+.best-time{display:flex;align-items:center;gap:10px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.best-time b{color:var(--text);font-weight:750}
+.best-time .bt-ic{font-size:18px}

@@ -83,6 +83,9 @@ const DEFAULT = {
     todayKey: null,
     history: {},        // 'YYYY-MM-DD' -> words read
     secHistory: {},     // 'YYYY-MM-DD' -> seconds read (for the minute goal, adaptive tuning, weekly)
+    bestWpmHistory: {}, // 'YYYY-MM-DD' -> best WPM that day (avg is derived from words/secs)
+    typeWords: {},      // content type ('article'|'book'|'note'|'course'…) -> words read
+    typeSecs: {},       // content type -> seconds read
     goalAdjustedDay: null, // last day the auto goal-adjust ran
     minGoalHits: 0,     // days the MINUTE goal was met
     hours: {},          // hour-of-day (0-23) -> words read (for time-of-day achievements)

@@ -213,6 +213,10 @@ function addReading(words, seconds, wpm) {
   g.totalWords += words;
   g.totalSeconds += seconds;
   if (wpm > g.bestWpm) g.bestWpm = Math.round(wpm);
+  if (words >= 100) { // only meaningful sessions inform the daily best (avoids tiny-sample spikes)
+    g.bestWpmHistory = g.bestWpmHistory || {};
+    g.bestWpmHistory[g.todayKey] = Math.max(g.bestWpmHistory[g.todayKey] || 0, Math.round(wpm));
+  }
   g.xp += Math.round(words / 8) + Math.round(seconds / 20);
   const lvl = levelFromXp(g.xp);
   if (lvl > g.level) { g.level = lvl; achievementToast('⚡', `Level ${lvl} reached!`); }
@@ -2285,6 +2289,11 @@ function accrue() {
     // (before addReading so topic-breadth achievements can unlock in the same pass).
     const topics = R.doc.topics || [];
     if (topics.length) { state.game.topicWords = state.game.topicWords || {}; for (const t of topics) state.game.topicWords[t] = (state.game.topicWords[t] || 0) + R.sessionWords; }
+    // attribute this session's words + time to the doc's content category
+    const cat = docCategory(R.doc);
+    state.game.typeWords = state.game.typeWords || {}; state.game.typeSecs = state.game.typeSecs || {};
+    state.game.typeWords[cat] = (state.game.typeWords[cat] || 0) + R.sessionWords;
+    state.game.typeSecs[cat] = (state.game.typeSecs[cat] || 0) + secs;
     addReading(R.sessionWords, secs, actualWpm);
     // visit totals feed the post-session summary
     R.visitWords = (R.visitWords || 0) + R.sessionWords;
@@ -2520,7 +2529,13 @@ const RANGES = { week:'This week', month:'This month', quarter:'This quarter', y
 const DAY = 86400000;
 const dKey = (d) => dayKey(d);
 const dayWords = (d) => state.game.history[dKey(d)] || 0;
+const daySecs = (d) => state.game.secHistory?.[dKey(d)] || 0;
+const dayMins = (d) => Math.round(daySecs(d) / 60);
+const dayVal = (d, metric) => metric === 'mins' ? dayMins(d) : dayWords(d);
+// avg WPM for a day (derived): words / minutes read
+const dayWpm = (d) => { const s = daySecs(d); return s > 0 ? Math.round(dayWords(d) / (s / 60)) : 0; };
 const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+let statsMetric = 'words';   // Volume chart toggle: 'words' | 'mins'
 
 function rangeStartDate(range) {
   const now = startOfToday();
@@ -2568,31 +2583,101 @@ function rangeStats(range) {
   };
 }
 
-// Chart buckets: ≤12 clean bars whatever the timeframe.
-function chartBuckets(range) {
+// Chart buckets: ≤12 clean bars whatever the timeframe. metric = 'words' | 'mins'.
+function chartBuckets(range, metric = 'words') {
   const now = startOfToday();
-  const monthlySum = (y, m) => Object.entries(state.game.history)
+  const src = metric === 'mins' ? (state.game.secHistory || {}) : state.game.history;
+  const scale = (v) => metric === 'mins' ? Math.round(v / 60) : v;
+  const monthlySum = (y, m) => Object.entries(src)
     .filter(([k]) => { const [Y, M] = k.split('-').map(Number); return Y === y && M - 1 === m; })
     .reduce((s, [, w]) => s + w, 0);
   const out = [];
-  // each bucket also carries `full` — a descriptive label for the hover tooltip.
   if (range === 'week') {
-    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], full: d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }), value: dayWords(d) }); }
+    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], full: d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }), value: dayVal(d, metric) }); }
   } else if (range === 'month') {
     for (let i = 3; i >= 0; i--) {
-      let s = 0; for (let j = 0; j < 7; j++) s += dayWords(new Date(now - (i * 7 + j) * DAY));
+      let s = 0; for (let j = 0; j < 7; j++) s += dayVal(new Date(now - (i * 7 + j) * DAY), metric);
       out.push({ label: i === 0 ? 'now' : `-${i}w`, full: i === 0 ? 'This week' : i === 1 ? 'Last week' : `${i} weeks ago`, value: s });
     }
   } else if (range === 'quarter' || range === 'year') {
     const n = range === 'quarter' ? 3 : 12;
-    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ label:'JFMAMJJASOND'[m.getMonth()], full: m.toLocaleDateString(undefined, { month:'long', year:'numeric' }), value: monthlySum(m.getFullYear(), m.getMonth()) }); }
+    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ label:'JFMAMJJASOND'[m.getMonth()], full: m.toLocaleDateString(undefined, { month:'long', year:'numeric' }), value: scale(monthlySum(m.getFullYear(), m.getMonth())) }); }
   } else {
     const years = {};
-    for (const [k, w] of Object.entries(state.game.history)) { const y = k.slice(0, 4); years[y] = (years[y] || 0) + w; }
+    for (const [k, w] of Object.entries(src)) { const y = k.slice(0, 4); years[y] = (years[y] || 0) + w; }
     const keys = Object.keys(years).sort();
-    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => out.push({ label:"'" + y.slice(2), full: y, value: years[y] || 0 }));
+    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => out.push({ label:"'" + y.slice(2), full: y, value: scale(years[y] || 0) }));
   }
   return out;
+}
+
+// Avg-WPM per bucket (words ÷ minutes over the bucket's days). Needs both maps,
+// so it aggregates sums rather than a single value.
+function wpmBuckets(range) {
+  const g = state.game, now = startOfToday();
+  const rangeWpm = (start, end) => { let w = 0, s = 0; for (const k of Object.keys(g.history)) { const dt = new Date(k + 'T00:00'); if (dt >= start && dt <= end) { w += g.history[k] || 0; s += g.secHistory?.[k] || 0; } } return s > 0 ? Math.round(w / (s / 60)) : 0; };
+  const out = [];
+  if (range === 'week') {
+    for (let i = 6; i >= 0; i--) { const d = new Date(now - i * DAY); out.push({ label:'SMTWTFS'[d.getDay()], full: d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }), value: dayWpm(d) }); }
+  } else if (range === 'month') {
+    for (let i = 3; i >= 0; i--) { const s = new Date(now - (i * 7 + 6) * DAY), e = new Date(now - i * 7 * DAY); out.push({ label: i === 0 ? 'now' : `-${i}w`, full: i === 0 ? 'This week' : i === 1 ? 'Last week' : `${i} weeks ago`, value: rangeWpm(s, e) }); }
+  } else if (range === 'quarter' || range === 'year') {
+    const n = range === 'quarter' ? 3 : 12;
+    for (let i = n - 1; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1), e = new Date(now.getFullYear(), now.getMonth() - i + 1, 0); out.push({ label:'JFMAMJJASOND'[m.getMonth()], full: m.toLocaleDateString(undefined, { month:'long', year:'numeric' }), value: rangeWpm(m, e) }); }
+  } else {
+    const years = {};
+    for (const k of Object.keys(g.history)) { const y = k.slice(0, 4); (years[y] = years[y] || { w:0, s:0 }).w += g.history[k] || 0; years[y].s += g.secHistory?.[k] || 0; }
+    const keys = Object.keys(years).sort();
+    (keys.length ? keys : [String(now.getFullYear())]).forEach(y => { const o = years[y] || { w:0, s:0 }; out.push({ label:"'" + y.slice(2), full: y, value: o.s > 0 ? Math.round(o.w / (o.s / 60)) : 0 }); });
+  }
+  return out;
+}
+
+// Window aggregates for the Speed/Consistency tiles.
+function windowAvgWpm(range) { const start = rangeStartDate(range), end = startOfToday(); let w = 0, s = 0; for (const k of Object.keys(state.game.history)) { const d = new Date(k + 'T00:00'); if (d >= start && d <= end) { w += state.game.history[k] || 0; s += state.game.secHistory?.[k] || 0; } } return s > 0 ? Math.round(w / (s / 60)) : 0; }
+function windowBestWpm(range) { const start = rangeStartDate(range), end = startOfToday(); let best = 0; for (const [k, v] of Object.entries(state.game.bestWpmHistory || {})) { const d = new Date(k + 'T00:00'); if (d >= start && d <= end && v > best) best = v; } return best; }
+function windowSecs(range) { const start = rangeStartDate(range), end = startOfToday(); let s = 0; for (const k of Object.keys(state.game.secHistory || {})) { const d = new Date(k + 'T00:00'); if (d >= start && d <= end) s += state.game.secHistory[k] || 0; } return s; }
+// Content-mix bars (words by category).
+function typeBreakdown() {
+  const tw = state.game.typeWords || {};
+  const entries = Object.entries(tw).filter(([, w]) => w > 0).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) return el('div', { class:'card', style:'padding:16px;color:var(--faint);font-size:13px;text-align:center' }, 'Read a few things and your content mix appears here.');
+  const label = { book:'📚 Books', article:'🔗 Articles', note:'📝 Notes', vault:'📁 Vault' };
+  const max = entries[0][1] || 1;
+  const card = el('div', { class:'card', style:'padding:12px 16px' });
+  for (const [type, w] of entries) {
+    const row = el('div', { class:'interest-row' });
+    row.append(el('div', { class:'ir-top' }, el('span', { class:'ir-name' }, label[type] || type), el('span', { class:'ir-val' }, `${fmt(w)} words`)));
+    const bar = el('div', { class:'ir-bar' }); bar.append(el('i', { style:`width:${Math.max(4, (w / max) * 100)}%` }));
+    row.append(bar); card.append(row);
+  }
+  return card;
+}
+// Week-over-week avg-WPM change (this 7 days vs prior 7), for the Speed header.
+function wowWpmDelta() {
+  const now = startOfToday();
+  const avg = (a, b) => { let w = 0, s = 0; for (const k of Object.keys(state.game.history)) { const d = new Date(k + 'T00:00'); if (d >= a && d <= b) { w += state.game.history[k] || 0; s += state.game.secHistory?.[k] || 0; } } return s > 0 ? w / (s / 60) : 0; };
+  const cur = avg(new Date(now - 6 * DAY), now), prev = avg(new Date(now - 13 * DAY), new Date(now - 7 * DAY));
+  return prev > 0 ? Math.round(((cur - prev) / prev) * 100) : 0;
+}
+// Share of days in the window where the minute goal was met.
+function goalAdherence(range) {
+  const start = rangeStartDate(range), today = startOfToday();
+  const first = firstActivityDate();
+  const from = new Date(Math.max(+first, +start));
+  const days = Math.max(1, Math.round((today - from) / DAY) + 1);
+  const goalSec = (state.profile.dailyGoalMin || 10) * 60;
+  let hit = 0; for (let i = 0; i < days; i++) { if ((state.game.secHistory?.[dKey(new Date(today - i * DAY))] || 0) >= goalSec) hit++; }
+  return Math.round((hit / days) * 100);
+}
+// Peak reading hour → a friendly time-of-day label.
+function bestTimeOfDay() {
+  const hours = state.game.hours || {}; let peak = -1, max = 0;
+  for (const [h, w] of Object.entries(hours)) if (w > max) { max = w; peak = +h; }
+  if (peak < 0) return '—';
+  const band = peak < 5 ? 'Late night' : peak < 8 ? 'Early morning' : peak < 12 ? 'Morning' : peak < 17 ? 'Afternoon' : peak < 21 ? 'Evening' : 'Night';
+  const h12 = (peak % 12) || 12, ap = peak < 12 ? 'am' : 'pm';
+  return `${band} · ${h12}${ap}`;
 }
 
 function renderStats() {
@@ -2614,32 +2699,64 @@ function renderStats() {
   v.append(seg);
 
   const rs = rangeStats(statsRange);
-  const avgWpm = g.totalSeconds > 0 ? Math.round(g.totalWords / (g.totalSeconds / 60)) : 0;
+  const allTimeAvgWpm = g.totalSeconds > 0 ? Math.round(g.totalWords / (g.totalSeconds / 60)) : 0;
   const minutesSaved = Math.max(0, (g.totalWords / baselineWPM) - (g.totalSeconds / 60));
-  const grid = el('div', { class:'stat-grid' });
   const stat = (n, k, grad, delta) => {
     const s = el('div', { class:'stat' }, el('div', { class:'n' + (grad ? ' grad' : '') }, n), el('div', { class:'k' }, k));
     if (delta != null && delta !== 0 && statsRange !== 'all')
       s.insertBefore(el('div', { class:'delta ' + (delta > 0 ? 'up' : 'down') }, `${delta > 0 ? '▲' : '▼'} ${Math.abs(delta)}%`), s.firstChild);
     return s;
   };
-  grid.append(stat(fmt(rs.total), 'words read', true, rs.delta));
-  grid.append(stat(fmt(rs.dailyAvg), 'daily average', true));
-  grid.append(stat(fmt(rs.best), 'best day'));
-  grid.append(stat(statsRange === 'all' ? `${rs.active}` : `${rs.active}/${rs.elapsedDays}`, statsRange === 'all' ? 'active days' : 'days active'));
-  grid.append(stat(`${avgWpm}`, 'avg WPM'));
-  grid.append(stat(`${g.bestWpm || 0}`, 'best WPM'));
-  grid.append(stat(`${g.streak || 0} 🔥`, 'day streak'));
-  grid.append(stat(`${g.finished || 0}`, 'texts finished'));
-  grid.append(stat(fmtTime(g.totalSeconds || 0), 'time read'));
-  v.append(grid);
+  const section = (title, right) => el('div', { class:'sec-title' }, el('h3', {}, title), right ? el('a', {}, right) : null);
 
-  // trend chart (line + area + regression trend line)
-  v.append(el('div', { class:'sec-title' }, el('h3', {}, RANGES[statsRange]),
-    el('a', {}, `${fmtTime(minutesSaved * 60)} saved`)));
-  v.append(lineChart(chartBuckets(statsRange)));
+  // ---------------- SPEED ----------------
+  const wow = wowWpmDelta();
+  v.append(section('Speed', wow ? `${wow > 0 ? '▲' : '▼'} ${Math.abs(wow)}% vs last wk` : ''));
+  const sg = el('div', { class:'stat-grid' });
+  sg.append(stat(`${windowAvgWpm(statsRange) || allTimeAvgWpm}`, 'avg WPM', true));
+  sg.append(stat(`${windowBestWpm(statsRange) || g.bestWpm || 0}`, 'best WPM'));
+  sg.append(stat(`${g.bestWpm || 0}`, 'all-time best'));
+  v.append(sg);
+  v.append(lineChart(wpmBuckets(statsRange), { kind:'wpm' }));
 
-  // interests (aggregate topics) — filled below the chart
+  // ---------------- VOLUME ----------------
+  const volHead = section('Volume');
+  const toggle = el('div', { class:'metric-toggle' });
+  for (const m of ['words', 'mins']) {
+    const b = el('button', { class:'chip sm' + (statsMetric === m ? ' on' : '') }, m === 'words' ? 'Words' : 'Minutes');
+    b.addEventListener('click', () => { statsMetric = m; haptic(6); renderStats(); });
+    toggle.append(b);
+  }
+  volHead.append(toggle);
+  v.append(volHead);
+  const vg = el('div', { class:'stat-grid' });
+  if (statsMetric === 'mins') {
+    const totalMin = Math.round(windowSecs(statsRange) / 60);
+    vg.append(stat(fmt(totalMin), 'minutes', true));
+    vg.append(stat(fmt(Math.round(totalMin / rs.elapsedDays)), 'daily avg', true));
+    vg.append(stat(fmtTime(g.totalSeconds || 0), 'time read'));
+  } else {
+    vg.append(stat(fmt(rs.total), 'words read', true, rs.delta));
+    vg.append(stat(fmt(rs.dailyAvg), 'daily avg', true));
+    vg.append(stat(fmt(rs.best), 'best day'));
+  }
+  v.append(vg);
+  v.append(lineChart(chartBuckets(statsRange, statsMetric), { kind: statsMetric }));
+  v.append(el('div', { class:'saved-note' }, `⏱ ${fmtTime(minutesSaved * 60)} saved vs an average reader`));
+
+  // ---------------- CONSISTENCY ----------------
+  v.append(section('Consistency'));
+  const cg = el('div', { class:'stat-grid' });
+  cg.append(stat(`${g.streak || 0} 🔥`, 'day streak'));
+  cg.append(stat(statsRange === 'all' ? `${rs.active}` : `${rs.active}/${rs.elapsedDays}`, 'days active'));
+  cg.append(stat(`${goalAdherence(statsRange)}%`, 'goal met', true));
+  cg.append(stat(`${g.finished || 0}`, 'texts finished'));
+  v.append(cg);
+  v.append(el('div', { class:'card best-time' }, el('span', { class:'bt-ic' }, '🕐'), el('span', {}, 'You read most in the '), el('b', {}, bestTimeOfDay())));
+
+  // ---------------- CONTENT ----------------
+  v.append(section('Content'));
+  v.append(typeBreakdown());
   v.append(renderInterests());
 
   // achievements — grouped, earned first within each group
@@ -2660,7 +2777,8 @@ function renderStats() {
 
 // SVG line/area chart with a dashed regression trend line and a hover/touch tooltip
 // that reads out each bucket's words read + reading time + share of the period.
-function lineChart(buckets) {
+function lineChart(buckets, opts = {}) {
+  const kind = opts.kind || 'words';
   const W = 320, H = 132, padX = 12, padTop = 14, padBot = 22;
   const n = buckets.length;
   const max = Math.max(1, ...buckets.map(b => b.value));
@@ -2701,11 +2819,12 @@ function lineChart(buckets) {
     const b = buckets[bi], px = x(bi);
     cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('opacity', '1');
     active.setAttribute('cx', px); active.setAttribute('cy', y(b.value)); active.setAttribute('opacity', '1');
-    const mins = b.value ? fmtTime(b.value / Math.max(60, state.settings.wpm) * 60) : '—';
     const share = periodTotal ? Math.round((b.value / periodTotal) * 100) : 0;
-    tip.innerHTML = `<div class="lc-tip-t">${b.full || b.label}</div>` +
-      `<div class="lc-tip-v">${fmt(b.value)} words</div>` +
-      `<div class="lc-tip-s">${mins}${periodTotal ? ` · ${share}% of period` : ''}</div>`;
+    let vtext, stext = '';
+    if (kind === 'wpm') { vtext = b.value ? `${b.value} WPM` : '—'; }
+    else if (kind === 'mins') { vtext = `${fmt(b.value)} min`; stext = periodTotal ? `${share}% of period` : ''; }
+    else { vtext = `${fmt(b.value)} words`; const mins = b.value ? fmtTime(b.value / Math.max(60, state.settings.wpm) * 60) : '—'; stext = `${mins}${periodTotal ? ` · ${share}% of period` : ''}`; }
+    tip.innerHTML = `<div class="lc-tip-t">${b.full || b.label}</div><div class="lc-tip-v">${vtext}</div>` + (stext ? `<div class="lc-tip-s">${stext}</div>` : '');
     tip.style.left = (px / W) * 100 + '%';
     tip.dataset.side = px / W > 0.72 ? 'r' : px / W < 0.28 ? 'l' : 'c';
     tip.classList.remove('hidden');
