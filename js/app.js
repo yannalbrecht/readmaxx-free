@@ -6,9 +6,11 @@
 import {
   state, save, applyTheme, ACCENTS, THEMES, FONTS, SCALES, HAS_VIBRATE, dayKey,
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
+  saveAsset, getAsset, touchAsset, assetUsage, evictAssetsTo, clearAssets,
 } from './store.js';
 import {
   buildFlashes, buildFlashesAsync, flashDelay, orpParts, mdToBlocks, blocksToOutline, countWords, analyzeTopics,
+  CARD_TYPES, ZERO_WORD_CARDS,
 } from './rsvp.js';
 import {
   el, clear, buzz, toast, achievementToast, sheet, closeSheet, ICON, fmt, fmtTime,
@@ -858,6 +860,7 @@ async function saveDoc(doc) {
   doc.idx = doc.idx || 0;
   doc.progress = doc.progress || 0;
   await putDoc(doc);
+  await prefetchRemoteImages(doc);   // download + store remote images so the doc reads offline
   return doc;
 }
 
@@ -870,7 +873,7 @@ function makeDoc({ title, type, text, author, markdown, blocks }) {
   const isMd = markdown || type === 'md' || (!blocks && /^#{1,6}\s+\S/m.test(text || ''));
   const bl = blocks || mdToBlocks(text, { markdown: isMd });
   const { chapters, toc } = blocksToOutline(bl, { title });
-  const { topics, keywords } = analyzeTopics(text || bl.map(b => b.text).join(' '));
+  const { topics, keywords } = analyzeTopics(text || bl.map(b => b.text || '').join(' '));
   return { title: title || 'Untitled', type, author, blocks: bl, chapters, toc, topics, keywords,
     words: chapters.reduce((s, c) => s + (c.words || 0), 0) };
 }
@@ -953,21 +956,53 @@ async function fetchArticle(url, timeoutMs = 15000) {
   return htmlToText(html);
 }
 
-// The ONE DOM→blocks walker (used by HTML article import and EPUB).
+// The ONE DOM→blocks walker (used by HTML article import and EPUB). Walks in
+// document order so headings, paragraphs, lists, tables, images, code and quotes
+// keep their place. Images carry a `src` (resolved to a stored asset at import).
 function domToBlocks(root) {
   const blocks = [];
-  root.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,blockquote').forEach(n => {
-    const t = n.textContent.replace(/\s+/g, ' ').trim();
-    if (!t) return;
-    const tag = n.tagName.toLowerCase();
-    const type = /^h[1-6]$/.test(tag) ? 'h' + Math.min(3, +tag[1]) : tag === 'blockquote' ? 'quote' : tag;
-    blocks.push({ type, text: t });
-  });
+  const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+  const pushImg = (im, cap) => { const src = im.getAttribute('src') || im.getAttribute('data-src') || ''; if (src) blocks.push({ type:'image', src, alt: cap || im.getAttribute('alt') || '', text:'' }); };
+  const domTable = (t) => [...t.querySelectorAll('tr')].map(tr => [...tr.children].map(td => clean(td.textContent))).filter(r => r.length);
+  const walk = (node) => {
+    for (const n of node.children) {
+      const tag = n.tagName.toLowerCase();
+      if (/^h[1-6]$/.test(tag)) { const t = clean(n.textContent); if (t) blocks.push({ type:'h' + Math.min(3, +tag[1]), text:t }); }
+      else if (tag === 'p') { const t = clean(n.textContent); if (t) blocks.push({ type:'p', text:t }); const im = n.querySelector('img'); if (im) pushImg(im); }
+      else if (tag === 'blockquote') { const t = clean(n.textContent); if (t) blocks.push({ type:'quote', text:t }); }
+      else if (tag === 'ul' || tag === 'ol') { const items = [...n.querySelectorAll(':scope > li')].map(li => clean(li.textContent)).filter(Boolean); if (items.length) blocks.push({ type:'list', ordered: tag === 'ol', items, text:'' }); }
+      else if (tag === 'table') { const rows = domTable(n); if (rows.length) blocks.push({ type:'table', rows, head: !!n.querySelector('th'), text:'' }); }
+      else if (tag === 'pre') { const t = n.textContent.replace(/\s+$/, ''); if (t.trim()) blocks.push({ type:'code', text:t, lang:'' }); }
+      else if (tag === 'figure') { const im = n.querySelector('img'); if (im) pushImg(im, clean(n.querySelector('figcaption')?.textContent)); }
+      else if (tag === 'img') { pushImg(n); }
+      else if (n.children.length) { walk(n); }              // recurse into wrappers (div/section/article)
+      else { const t = clean(n.textContent); if (t) blocks.push({ type:'p', text:t }); }
+    }
+  };
+  walk(root);
   return blocks;
 }
+function tableToMd(b) {
+  const esc = (c) => (c || '').replace(/\|/g, '\\|');
+  const rows = b.rows || [];
+  if (!rows.length) return '';
+  const cols = Math.max(...rows.map(r => r.length));
+  const line = (r) => '| ' + Array.from({ length: cols }, (_, i) => esc(r[i] || '')).join(' | ') + ' |';
+  const out = [line(rows[0]), '| ' + Array.from({ length: cols }, () => '---').join(' | ') + ' |'];
+  for (let i = 1; i < rows.length; i++) out.push(line(rows[i]));
+  return out.join('\n');
+}
 function blocksToMarkdown(blocks) {
-  const pre = { h1:'# ', h2:'## ', h3:'### ', li:'- ', quote:'> ', p:'' };
-  return blocks.map(b => (pre[b.type] || '') + b.text).join('\n\n');
+  const out = [];
+  for (const b of blocks) {
+    if (b.type === 'list') { out.push((b.items || []).map(it => (b.ordered ? '1. ' : '- ') + it).join('\n')); continue; }
+    if (b.type === 'image') { out.push(`![${b.alt || ''}](${b.src || ''})`); continue; }
+    if (b.type === 'code') { out.push('```\n' + (b.text || '') + '\n```'); continue; }
+    if (b.type === 'table') { out.push(tableToMd(b)); continue; }
+    if (b.type === 'math') { out.push('$$\n' + (b.tex || '') + '\n$$'); continue; }
+    out.push(({ h1:'# ', h2:'## ', h3:'### ', quote:'> ', p:'' }[b.type] || '') + (b.text || ''));
+  }
+  return out.join('\n\n');
 }
 function htmlToText(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -1214,6 +1249,16 @@ function loadScript(src) {
     const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.append(s);
   });
 }
+// Resolve an image href (relative to its chapter file) to a normalised zip path.
+function resolveZipPath(base, chapterHref, src) {
+  const dir = (base + chapterHref).replace(/[^/]+$/, '');    // chapter file's directory
+  const stack = [];
+  for (const p of (dir + decodeURIComponent(src)).split('/')) {
+    if (p === '..') stack.pop();
+    else if (p && p !== '.') stack.push(p);
+  }
+  return stack.join('/');
+}
 async function parseEpub(file) {
   await loadScript('./vendor/jszip.min.js');
   const zip = await window.JSZip.loadAsync(file);
@@ -1235,6 +1280,12 @@ async function parseEpub(file) {
     const dd = parser.parseFromString(await entry.async('string'), 'text/html');
     dd.querySelectorAll('script,style,svg').forEach(n => n.remove());
     const blocks = domToBlocks(dd.body || dd);
+    // Pull each referenced image straight from the zip (fully offline) and store it.
+    for (const b of blocks) {
+      if (b.type !== 'image' || b.assetHash || !b.src || /^(data:|https?:)/i.test(b.src)) continue;
+      const imgEntry = zip.file(resolveZipPath(base, spine[si], b.src));
+      if (imgEntry) { try { b.assetHash = await saveAsset(await imgEntry.async('blob')); } catch {} }
+    }
     if (!blocks.length) continue;
     // make each spine file a chapter: ensure it starts at the top heading level.
     if (!blocks.some(b => b.type === 'h1')) {
@@ -1577,9 +1628,18 @@ function gotoNote(delta) {
   openVaultNote(vaultDoc, j);
 }
 
+// Pivot rendering has two independent switches: `orp` = fixed-position ALIGNMENT
+// (the RSVP mechanism), `pivotColor` = the red highlight. no-pivotcolor only bites
+// when alignment is on (there's no pivot span to colour otherwise).
+function applyPivotClasses() {
+  const r = D.reader; if (!r) return;
+  r.classList.toggle('no-orp', !state.settings.orp);
+  r.classList.toggle('no-pivotcolor', !state.settings.pivotColor);
+}
+
 function renderReader() {
   const r = D.reader; clear(r);
-  r.classList.toggle('no-orp', !state.settings.orp);
+  applyPivotClasses();
 
   const inVault = !!R.vaultCtx;
   const multiChapter = R.ranges.length > 1;
@@ -1705,9 +1765,17 @@ function addSpeedStrips(stage, speedLbl) {
 
 function renderFlash(i) {
   const f = R.flashes[i]; if (!f) return;
+  const stage = $('.rd-stage', D.reader);
+  $('.rd-richcard', D.reader)?.remove();          // clear any previous overlay
   const w = wEl(); clear(w);
-  w.classList.toggle('rd-heading', !!f.card);
-  if (f.card) {
+  const richCard = !!(f.card && f.block);         // table/image/code/math/list/quote
+  const headingCard = !!(f.card && f.heading);
+  w.classList.toggle('rd-heading', headingCard);
+  stage?.classList.toggle('has-card', richCard);
+
+  if (richCard) {
+    stage?.append(renderRichCard(f.block));
+  } else if (headingCard) {
     // a heading shows as a brief title card (not flashed word-by-word)
     w.append(el('div', { class:'rd-card-eyebrow' }, f.heading === 1 ? 'Chapter' : 'Section'),
       el('div', { class:'rd-card-t' }, f.text));
@@ -1719,15 +1787,17 @@ function renderFlash(i) {
   } else {
     w.textContent = f.text;
   }
-  // context window (wrapping text in a fixed low box; bottom-aligned)
+  // context window (wrapping text in a fixed low box; bottom-aligned) — hidden while
+  // a rich card is up (the card owns the stage).
   const ctxBox = $('.rd-context', D.reader);
   const ctx = $('.ctx-text', D.reader);
-  if (state.settings.showContext) {
+  if (state.settings.showContext && !richCard) {
     ctxBox.style.display = '';
     clear(ctx);
     const lo = Math.max(0, i - 7), hi = Math.min(R.total, i + 8);
     for (let k = lo; k < hi; k++) {
-      ctx.append(el('span', k === i ? { class:'cur' } : {}, R.flashes[k].text + ' '));
+      const ft = R.flashes[k].text || (R.flashes[k].card ? '▦' : '');
+      ctx.append(el('span', k === i ? { class:'cur' } : {}, ft + ' '));
     }
   } else ctxBox.style.display = 'none';
 
@@ -1751,6 +1821,141 @@ function renderFlash(i) {
   $('.rd-tot', D.reader).textContent = fmtTime((R.total - i) > 0 ? (R.doc.words - wordsRead) / state.settings.wpm * 60 : 0);
 }
 const pctText = (i) => `${R?.finished ? 100 : Math.round((i / R.total) * 100)}%`;
+
+/* ============================================================
+   RICH BLOCKS — tables, images, code, math, lists, quotes
+   Rendered whole (never flashed word-by-word). The same renderer feeds both the
+   reader's tap-to-continue pause card and the scrollable Text View.
+   ============================================================ */
+
+// One block → a DOM node. Used by the reader overlay and the Text View.
+function richBlockEl(b) {
+  switch (b.type) {
+    case 'table': {
+      const wrap = el('div', { class:'rich-table-wrap' });
+      const t = el('table', { class:'rich-table' });
+      (b.rows || []).forEach((row, ri) => {
+        const tr = el('tr');
+        const head = b.head && ri === 0;
+        for (const cell of row) tr.append(el(head ? 'th' : 'td', {}, cell));
+        t.append(tr);
+      });
+      wrap.append(t);
+      return wrap;
+    }
+    case 'image': return imageEl(b);
+    case 'code': {
+      const pre = el('pre', { class:'rich-code' });
+      pre.append(el('code', {}, b.text || ''));
+      return pre;
+    }
+    case 'math': return mathEl(b.tex || '', true);
+    case 'list': {
+      const l = el(b.ordered ? 'ol' : 'ul', { class:'rich-list' });
+      for (const it of (b.items || [])) l.append(el('li', {}, it));
+      return l;
+    }
+    case 'quote': return el('blockquote', { class:'rich-quote' }, b.text || '');
+    default: return el('div', {}, b.text || '');
+  }
+}
+
+// The reader's full-stage pause card: the block content + a Continue control.
+function renderRichCard(b) {
+  const card = el('div', { class:'rd-richcard rc-' + b.type });
+  const kind = { table:'Table', image:'Figure', code:'Code', math:'Formula', list:'List', quote:'Quote' }[b.type] || '';
+  card.append(el('div', { class:'rc-eyebrow' }, kind));
+  card.append(el('div', { class:'rc-body' }, richBlockEl(b)));
+  card.append(el('button', { class:'rc-continue', onclick:(e) => { e.stopPropagation(); haptic(8); resumeFromCard(); } }, 'Continue ›'));
+  return card;
+}
+
+// <figure> for an image block. Sources, in order: a locally stored asset (offline),
+// then an inline data:/http(s) src. Missing/blocked images degrade to a caption chip.
+function imageEl(b) {
+  const fig = el('figure', { class:'rich-figure' });
+  const img = el('img', { class:'rich-img', alt: b.alt || '', loading:'lazy', decoding:'async' });
+  img.addEventListener('error', () => { img.remove(); if (!fig.querySelector('.rich-imgmiss')) fig.prepend(el('div', { class:'rich-imgmiss' }, '🖼️ image unavailable')); });
+  if (b.assetHash && typeof getAssetURL === 'function') {
+    getAssetURL(b.assetHash).then(u => { if (u) img.src = u; else img.dispatchEvent(new Event('error')); });
+  } else if (b.src && /^(data:|https?:)/.test(b.src)) {
+    img.src = b.src;
+  } else {
+    img.dispatchEvent(new Event('error'));
+  }
+  fig.append(img);
+  if (b.alt) fig.append(el('figcaption', { class:'rich-cap' }, b.alt));
+  return fig;
+}
+
+// KaTeX is self-hosted in /vendor and loaded on first use only (keeps boot lean).
+let _katexReady = null;
+function loadKatex() {
+  if (_katexReady) return _katexReady;
+  _katexReady = (async () => {
+    if (!document.getElementById('katex-css'))
+      document.head.append(el('link', { id:'katex-css', rel:'stylesheet', href:'vendor/katex/katex.min.css' }));
+    if (!window.katex) await loadScript('./vendor/katex/katex.min.js');
+    return window.katex;
+  })();
+  return _katexReady;
+}
+function mathEl(tex, display) {
+  const host = el('div', { class:'rich-math' + (display ? ' is-display' : '') });
+  host.textContent = tex; // readable fallback until KaTeX renders (or if it fails)
+  loadKatex()
+    .then(katex => katex.render(tex, host, { displayMode: display, throwOnError: false }))
+    .catch(() => { host.textContent = tex; });
+  return host;
+}
+
+/* ---- image asset resolution (blob URLs, cached + revoked with the reader) ---- */
+const _assetURLs = new Map();
+async function getAssetURL(hash) {
+  if (_assetURLs.has(hash)) return _assetURLs.get(hash);
+  try {
+    const a = await getAsset(hash);
+    if (!a?.blob) return null;
+    const url = URL.createObjectURL(a.blob);
+    _assetURLs.set(hash, url);
+    touchAsset(hash).catch(() => {});
+    return url;
+  } catch { return null; }
+}
+function revokeAssetURLs() {
+  for (const u of _assetURLs.values()) { try { URL.revokeObjectURL(u); } catch {} }
+  _assetURLs.clear();
+}
+
+/* ---- prefetch-at-import: store images locally so docs read fully offline ---- */
+function collectImageBlocks(doc) {
+  const out = [], seen = new Set();
+  const scan = (blocks) => { for (const b of blocks || []) if (b?.type === 'image' && !seen.has(b)) { seen.add(b); out.push(b); } };
+  scan(doc.blocks);
+  for (const ch of doc.chapters || []) scan(ch.blocks);   // chapters may hold separate refs on old docs
+  return out;
+}
+async function prefetchRemoteImages(doc) {
+  if (!state.settings.loadImages) return doc;
+  const imgs = collectImageBlocks(doc).filter(b => !b.assetHash && b.src && /^https?:/i.test(b.src));
+  if (!imgs.length) return doc;
+  let done = 0, saved = 0;
+  for (const b of imgs) {
+    try {
+      const res = await fetch(b.src, { mode:'cors' });
+      if (res.ok) {
+        const blob = await res.blob();
+        if (/^image\//.test(blob.type) && blob.size <= 8 * 1048576) { b.assetHash = await saveAsset(blob, doc.id); saved++; }
+      }
+    } catch {}
+    if (imgs.length > 2) toast(`Saving images… ${++done}/${imgs.length}`);
+  }
+  if (saved) { await enforceImageBudget(); await putDoc(doc); }
+  return doc;
+}
+async function enforceImageBudget() {
+  try { await evictAssetsTo((state.settings.imageBudgetMB || 300) * 1048576); } catch {}
+}
 
 /* ---- chapter navigation ---- */
 function chapterIndexAt(i) {
@@ -1837,16 +2042,30 @@ function openTextView() {
   const stageWrap = el('div', { class:'tv-stage' });
   const scroll = el('div', { class:'tv-scroll' });
   const inner = el('div', { class:'tv-inner' });
-  // render blocks with one span per word (index = word position within chapter)
+  // render blocks with one span per word (index = word position within chapter).
+  // Word count here MUST equal the sum of flash `.n` for the chapter (buildChapter),
+  // or the scroll marker / tap-to-jump mapping drifts — so zero-word cards emit NO
+  // spans, and word-bearing cards (list/quote) emit one span per word.
   const spans = [];
+  const wordSpan = (word, into) => {
+    const s = document.createElement('span');
+    s.className = 'tv-w'; s.dataset.w = spans.length; s.textContent = word;
+    into.append(s, document.createTextNode(' '));
+    spans.push(s);
+  };
   for (const b of chapterBlocks(chDoc)) {
-    const blk = el('div', { class: TV_BLOCK_CLASS[b.type] || 'tv-p' });
-    for (const word of b.text.split(/\s+/).filter(Boolean)) {
-      const s = document.createElement('span');
-      s.className = 'tv-w'; s.dataset.w = spans.length; s.textContent = word;
-      blk.append(s, document.createTextNode(' '));
-      spans.push(s);
+    if (ZERO_WORD_CARDS.has(b.type)) {           // table/image/code/math — no words
+      inner.append(el('div', { class:'tv-card' }, richBlockEl(b)));
+      continue;
     }
+    if (b.type === 'list') {                     // list — one span per word, still tappable
+      const l = el(b.ordered ? 'ol' : 'ul', { class:'tv-list' });
+      for (const it of (b.items || [])) { const li = el('li'); for (const word of it.split(/\s+/).filter(Boolean)) wordSpan(word, li); l.append(li); }
+      inner.append(l);
+      continue;
+    }
+    const blk = el('div', { class: TV_BLOCK_CLASS[b.type] || 'tv-p' });
+    for (const word of (b.text || '').split(/\s+/).filter(Boolean)) wordSpan(word, blk);
     inner.append(blk);
   }
   scroll.append(inner);
@@ -1878,9 +2097,9 @@ function openTextView() {
   function setMarker(w, scrollTo) {
     spans[marker]?.classList.remove('tv-cur');
     marker = Math.max(0, Math.min(spans.length - 1, w));
-    spans[marker].classList.add('tv-cur');
-    chipPct.textContent = ' ' + Math.round((wordToFlash(marker) / R.total) * 100) + '%';
-    if (scrollTo && offsets) scroll.scrollTop = offsets[marker] - scroll.clientHeight * READ_FRAC;
+    spans[marker]?.classList.add('tv-cur');   // a card-only chapter has no word spans
+    chipPct.textContent = ' ' + Math.round((wordToFlash(Math.max(0, marker)) / R.total) * 100) + '%';
+    if (scrollTo && offsets && offsets[marker] != null) scroll.scrollTop = offsets[marker] - scroll.clientHeight * READ_FRAC;
   }
   function markerFromScroll() {
     if (!offsets) return;
@@ -1924,8 +2143,17 @@ function updatePlayBtn() {
   b.classList.toggle('is-replay', !!R.finished);
 }
 
+// Advance past a pause-card the user was reading, then keep playing.
+function resumeFromCard() {
+  if (!R) return;
+  R.cardWait = false;
+  D.reader.classList.remove('card-wait');
+  play();
+}
 function play() {
   if (!R || R.playing) return;
+  // Any play trigger (tap, button, space) also dismisses a waiting pause-card.
+  if (R.cardWait) { R.cardWait = false; D.reader.classList.remove('card-wait'); }
   if (R.finished) return; // completed → only "Read again" restarts (keeps the ✓ badge)
   // Paused past the final flash → the text was read to the end: finish it properly.
   // (No restart-from-0 here: openReader already resets non-finished docs that load
@@ -1949,6 +2177,17 @@ function tick() {
   const f = R.flashes[R.idx];
   if (f.paraEnd) haptic(12);
   R.sessionWords += f.n;
+  // A tap-to-continue card halts the loop: show it, bank progress, wait for the user.
+  if (f.card && f.hold === 'pause') {
+    R.idx++;                       // resume continues AFTER the card
+    R.cardWait = true;
+    R.playing = false; clearTimeout(R.timer);
+    D.reader.classList.add('card-wait');
+    accrue(); saveProgress();
+    updatePlayBtn(); releaseWake();
+    haptic(10);
+    return;
+  }
   const delay = flashDelay(f, state.settings.wpm);
   R.idx++;
   R.timer = setTimeout(tick, delay);
@@ -1980,6 +2219,7 @@ function accrue() {
 function seek(i) {
   const wasPlaying = R.playing;
   if (wasPlaying) pause();
+  R.cardWait = false; D.reader.classList.remove('card-wait');
   R.idx = Math.max(0, Math.min(R.total - 1, i));
   R.done = R.idx >= R.total - 1;
   renderFlash(R.idx);
@@ -2033,6 +2273,7 @@ function closeReader() {
   const wantSummary = R && !R.summaryShown && !vaultCtx && (R.visitWords || 0) >= 250;
   const visit = R ? { words: R.visitWords, secs: R.visitSecs, wpm: R.visitWpm, xpAtOpen: R.xpAtOpen, streakWasEarned: R.streakWasEarned } : null;
   R = null;
+  revokeAssetURLs();
   D.reader.classList.add('hidden');
   if (vaultCtx) openVaultBrowser(vaultCtx.vaultDoc.id); // back to vault, progress refreshed
   else showView('home');
@@ -2171,7 +2412,8 @@ function syncReaderWpm() { const r = $('.rd-range', D.reader); if (r) r.value = 
 function readerSettings() {
   if (R?.playing) pause();
   const body = el('div', { class:'stack' });
-  body.append(toggleRow('Highlight pivot letter (ORP)', 'orp', () => renderFlash(R.idx)));
+  body.append(toggleRow('Pivot alignment (ORP)', 'orp', () => { applyPivotClasses(); renderFlash(R.idx); }));
+  body.append(toggleRow('Red pivot letter', 'pivotColor', () => { applyPivotClasses(); renderFlash(R.idx); }));
   body.append(toggleRow('Show context', 'showContext', () => renderFlash(R.idx)));
   body.append(toggleRow('Tap screen to pause', 'tapToPause'));
   body.append(stepperRow('Words per flash', 'chunk', 1, 4, () => rebuildFlashes()));
@@ -2492,7 +2734,8 @@ function renderProfile() {
   const g1 = el('div', { class:'set-group' });
   g1.append(navRow(ICON.fwd, 'Default speed', `${s.wpm} WPM`, () => speedSheet()));
   g1.append(stepperRow('Words per flash', 'chunk', 1, 4, null, true));
-  g1.append(toggleRow('Highlight pivot (ORP)', 'orp', null, true));
+  g1.append(toggleRow('Pivot alignment (ORP)', 'orp', null, true));
+  g1.append(toggleRow('Red pivot letter', 'pivotColor', null, true));
   g1.append(toggleRow('Show context line', 'showContext', null, true));
   g1.append(toggleRow('Tap screen to pause', 'tapToPause', null, true));
   v.append(g1);
@@ -2528,6 +2771,13 @@ function renderProfile() {
     el('div', { class:'sv rm-storage' }, '…'));
   g5.append(storageRow);
   updateStorageRow();
+  g5.append(toggleRow('Load images over the internet', 'loadImages', null, true));
+  const imgRow = el('div', { class:'set' });
+  imgRow.append(el('div', { class:'si', html: ICON.file }), el('div', { class:'st' }, 'Images stored'),
+    el('div', { class:'sv rm-images' }, '…'));
+  g5.append(imgRow);
+  updateImagesRow();
+  g5.append(navRow(ICON.trash, 'Clear stored images', '', clearStoredImages));
   g5.append(navRow(ICON.file, 'Export backup', '.json', exportBackup));
   g5.append(navRow(ICON.paste, 'Import backup', '', importBackup));
   g5.append(navRow(ICON.trash, 'Reset onboarding', '', () => { state.profile.onboarded = false; save(); startOnboarding(); }));
@@ -2782,6 +3032,20 @@ async function updateStorageRow() {
   const pctUsed = quota ? Math.round((used / quota) * 100) : 0;
   node.textContent = `${fmtB(used)}${quota ? ` of ${fmtB(quota)} · ${pctUsed}%` : ''}`;
   if (pctUsed >= 80) { node.style.color = 'var(--warn)'; toast('Storage is getting full — export a backup', { err:true }); }
+}
+
+async function updateImagesRow() {
+  let u;
+  try { u = await assetUsage(); } catch {}
+  const node = $('.rm-images', D.profile); if (!node) return;
+  if (!u) { node.textContent = '—'; return; }
+  const fmtB = (b) => b >= 1048576 ? (b / 1048576).toFixed(b < 10485760 ? 1 : 0) + ' MB' : Math.round(b / 1024) + ' KB';
+  const cap = (state.settings.imageBudgetMB || 300);
+  node.textContent = u.count ? `${u.count} · ${fmtB(u.bytes)} of ${cap} MB` : 'none yet';
+}
+async function clearStoredImages() {
+  try { await clearAssets(); revokeAssetURLs(); toast('Stored images cleared'); updateImagesRow(); }
+  catch { toast('Could not clear images', { err:true }); }
 }
 
 async function exportBackup() {

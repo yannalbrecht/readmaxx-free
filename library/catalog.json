@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-07-12",
+ "updated": "2026-07-18",
  "authors": [
   {
    "id": "dan-koe",
@@ -427,6 +427,15 @@
    "texts": 1,
    "tagline": "A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.",
    "bio": ""
+  },
+  {
+   "id": "readmaxx-courses",
+   "name": "ReadMaxx Courses",
+   "tagline": "Original, self-paced courses written for the reader — built to be read fast, with tables, formulas and figures shown in full.",
+   "bio": "ReadMaxx Courses are structured, book-length primers written in-house. Each course recaps a subject from the ground up and connects it to everyday, practical decisions. Designed to exploit the reader’s rich-content view: tables, chemical formulas and figures pause the flow and display whole, so nothing important gets flashed past.",
+   "phase": 1,
+   "order": -1,
+   "texts": 1
   }
  ],
  "texts": [
@@ -4391,6 +4400,24 @@
    "desc": "A student of Ken Wilber on masculine and feminine dynamics and spiritual growth.",
    "src": "owned",
    "url": "https://www.google.com/search?q=The%20Way%20of%20the%20Superior%20Man%20David%20Deida%20ebook"
+  },
+  {
+   "id": "readmaxx-courses--chemistry-for-the-body",
+   "authorId": "readmaxx-courses",
+   "title": "Chemistry for the Body — A Practical Recap",
+   "date": "2026-07-18",
+   "words": 9959,
+   "tags": [
+    "chemistry",
+    "health",
+    "nutrition",
+    "biology",
+    "longevity"
+   ],
+   "src": "bundled",
+   "path": "library/texts/courses/chemistry-for-the-body.md",
+   "preview": "You already met most of this in school. The goal here is not to re-teach an exam — it is to give you a working mental model of matter that you can point at your own body, your food, your supplements, and your skincare, and actually understand what is going on.",
+   "desc": "A ground-up recap of chemistry aimed squarely at your own body, in 25 chapters: atoms, bonds, water, energy (ATP), pH and electrolytes; carbs, fats, proteins, vitamins and minerals; metabolism, oxidation, hormones, neurochemistry and homeostasis; then applied chapters on nutrition, supplements, drugs, fitness, longevity, skincare and the materials you wear — closing with how to judge any health claim like a chemist. Honest about the science and the hype."
   }
  ],
  "collections": [

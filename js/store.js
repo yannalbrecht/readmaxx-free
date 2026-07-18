@@ -12,14 +12,16 @@ export const ACCENTS = {
   mono:   { a1:'#c8c4e0', a2:'#8b87a8', name:'Mono' },
 };
 
-// Kindle-style display themes. `lock:true` = the theme owns its accent (accent picker
-// hidden and no inline accent overrides). `sw` = [background, ink] for picker swatches.
+// Kindle-style display themes. Applied via data-theme on <html> (the default
+// 'dark' theme uses the base :root, no attribute). `sw:[page, ink]` colours the
+// "Aa" preview swatch. `lock:true` themes own their accent (mono/red) — applyTheme
+// must NOT write inline --a1/--a2/--accent for them, or it would beat the CSS.
 export const THEMES = {
-  nebula: { name:'Nebula',    sw:['#08070d','#8b6cff'] },
-  paper:  { name:'Paper',     sw:['#f6f5f2','#1d1a26'] },
-  sepia:  { name:'Sepia',     sw:['#f7ecd7','#4a3b28'] },
-  mono:   { name:'Mono',      sw:['#000000','#f5f5f5'], lock:true },
-  red:    { name:'Night Red', sw:['#000000','#ff5a45'], lock:true },
+  dark:  { name:'Night', sw:['#15131f', '#f4f3fb'] },
+  paper: { name:'Paper', sw:['#ffffff', '#1d1a26'] },
+  sepia: { name:'Sepia', sw:['#fdf6e5', '#4a3b28'] },
+  mono:  { name:'Mono',  sw:['#000000', '#f5f5f5'], lock:true },
+  red:   { name:'Ember', sw:['#130303', '#ff8d7a'], lock:true },
 };
 
 // Reading faces offered in Settings. `css` is the font-family stack.
@@ -47,13 +49,16 @@ const DEFAULT = {
   settings: {
     wpm: 350,
     chunk: 1,          // words per flash
-    orp: true,         // highlight pivot letter
+    orp: true,         // ORP pivot ALIGNMENT (fixed pivot position — the RSVP mechanism)
+    pivotColor: true,  // colour the pivot letter red (independent of alignment)
     showContext: true, // show surrounding sentence
     accent: 'violet',
-    theme: 'nebula',   // display theme (see THEMES)
+    theme: 'dark',     // display theme (see THEMES): dark | paper | sepia | mono | red
     font: 'lexend',    // reading face (see FONTS)
     scale: 'm',        // reading size (see SCALES)
     bigFont: false,    // legacy extra-large toggle
+    loadImages: true,  // fetch remote images at import to store them locally (offline after)
+    imageBudgetMB: 300,// soft cap on stored image bytes; LRU-evicted past this
     haptics: true,     // vibrate where supported (Android); no-op on iOS
     sound: false,
     tapToPause: true,  // tap the flash stage to pause/resume
@@ -78,18 +83,6 @@ const DEFAULT = {
     totalWords: 0,
     totalSeconds: 0,
     sessions: 0,
-    // Duolingo-style habit engine
-    freezes: 0,         // streak freezes held (max 2) — earned, never bought
-    freezeProgress: 0,  // consecutive earned days toward the next freeze (7 → +1)
-    frozenDays: {},     // 'YYYY-MM-DD' -> true (days a freeze saved)
-    milestonesSeen: [], // streak milestones already celebrated (3/7/30/100/365)
-    secondsToday: 0,    // daily counters for quests (reset in ensureToday)
-    sessionsToday: 0,
-    finishedToday: 0,
-    bestWpmToday: 0,
-    questsDay: null,    // dayKey the current quests were generated for
-    quests: [],         // [{metric,target,tier,label,done,claimed}]
-    questsRewardDay: null, // dayKey the all-3 bonus was granted
   },
 };
 
@@ -133,16 +126,22 @@ export function dayKey(d = new Date()) {
    ============================================================ */
 const DB_NAME = 'readmaxx-db';
 const STORE = 'docs';
+const ASSETS = 'assets';   // binary blobs (images), keyed by content hash
+const DB_VERSION = 2;
 let _db;
 
 function db() {
   if (_db) return Promise.resolve(_db);
   return new Promise((res, rej) => {
-    const r = indexedDB.open(DB_NAME, 1);
-    r.onupgradeneeded = () => {
+    const r = indexedDB.open(DB_NAME, DB_VERSION);
+    // Migration is additive and version-guarded so existing docs survive the upgrade.
+    r.onupgradeneeded = (e) => {
       const d = r.result;
-      if (!d.objectStoreNames.contains(STORE))
-        d.createObjectStore(STORE, { keyPath: 'id' });
+      if (!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE, { keyPath: 'id' });
+      if (!d.objectStoreNames.contains(ASSETS)) {
+        const a = d.createObjectStore(ASSETS, { keyPath: 'hash' });
+        a.createIndex('lastUsed', 'lastUsed'); // for LRU eviction under quota pressure
+      }
     };
     r.onsuccess = () => { _db = r.result; res(_db); };
     r.onerror = () => rej(r.error);
@@ -150,6 +149,51 @@ function db() {
 }
 
 function tx(mode) { return db().then(d => d.transaction(STORE, mode).objectStore(STORE)); }
+function assetStore(mode) { return db().then(d => d.transaction(ASSETS, mode).objectStore(ASSETS)); }
+const idbReq = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+
+/* ---------- image assets (content-addressed, deduped across docs) ---------- */
+export async function sha256Hex(buf) {
+  const h = await crypto.subtle.digest('SHA-256', buf);
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+export async function getAsset(hash) { return idbReq((await assetStore('readonly')).get(hash)); }
+export async function putAsset(rec) { await idbReq((await assetStore('readwrite')).put(rec)); return rec; }
+export async function deleteAsset(hash) { return idbReq((await assetStore('readwrite')).delete(hash)); }
+// Store a blob under its content hash, deduping and tracking which docs reference it.
+export async function saveAsset(blob, docId) {
+  const hash = await sha256Hex(await blob.arrayBuffer());
+  const existing = await getAsset(hash);
+  const docIds = new Set(existing?.docIds || []); if (docId) docIds.add(docId);
+  await putAsset({ hash, blob, type: blob.type || 'image/*', bytes: blob.size, docIds: [...docIds], lastUsed: Date.now() });
+  return hash;
+}
+export async function touchAsset(hash) {
+  const a = await getAsset(hash); if (a) { a.lastUsed = Date.now(); await putAsset(a); }
+}
+// Sum of stored asset bytes + a coarse device-quota estimate (for the Settings readout).
+export async function assetUsage() {
+  let bytes = 0, count = 0;
+  const store = await assetStore('readonly');
+  await new Promise((res) => { const c = store.openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { bytes += cur.value.bytes || 0; count++; cur.continue(); } else res(); }; c.onerror = () => res(); });
+  let quota = null, usage = null;
+  try { const est = await navigator.storage?.estimate?.(); if (est) { quota = est.quota; usage = est.usage; } } catch {}
+  return { bytes, count, quota, usage };
+}
+// Evict least-recently-used assets until stored image bytes fall under `cap`.
+export async function evictAssetsTo(cap) {
+  const store = await assetStore('readwrite');
+  let total = 0; const recs = [];
+  await new Promise((res) => { const c = store.openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { total += cur.value.bytes || 0; recs.push({ hash: cur.value.hash, bytes: cur.value.bytes || 0, lastUsed: cur.value.lastUsed || 0 }); cur.continue(); } else res(); }; c.onerror = () => res(); });
+  if (total <= cap) return 0;
+  recs.sort((a, b) => a.lastUsed - b.lastUsed); // oldest first
+  let freed = 0;
+  for (const r of recs) { if (total - freed <= cap) break; await deleteAsset(r.hash); freed += r.bytes; }
+  return freed;
+}
+export async function clearAssets() {
+  await idbReq((await assetStore('readwrite')).clear());
+}
 
 export async function putDoc(doc) {
   const o = await tx('readwrite');
@@ -183,10 +227,14 @@ export function uid() {
 /* apply display theme + accent + reading font + size to :root */
 export function applyTheme() {
   const root = document.documentElement;
-  const tKey = THEMES[state.settings.theme] ? state.settings.theme : 'nebula';
-  root.dataset.theme = tKey;
-  if (THEMES[tKey].lock) {
-    // mono/red own their palette — inline accent overrides would beat the CSS
+  const themeKey = THEMES[state.settings.theme] ? state.settings.theme : 'dark';
+  const theme = THEMES[themeKey];
+  // 'dark' is the base :root (no attribute); everything else is a data-theme.
+  if (themeKey === 'dark') root.removeAttribute('data-theme');
+  else root.setAttribute('data-theme', themeKey);
+  // Accent: lock themes (mono/red) define their own in CSS — an inline override
+  // here would win over the stylesheet, so clear it for them instead.
+  if (theme.lock) {
     root.style.removeProperty('--a1');
     root.style.removeProperty('--a2');
     root.style.removeProperty('--accent');
@@ -200,9 +248,6 @@ export function applyTheme() {
   root.style.setProperty('--read-font', f.css);
   root.style.setProperty('--read-scale', SCALES[state.settings.scale] ?? 1);
   root.classList.toggle('bigfont', state.settings.bigFont);
-  // keep the browser/PWA chrome in step with the theme background
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#08070d');
 }
 
 /* Capability flag — iOS Safari has no Vibration API, so haptics is Android-only.

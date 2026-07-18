@@ -58,18 +58,32 @@ function buildChapter(ch, ci, chunk, flashes) {
   const blocks = ch.blocks?.length ? ch.blocks
     : mdToBlocks(ch.text || '', { markdown: false });
   for (const b of blocks) {
-    const ws = b.text.split(RE_WS).filter(Boolean);
-    if (!ws.length) continue;
+    // Heading → brief TIMED title card (auto-advances), still word-counted.
     if (/^h[1-3]$/.test(b.type)) {
-      flashes.push({ text: b.text, n: ws.length, chapter: ci, mul: 1, paraEnd: true, heading: +b.type[1], card: true });
-    } else {
-      for (let i = 0; i < ws.length; i += chunk) {
-        const end = Math.min(i + chunk, ws.length);
-        let txt = ws[i];
-        for (let k = i + 1; k < end; k++) txt += ' ' + ws[k];
-        const pe = end === ws.length; // paragraph break at the end of a block
-        flashes.push({ text: txt, n: end - i, chapter: ci, mul: wordMultiplier(ws[end - 1]) * (pe ? 1.6 : 1), paraEnd: pe });
-      }
+      const ws = (b.text || '').split(RE_WS).filter(Boolean);
+      if (!ws.length) continue;
+      flashes.push({ text: b.text, n: ws.length, chapter: ci, mul: 1, paraEnd: true, heading: +b.type[1], card: true, hold: 'timed' });
+      words += ws.length;
+      continue;
+    }
+    // Rich block → ONE tap-to-continue PAUSE card shown whole. table/image/code/math
+    // carry no words into the stream; list/quote keep their words (still counted).
+    if (CARD_TYPES.has(b.type)) {
+      const zero = ZERO_WORD_CARDS.has(b.type);
+      const n = zero ? 0 : countWords(b.text || (b.items ? b.items.join(' ') : ''));
+      flashes.push({ text: b.text || '', n, chapter: ci, mul: 1, paraEnd: true, card: true, hold: 'pause', block: b });
+      words += n;
+      continue;
+    }
+    // Paragraph (and legacy `li`) → word/chunk flashes.
+    const ws = (b.text || '').split(RE_WS).filter(Boolean);
+    if (!ws.length) continue;
+    for (let i = 0; i < ws.length; i += chunk) {
+      const end = Math.min(i + chunk, ws.length);
+      let txt = ws[i];
+      for (let k = i + 1; k < end; k++) txt += ' ' + ws[k];
+      const pe = end === ws.length; // paragraph break at the end of a block
+      flashes.push({ text: txt, n: end - i, chapter: ci, mul: wordMultiplier(ws[end - 1]) * (pe ? 1.6 : 1), paraEnd: pe });
     }
     words += ws.length;
   }
@@ -100,9 +114,10 @@ export async function buildFlashesAsync(chapters, chunk = 1) {
   return { flashes, chapterRanges, words: totalWords };
 }
 
-/* delay in ms for one flash at a given wpm */
+/* delay in ms for one flash at a given wpm. Pause cards halt the loop (handled in
+   tick), so their delay is never consumed; timed heading cards get a fixed beat. */
 export function flashDelay(flash, wpm) {
-  if (flash.card) return 1100; // heading title-card pause
+  if (flash.card) return flash.hold === 'timed' ? 1100 : 1e9;
   const base = 60000 / Math.max(60, wpm);
   return Math.round(base * flash.n * flash.mul);
 }
@@ -125,28 +140,106 @@ function inlineClean(s) {
     .trim();
 }
 
+// Card blocks are shown WHOLE (not flashed word-by-word). table/image/code/math
+// are "zero-word" cards (they carry no prose into the flash/word stream); list and
+// quote are word-bearing cards (shown whole, but still counted + tappable).
+export const CARD_TYPES = new Set(['table', 'image', 'code', 'math', 'list', 'quote']);
+export const ZERO_WORD_CARDS = new Set(['table', 'image', 'code', 'math']);
+
 // Markdown / plain text → ordered typed blocks. markdown:false ⇒ paragraphs only.
+// With markdown:true, detects headings, lists, tables, fenced code, block math
+// ($$…$$), standalone images, blockquotes and horizontal rules.
 export function mdToBlocks(raw, { markdown = false } = {}) {
   let text = (raw || '').replace(/\r/g, '').replace(/^---\n[\s\S]*?\n---\n/, ''); // drop YAML frontmatter
-  text = text.replace(/```[\s\S]*?```/g, '\n\n');                                 // drop code fences
   const blocks = [];
-  let para = [];
-  const flush = () => { const t = inlineClean(para.join(' ')); if (t) blocks.push({ type: 'p', text: t }); para = []; };
-  for (const line of text.split('\n')) {
-    if (markdown) {
-      const h = line.match(/^(#{1,6})\s+(.+)/);
-      if (h) { flush(); blocks.push({ type: 'h' + Math.min(3, h[1].length), text: inlineClean(h[2]) }); continue; }
-      const li = line.match(/^\s*(?:[-*+]|\d+[.)])\s+(.+)/);
-      if (li) { flush(); const t = inlineClean(li[1]); if (t) blocks.push({ type: 'li', text: t }); continue; }
-      const q = line.match(/^\s*>\s?(.*)/);
-      if (q) { flush(); const t = inlineClean(q[1]); if (t) blocks.push({ type: 'quote', text: t }); continue; }
-      if (/^\s*[-=*_]{3,}\s*$/.test(line)) { flush(); continue; }                 // horizontal rule
+  let para = [], quoteBuf = [], list = null;
+  const flushPara  = () => { const t = inlineClean(para.join(' ')); if (t) blocks.push({ type: 'p', text: t }); para = []; };
+  const flushQuote = () => { const t = inlineClean(quoteBuf.join(' ')); if (t) blocks.push({ type: 'quote', text: t }); quoteBuf = []; };
+  const flushList  = () => { if (list && list.items.length) blocks.push(list); list = null; };
+  const flushAll   = () => { flushPara(); flushQuote(); flushList(); };
+
+  if (!markdown) {
+    for (const line of text.split('\n')) {
+      if (/^\s*$/.test(line)) { flushPara(); continue; }
+      para.push(line);
     }
-    if (/^\s*$/.test(line)) { flush(); continue; }
+    flushPara();
+    return blocks.filter(b => b.text);
+  }
+
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // fenced code ``` or ~~~
+    const fence = line.match(/^\s*(`{3,}|~{3,})\s*([A-Za-z0-9+#-]*)/);
+    if (fence) {
+      flushAll();
+      const marker = fence[1][0], lang = fence[2] || '', buf = [];
+      const close = new RegExp('^\\s*\\' + marker + '{3,}\\s*$');
+      for (i++; i < lines.length && !close.test(lines[i]); i++) buf.push(lines[i]);
+      blocks.push({ type: 'code', text: buf.join('\n'), lang });
+      continue;
+    }
+
+    // block math $$ … $$  (single- or multi-line)
+    const mOpen = line.match(/^\s*\$\$(.*)$/);
+    if (mOpen) {
+      flushAll();
+      let body = mOpen[1];
+      if (/\$\$\s*$/.test(body)) { blocks.push({ type: 'math', tex: body.replace(/\$\$\s*$/, '').trim() }); continue; }
+      const buf = body.trim() ? [body] : [];
+      for (i++; i < lines.length; i++) {
+        if (/\$\$\s*$/.test(lines[i])) { const rest = lines[i].replace(/\$\$\s*$/, ''); if (rest.trim()) buf.push(rest); break; }
+        buf.push(lines[i]);
+      }
+      blocks.push({ type: 'math', tex: buf.join('\n').trim() });
+      continue;
+    }
+
+    // pipe table: a `| … |` row whose NEXT line is a `|---|---|` separator
+    if (/^\s*\|?.*\|.*$/.test(line) && /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i + 1] || '')) {
+      const parseRow = (l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => inlineClean(c.trim()));
+      flushAll();
+      const rows = [parseRow(line)];
+      i += 2; // skip header + separator
+      for (; i < lines.length && /\|/.test(lines[i]) && lines[i].trim(); i++) rows.push(parseRow(lines[i]));
+      i--;
+      blocks.push({ type: 'table', rows, head: true, text: '' });
+      continue;
+    }
+
+    // standalone image ![alt](src)
+    const img = line.match(/^\s*!\[([^\]]*)\]\(\s*<?([^)\s>]+)>?[^)]*\)\s*$/);
+    if (img) { flushAll(); blocks.push({ type: 'image', alt: img[1], src: img[2], text: '' }); continue; }
+
+    // heading
+    const h = line.match(/^(#{1,6})\s+(.+)/);
+    if (h) { flushAll(); blocks.push({ type: 'h' + Math.min(3, h[1].length), text: inlineClean(h[2]) }); continue; }
+
+    // list item (consecutive same-kind items grouped into one list card)
+    const li = line.match(/^\s*(?:([-*+])|(\d+)[.)])\s+(.+)/);
+    if (li) {
+      flushPara(); flushQuote();
+      const ordered = !!li[2];
+      if (!list || list.ordered !== ordered) { flushList(); list = { type: 'list', ordered, items: [], text: '' }; }
+      const t = inlineClean(li[3]); if (t) list.items.push(t);
+      continue;
+    }
+
+    // blockquote (consecutive `>` lines merged)
+    const q = line.match(/^\s*>\s?(.*)/);
+    if (q) { flushPara(); flushList(); quoteBuf.push(q[1]); continue; }
+
+    if (/^\s*[-=*_]{3,}\s*$/.test(line)) { flushAll(); continue; }  // horizontal rule
+    if (/^\s*$/.test(line)) { flushAll(); continue; }               // blank line
+    flushQuote();                                                    // prose ends a quote
     para.push(line);
   }
-  flush();
-  return blocks.filter(b => b.text);
+  flushAll();
+
+  for (const b of blocks) if (b.type === 'list') b.text = b.items.join(' ');
+  return blocks.filter(b => CARD_TYPES.has(b.type) ? (b.rows || b.src || b.text || b.tex || b.items?.length) : b.text);
 }
 
 const isHeading = (b) => /^h[1-3]$/.test(b.type);
@@ -178,14 +271,14 @@ export function blocksToOutline(blocks, { title = '', target = 1400 } = {}) {
   }
 
   for (const c of chapters) {
-    c.text = c.blocks.map(b => b.text).join('\n\n');
+    c.text = c.blocks.map(b => b.text || '').join('\n\n');
     c.words = countWords(c.text);
   }
   return { chapters: chapters.filter(c => c.words || c.title), toc };
 }
 
 function splitBlocksByLength(blocks, target) {
-  const total = blocks.reduce((s, b) => s + countWords(b.text), 0);
+  const total = blocks.reduce((s, b) => s + countWords(b.text || ''), 0);
   if (total <= target * 1.4) return [blocks];
   const parts = []; let buf = [], n = 0;
   for (const b of blocks) {

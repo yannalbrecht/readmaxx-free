@@ -94,6 +94,8 @@
 /* mono: pivot must still stand out with zero color — dim the word, keep pivot pure white */
 [data-theme=mono] .rd-word{color:#c9c9c9}
 [data-theme=mono] .rd-word .pivot{color:#fff;font-weight:900}
+/* red pivot turned off → pivot matches the word (no colour, no bold pop) */
+[data-theme=mono] .reader.no-pivotcolor .rd-word .pivot{color:#c9c9c9;font-weight:inherit}
 /* content covers/avatars follow the theme's light discipline */
 [data-theme=mono] .cover,[data-theme=mono] .gcover,[data-theme=mono] .cont-cover,[data-theme=mono] .avatar{filter:grayscale(1)}
 [data-theme=red] .cover,[data-theme=red] .gcover,[data-theme=red] .cont-cover,[data-theme=red] .avatar{filter:grayscale(1) sepia(1) hue-rotate(-42deg) saturate(3.2) brightness(.72)}
@@ -403,7 +405,8 @@ textarea.field{height:auto;min-height:200px;padding:16px 18px;line-height:1.55;r
 .word .pivot{color:var(--orp);flex:none;display:inline-block;text-align:center}
 .word .pre{flex:1;text-align:right;white-space:pre}
 .word .post{flex:1;text-align:left;white-space:pre}
-.reader.no-orp .word .pivot{color:var(--text)}
+.reader.no-orp .word .pivot,
+.reader.no-pivotcolor .word .pivot{color:var(--text)}
 /* heading shown as a title card (not flashed word-by-word) */
 .word.rd-heading{display:block;width:100%;text-align:center;white-space:normal;font-weight:750}
 .rd-card-eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
@@ -816,3 +819,61 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+
+/* ============================================================
+   RICH CONTENT — pause cards (reader) + native blocks (text view)
+   ============================================================ */
+/* while a rich card owns the stage, hide the flashing word + speed readout */
+.rd-stage.has-card .rd-wordzone,
+.rd-stage.has-card .rd-speed{display:none}
+
+.rd-richcard{position:absolute;inset:10px 10px 8px;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,var(--stage-1),var(--stage-2));
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 14px 12px;z-index:3;
+  box-shadow:var(--shadow);animation:cardin .22s ease}
+@keyframes cardin{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+.rc-eyebrow{font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;flex:none}
+.rc-body{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:center;
+  font-family:var(--read-font);color:var(--text);font-size:calc(15px * var(--read-scale,1));line-height:1.6}
+.rc-continue{flex:none;margin-top:12px;align-self:center;padding:10px 22px;border-radius:999px;border:0;cursor:pointer;
+  background:var(--grad);color:#fff;font-weight:750;font-size:14px;box-shadow:var(--glow)}
+.reader.card-wait .rc-continue{animation:contpulse 1.4s ease-in-out infinite}
+@keyframes contpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* tables */
+.rich-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
+.rich-table{border-collapse:collapse;margin:0 auto;font-size:calc(13px * var(--read-scale,1));min-width:min(100%,max-content)}
+.rich-table th,.rich-table td{border:1px solid var(--line-2);padding:6px 10px;text-align:left;vertical-align:top;white-space:normal}
+.rich-table th{background:var(--surface-2);font-weight:700;color:var(--text)}
+.rich-table tr:nth-child(even) td{background:color-mix(in srgb,var(--surface) 55%,transparent)}
+
+/* code */
+.rich-code{font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre;overflow:auto;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0;color:var(--text);text-align:left}
+
+/* lists (reader card) */
+.rich-list{text-align:left;margin:0 auto;padding-left:1.4em;max-width:40ch}
+.rich-list li{margin:0 0 8px}
+ol.rich-list li{list-style:decimal}ul.rich-list li{list-style:disc}
+
+/* blockquote (reader card) */
+.rich-quote{border-left:3px solid var(--accent);padding:2px 0 2px 16px;margin:0 auto;max-width:44ch;
+  font-style:italic;color:var(--muted);text-align:left}
+
+/* image */
+.rich-figure{margin:0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.rich-img{max-width:100%;max-height:52vh;border-radius:12px;object-fit:contain}
+.rich-cap{font-size:12px;color:var(--faint);max-width:44ch}
+.rich-imgmiss{padding:26px 20px;border:1px dashed var(--line-2);border-radius:12px;color:var(--faint);font-size:13px}
+
+/* math */
+.rich-math{overflow-x:auto;overflow-y:hidden;max-width:100%;text-align:center;color:var(--text)}
+.rich-math.is-display{margin:2px 0}
+
+/* text view native blocks */
+.tv-card{margin:20px 0}
+.tv-card .rich-img{max-height:60vh}
+.tv-card .rc-body{display:block}
+.tv-list{margin:0 0 14px;padding-left:22px}
+.tv-list li{margin:0 0 6px}
+ul.tv-list li{list-style:disc}ol.tv-list li{list-style:decimal}
