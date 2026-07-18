@@ -233,7 +233,7 @@ export function mdToBlocks(raw, { markdown = false } = {}) {
 
     if (/^\s*[-=*_]{3,}\s*$/.test(line)) { flushAll(); continue; }  // horizontal rule
     if (/^\s*$/.test(line)) { flushAll(); continue; }               // blank line
-    flushQuote();                                                    // prose ends a quote
+    flushQuote(); flushList();                                       // prose ends a quote or list
     para.push(line);
   }
   flushAll();

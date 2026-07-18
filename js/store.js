@@ -52,8 +52,10 @@ const DEFAULT = {
     orp: true,         // ORP pivot ALIGNMENT (fixed pivot position — the RSVP mechanism)
     pivotColor: true,  // colour the pivot letter red (independent of alignment)
     showContext: true, // show surrounding sentence
-    accent: 'violet',
-    theme: 'dark',     // display theme (see THEMES): dark | paper | sepia | mono | red
+    accent: 'violet',  // preset accent id, or 'custom' (see customAccent)
+    customAccent: '',  // free-choice accent hex when accent === 'custom'
+    theme: 'dark',     // display theme: a THEMES key, or a customThemes[].id
+    customThemes: [],  // user-made themes: { id, name, bg, text, accent }
     font: 'lexend',    // reading face (see FONTS)
     scale: 'm',        // reading size (see SCALES)
     bigFont: false,    // legacy extra-large toggle
@@ -224,25 +226,88 @@ export function uid() {
   return 'd' + Date.now().toString(36) + Math.floor(performance.now()*1000 % 1e6).toString(36);
 }
 
+/* ---------- colour maths (for free accents + custom themes) ---------- */
+function hexRgb(h) {
+  h = (h || '').replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h || '000000', 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const clamp8 = (x) => Math.max(0, Math.min(255, Math.round(x)));
+function rgbHex(r, g, b) { return '#' + [r, g, b].map(x => clamp8(x).toString(16).padStart(2, '0')).join(''); }
+// Blend two hex colours (t=0 → a, t=1 → b).
+function mixHex(a, b, t) { const A = hexRgb(a), B = hexRgb(b); return rgbHex(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t); }
+// Perceived luminance 0..1 (for light/dark decisions).
+export function luma(h) { const [r, g, b] = hexRgb(h); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; }
+function rgba(h, a) { const [r, g, b] = hexRgb(h); return `rgba(${r},${g},${b},${a})`; }
+// Rotate hue to derive a pleasing gradient partner for a single chosen accent.
+function hueRotate(hex, deg) {
+  let [r, g, b] = hexRgb(hex).map(x => x / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  let h = 0; const l = (max + min) / 2; const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  if (d) { h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  h = (h + deg) % 360;
+  const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
+  const [rr, gg, bb] = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+  return rgbHex((rr + m) * 255, (gg + m) * 255, (bb + m) * 255);
+}
+
+// Derive a full, cohesive CSS-variable palette from a custom theme's 3 base colours.
+const CUSTOM_VARS = ['--bg', '--bg-2', '--bg-deep', '--surface', '--surface-2', '--surface-3',
+  '--stage-1', '--stage-2', '--splash-glow', '--line', '--line-2', '--text', '--muted', '--faint',
+  '--a1', '--a2', '--accent', 'color-scheme'];
+function customThemeVars(t) {
+  const dark = luma(t.bg) < 0.5;
+  const lift = dark ? '#ffffff' : '#000000';         // surfaces step toward this
+  const accent = t.accent || '#8b6cff';
+  return {
+    '--bg': t.bg,
+    '--bg-2': mixHex(t.bg, lift, 0.05),
+    '--bg-deep': mixHex(t.bg, dark ? '#000000' : '#ffffff', 0.14),
+    '--surface': mixHex(t.bg, lift, 0.08),
+    '--surface-2': mixHex(t.bg, lift, 0.13),
+    '--surface-3': mixHex(t.bg, lift, 0.20),
+    '--stage-1': mixHex(t.bg, lift, 0.04),
+    '--stage-2': t.bg,
+    '--splash-glow': mixHex(t.bg, accent, 0.18),
+    '--line': rgba(t.text, 0.10),
+    '--line-2': rgba(t.text, 0.18),
+    '--text': t.text,
+    '--muted': mixHex(t.text, t.bg, 0.35),
+    '--faint': mixHex(t.text, t.bg, 0.55),
+    '--a1': accent, '--a2': hueRotate(accent, 26), '--accent': accent,
+    'color-scheme': dark ? 'dark' : 'light',
+  };
+}
+export const findCustomTheme = (id) => (state.settings.customThemes || []).find(t => t.id === id);
+
 /* apply display theme + accent + reading font + size to :root */
 export function applyTheme() {
   const root = document.documentElement;
-  const themeKey = THEMES[state.settings.theme] ? state.settings.theme : 'dark';
-  const theme = THEMES[themeKey];
-  // 'dark' is the base :root (no attribute); everything else is a data-theme.
-  if (themeKey === 'dark') root.removeAttribute('data-theme');
-  else root.setAttribute('data-theme', themeKey);
-  // Accent: lock themes (mono/red) define their own in CSS — an inline override
-  // here would win over the stylesheet, so clear it for them instead.
-  if (theme.lock) {
-    root.style.removeProperty('--a1');
-    root.style.removeProperty('--a2');
-    root.style.removeProperty('--accent');
+  CUSTOM_VARS.forEach(v => root.style.removeProperty(v));   // clear any prior custom palette
+  const custom = findCustomTheme(state.settings.theme);
+
+  if (custom) {
+    // Custom themes carry their own full palette + accent via inline vars.
+    root.removeAttribute('data-theme');
+    const vars = customThemeVars(custom);
+    for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v);
   } else {
-    const a = ACCENTS[state.settings.accent] || ACCENTS.violet;
-    root.style.setProperty('--a1', a.a1);
-    root.style.setProperty('--a2', a.a2);
-    root.style.setProperty('--accent', a.a1);
+    const themeKey = THEMES[state.settings.theme] ? state.settings.theme : 'dark';
+    const theme = THEMES[themeKey];
+    if (themeKey === 'dark') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', themeKey);
+    // Lock themes (mono/red) own their accent in CSS — clear inline so the sheet wins.
+    if (theme.lock) {
+      root.style.removeProperty('--a1'); root.style.removeProperty('--a2'); root.style.removeProperty('--accent');
+    } else {
+      const useCustom = state.settings.accent === 'custom' && state.settings.customAccent;
+      const a1 = useCustom ? state.settings.customAccent : (ACCENTS[state.settings.accent] || ACCENTS.violet).a1;
+      const a2 = useCustom ? hueRotate(a1, 26) : (ACCENTS[state.settings.accent] || ACCENTS.violet).a2;
+      root.style.setProperty('--a1', a1);
+      root.style.setProperty('--a2', a2);
+      root.style.setProperty('--accent', a1);
+    }
   }
   const f = FONTS[state.settings.font] || FONTS.lexend;
   root.style.setProperty('--read-font', f.css);

@@ -7,6 +7,7 @@ import {
   state, save, applyTheme, ACCENTS, THEMES, FONTS, SCALES, HAS_VIBRATE, dayKey,
   putDoc, getDoc, allDocs, deleteDoc, uid, exportData, importData,
   saveAsset, getAsset, touchAsset, assetUsage, evictAssetsTo, clearAssets,
+  findCustomTheme,
 } from './store.js';
 import {
   buildFlashes, buildFlashesAsync, flashDelay, orpParts, mdToBlocks, blocksToOutline, countWords, analyzeTopics,
@@ -737,7 +738,7 @@ function importSheet() {
   body.append(opt(ICON.link, 'Read a copied link', 'Copy in Safari, then tap here', pasteLinkImport));
   body.append(opt(ICON.paste, 'Paste text', 'Articles, emails, notes', pasteSheet));
   body.append(opt(ICON.search, 'Type a web link', 'Enter or paste a URL', urlSheet));
-  body.append(opt(ICON.file, 'Upload file', '.txt · .md · .epub · .pdf', () => D.fileInput.click()));
+  body.append(opt(ICON.file, 'Upload file', '.txt · .md · .html · .epub · .pdf', () => D.fileInput.click()));
   body.append(opt(ICON.vault, 'Import folder / vault', 'Whole vault, subfolders included', vaultSheet));
   sheet({ title:'Import', sub:'Everything stays on your device.', body });
 }
@@ -1025,6 +1026,15 @@ async function onFilePicked(e) {
     } else if (/\.pdf$/i.test(file.name)) {
       toast('Reading PDF…');
       const saved = await saveDoc(await parsePdf(file));
+      openDoc(saved.id);
+    } else if (/\.(html?|xhtml)$/i.test(file.name)) {
+      toast('Reading HTML…');
+      const dd = new DOMParser().parseFromString(await file.text(), 'text/html');
+      dd.querySelectorAll('script,style,nav,footer,header,aside,noscript,svg').forEach(n => n.remove());
+      const blocks = domToBlocks(dd.querySelector('article, main') || dd.body);
+      if (!blocks.length) throw new Error('No readable content in that HTML');
+      const title = (dd.querySelector('title')?.textContent || name).replace(/\s+/g, ' ').trim().slice(0, 80);
+      const saved = await saveDoc(makeDoc({ title, type: 'text', blocks }));
       openDoc(saved.id);
     } else {
       const text = await file.text();
@@ -2743,8 +2753,9 @@ function renderProfile() {
   // Appearance
   v.append(groupTitle('Appearance'));
   const g2 = el('div', { class:'set-group' });
-  g2.append(themeRow(() => renderProfile())); // re-render: lock themes hide the Accent row
-  if (!THEMES[state.settings.theme]?.lock) g2.append(accentRow());
+  g2.append(themeRow(() => renderProfile())); // re-render: lock/custom themes hide the Accent row
+  // Preset/custom themes that own their accent (mono, red, and any custom theme) hide the picker.
+  if (!THEMES[state.settings.theme]?.lock && !findCustomTheme(state.settings.theme)) g2.append(accentRow());
   g2.append(fontRow(true));
   g2.append(segRow('Reading size', 'scale', SCALES, () => applyTheme(), true));
   v.append(g2);
@@ -2851,12 +2862,25 @@ function accentRow() {
   const row = el('div', { class:'set' });
   row.append(el('div', { class:'st' }, 'Accent'));
   const sw = el('div', { class:'swatches' });
+  const clearOn = () => [...sw.children].forEach(c => c.classList.remove('on'));
   for (const [k, a] of Object.entries(ACCENTS)) {
     const b = el('button', { class:'swatch' + (state.settings.accent === k ? ' on' : ''),
       style:`background:linear-gradient(120deg,${a.a1},${a.a2})` });
-    b.addEventListener('click', () => { state.settings.accent = k; applyTheme(); save(); haptic(6); [...sw.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); });
+    b.addEventListener('click', () => { state.settings.accent = k; applyTheme(); save(); haptic(6); clearOn(); b.classList.add('on'); });
     sw.append(b);
   }
+  // Free colour picker: a native swatch that opens the OS colour wheel.
+  const isCustom = state.settings.accent === 'custom';
+  const pick = el('label', { class:'swatch swatch-pick' + (isCustom ? ' on' : ''),
+    style: isCustom && state.settings.customAccent ? `background:${state.settings.customAccent}` : '' }, '＋');
+  const input = el('input', { type:'color', value: state.settings.customAccent || '#8b6cff',
+    style:'position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer' });
+  input.addEventListener('input', () => {
+    state.settings.accent = 'custom'; state.settings.customAccent = input.value;
+    applyTheme(); save(); clearOn(); pick.classList.add('on'); pick.style.background = input.value; pick.textContent = '';
+  });
+  pick.append(input);
+  sw.append(pick);
   row.append(sw);
   return row;
 }
@@ -2866,19 +2890,83 @@ function themeRow(onPick) {
   const row = el('div', { class:'set theme-set' });
   row.append(el('div', { class:'st' }, 'Theme'));
   const sw = el('div', { class:'theme-swatches' });
-  for (const [k, t] of Object.entries(THEMES)) {
-    const b = el('button', { class:'tswatch' + (state.settings.theme === k ? ' on' : '') },
-      el('span', { class:'tsw-chip', style:`background:${t.sw[0]};color:${t.sw[1]}` }, 'Aa'),
-      el('span', { class:'tsw-name' }, t.name));
-    b.addEventListener('click', () => {
-      state.settings.theme = k; applyTheme(); save(); haptic(6);
-      [...sw.querySelectorAll('.tswatch')].forEach(c => c.classList.remove('on')); b.classList.add('on');
-      onPick?.(k);
-    });
-    sw.append(b);
-  }
+  const select = (id) => { state.settings.theme = id; applyTheme(); save(); haptic(6); onPick?.(id); };
+  const swatch = (id, chipBg, chipInk, name, onLong) => {
+    const b = el('button', { class:'tswatch' + (state.settings.theme === id ? ' on' : '') },
+      el('span', { class:'tsw-chip', style:`background:${chipBg};color:${chipInk}` }, 'Aa'),
+      el('span', { class:'tsw-name' }, name));
+    b.addEventListener('click', () => { select(id); [...sw.querySelectorAll('.tswatch')].forEach(c => c.classList.remove('on')); b.classList.add('on'); });
+    if (onLong) { let t; b.addEventListener('pointerdown', () => { t = setTimeout(onLong, 500); }); ['pointerup','pointerleave','pointercancel'].forEach(e => b.addEventListener(e, () => clearTimeout(t))); }
+    return b;
+  };
+  for (const [k, t] of Object.entries(THEMES)) sw.append(swatch(k, t.sw[0], t.sw[1], t.name));
+  for (const t of state.settings.customThemes || []) sw.append(swatch(t.id, t.bg, t.text, t.name, () => customThemeSheet(t, onPick)));
+  // "＋" create-a-theme tile
+  const add = el('button', { class:'tswatch tsw-add' }, el('span', { class:'tsw-chip' }, '＋'), el('span', { class:'tsw-name' }, 'Custom'));
+  add.addEventListener('click', () => customThemeSheet(null, onPick));
+  sw.append(add);
   row.append(sw);
   return row;
+}
+
+// Create or edit a custom theme (three colours + a name). Long-press a custom
+// swatch to edit/delete; the "＋" tile creates a new one.
+function customThemeSheet(existing, onPick) {
+  const t = existing || { id: 'ct_' + uid(), name: 'My Theme', bg: '#0e0c16', text: '#f4f3fb', accent: '#8b6cff' };
+  const draft = { ...t };
+  const body = el('div', { class:'stack' });
+
+  const preview = el('div', { class:'ct-preview' });
+  const paintPreview = () => {
+    preview.style.background = draft.bg; preview.style.color = draft.text;
+    preview.style.borderColor = draft.accent;
+    clear(preview);
+    preview.append(el('div', { class:'ct-pv-word' }, el('span', { style:`color:${draft.text}` }, 'Read'), el('span', { style:`color:${draft.accent}`, class:'ct-pv-piv' }, 'm'), el('span', { style:`color:${draft.text}` }, 'axx')),
+      el('div', { class:'ct-pv-sub', style:`color:${mixPreview(draft.text, draft.bg)}` }, 'live preview'));
+  };
+  body.append(preview);
+
+  const nameInp = el('input', { class:'field', type:'text', value: draft.name, maxlength:'24', placeholder:'Theme name' });
+  nameInp.addEventListener('input', () => draft.name = nameInp.value.slice(0, 24));
+  body.append(nameInp);
+
+  const colorRow = (label, key) => {
+    const r = el('label', { class:'ct-color' });
+    const chip = el('span', { class:'ct-chip', style:`background:${draft[key]}` });
+    const inp = el('input', { type:'color', value: draft[key], style:'position:absolute;opacity:0;width:44px;height:44px;cursor:pointer' });
+    inp.addEventListener('input', () => { draft[key] = inp.value; chip.style.background = inp.value; paintPreview(); });
+    r.append(chip, el('span', { class:'ct-lbl' }, label), inp);
+    return r;
+  };
+  const grid = el('div', { class:'ct-colors' });
+  grid.append(colorRow('Background', 'bg'), colorRow('Text', 'text'), colorRow('Accent', 'accent'));
+  body.append(grid);
+  paintPreview();
+
+  const save1 = el('button', { class:'btn' }, existing ? 'Save changes' : 'Create theme');
+  save1.addEventListener('click', () => {
+    const list = state.settings.customThemes = state.settings.customThemes || [];
+    const i = list.findIndex(x => x.id === draft.id);
+    if (i >= 0) list[i] = draft; else list.push(draft);
+    state.settings.theme = draft.id;
+    applyTheme(); save(); haptic(8); closeSheet(); onPick?.(draft.id);
+  });
+  body.append(save1);
+  if (existing) {
+    const del = el('button', { class:'btn ghost', style:'color:var(--bad)' }, 'Delete theme');
+    del.addEventListener('click', () => {
+      state.settings.customThemes = (state.settings.customThemes || []).filter(x => x.id !== draft.id);
+      if (state.settings.theme === draft.id) state.settings.theme = 'dark';
+      applyTheme(); save(); haptic(8); closeSheet(); onPick?.('dark');
+    });
+    body.append(del);
+  }
+  sheet({ title: existing ? 'Edit theme' : 'New theme', sub:'Pick three colours — the rest is generated.', body });
+}
+// tiny muted-colour helper for the preview subtitle (mirrors store's mix)
+function mixPreview(a, b) {
+  const p = (h) => { h = h.replace('#',''); if (h.length===3) h = h.split('').map(c=>c+c).join(''); const n = parseInt(h,16); return [n>>16&255, n>>8&255, n&255]; };
+  const A = p(a), B = p(b); return '#' + [0,1,2].map(i => Math.round(A[i]+(B[i]-A[i])*0.45).toString(16).padStart(2,'0')).join('');
 }
 function fontRow(inGroup) {
   const row = el('button', { class:'set', style:'width:100%;text-align:left', onclick: fontSheet });

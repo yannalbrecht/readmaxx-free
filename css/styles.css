@@ -610,9 +610,13 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
 .set .si svg{width:18px;height:18px}
 .set .st{flex:1;font-weight:650;font-size:15px}
 .set .sv{color:var(--muted);font-size:14px;font-weight:600}
-.swatches{display:flex;gap:10px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
 .swatch{width:30px;height:30px;border-radius:50%;border:2px solid transparent}
 .swatch.on{border-color:var(--text)}
+/* free-colour accent picker tile */
+.swatch-pick{position:relative;display:grid;place-items:center;overflow:hidden;
+  background:var(--surface-2);border:2px dashed var(--line-2);color:var(--faint);font-weight:800;font-size:16px}
+.swatch-pick.on{border-style:solid;border-color:var(--text);color:transparent}
 
 /* display-theme picker */
 .theme-set{flex-wrap:wrap}
@@ -625,6 +629,16 @@ input[type=range].grad-track::-webkit-slider-runnable-track{background:var(--gra
 .tswatch.on .tsw-chip{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
 .tsw-name{font-size:10px;font-weight:650;color:var(--faint)}
 .tswatch.on .tsw-name{color:var(--text)}
+.tsw-add .tsw-chip{border-style:dashed;color:var(--faint);background:var(--surface-2)}
+
+/* custom-theme creator sheet */
+.ct-preview{border-radius:16px;border:2px solid;padding:22px 16px;text-align:center;transition:.15s}
+.ct-pv-word{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.ct-pv-sub{font-size:12px;margin-top:6px;letter-spacing:.14em;text-transform:uppercase}
+.ct-colors{display:flex;flex-direction:column;gap:8px}
+.ct-color{position:relative;display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;background:var(--surface-2);cursor:pointer}
+.ct-chip{width:26px;height:26px;border-radius:8px;border:1px solid var(--line-2);flex:none}
+.ct-lbl{font-size:14px;color:var(--text);font-weight:600}
 
 /* toggle */
 .toggle{width:48px;height:29px;border-radius:99px;background:var(--surface-3);position:relative;transition:.2s;flex:none}
